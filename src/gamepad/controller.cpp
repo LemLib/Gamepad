@@ -33,7 +33,7 @@ void Controller::update() {
     this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
 }
 
-ButtonState Controller::operator[](pros::controller_digital_e_t button) {
+const ButtonState& Controller::operator[](pros::controller_digital_e_t button) {
     switch (button) {
         case DIGITAL_L1: return this->L1;
         case DIGITAL_L2: return this->L2;
