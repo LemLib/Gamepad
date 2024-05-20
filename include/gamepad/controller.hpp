@@ -34,9 +34,9 @@ class Button {
     uint32_t addListener(EventType event, std::function<void(void)> func);
     bool removeListener(uint32_t id);
     private:
-    EventHandler<void> onPressEvent;
-    EventHandler<void> onLongPressEvent;
-    EventHandler<void> onReleaseEvent;
+    EventHandler<> onPressEvent;
+    EventHandler<> onLongPressEvent;
+    EventHandler<> onReleaseEvent;
 };
 
 class Controller {

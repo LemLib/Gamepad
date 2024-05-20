@@ -24,7 +24,9 @@ class EventHandler {
     using Listener = std::function<void(Args...)>;
     uint32_t add_listener(Listener func) {
         std::lock_guard lock(mutex);
-        listeners.emplace(MonotonicCounter::next_value(), std::move(func));
+        uint32_t id = MonotonicCounter::next_value();
+        listeners.emplace(id, std::move(func));
+        return id;
     }
     bool remove_listener(uint32_t id) {
         std::lock_guard lock(mutex);

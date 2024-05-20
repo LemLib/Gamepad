@@ -16,8 +16,8 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::update() {
-    for(auto i = DIGITAL_L1; i != DIGITAL_A; ++i) {
-        this->updateButton(i);
+    for(int i = DIGITAL_L1; i != DIGITAL_A; ++i) {
+        this->updateButton(static_cast<pros::controller_digital_e_t>(i));
     }
 
     this->LeftX = this->controller.get_analog(ANALOG_LEFT_X);
