@@ -1,8 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <map>
-#include <utility>
 #include <functional>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
