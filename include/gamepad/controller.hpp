@@ -75,6 +75,7 @@ class Controller {
         std::deque<std::pair<std::string, std::uint32_t>> screen_buffer[3];
         std::pair<std::string, std::uint32_t> screen_contents[3];
         uint32_t line_set_time[3];
+        uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
         pros::Controller controller;
 }; // namespace Gamepad

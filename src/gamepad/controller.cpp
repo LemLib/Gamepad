@@ -21,19 +21,21 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::updateScreen() {
-    if (pros::millis() - this->last_print_time < 50) {
+    if (pros::millis() - this->last_print_time < 50)
         return;
-    }
 
-    for (int line = 0; line < 3; line++) {
-        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].second) {
+    for (int i = 1; i < 3; i++) {
+        int line = (this->last_printed_line + i) % 3;
+        
+        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].second)
             continue;
-        }
-
+        
         this->controller.clear_line(line);
         this->controller.set_text(line, 0, this->screen_buffer[line][0].first.c_str());
         this->screen_contents[line] = this->screen_buffer[line][0];
         this->screen_buffer[line].pop_front();
+        
+        this->last_printed_line = line;
         this->last_print_time = pros::millis();
         break;
     }
