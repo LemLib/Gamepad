@@ -6,7 +6,6 @@
 #include <functional>
 #include <string>
 #include <sys/types.h>
-#include <utility>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
 #endif

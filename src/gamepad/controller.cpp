@@ -93,7 +93,8 @@ void Controller::update() {
 }
 
 void Controller::print_line(uint8_t line, std::string str, std::uint32_t duration) {
-    if (line > 2) std::exit(1); // TODO: change handling
+    TODO("change handling for off screen lines")
+    if (line > 2) std::exit(1);
 
     screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });  
 }
