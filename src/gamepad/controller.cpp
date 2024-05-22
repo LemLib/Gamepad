@@ -75,7 +75,7 @@ void Controller::updateScreen() {
 
     // nothing to print to screen this update so rumble controller
     this->controller.rumble(this->screen_buffer[4][0].text.c_str());
-    this->screen_buffer[4].pop_front();
+    this->screen_buffer[3].pop_front();
     this->last_print_time = pros::millis();
 }
 
@@ -97,6 +97,10 @@ void Controller::print_line(uint8_t line, std::string str, std::uint32_t duratio
     if (line > 2) std::exit(1);
 
     screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });  
+}
+
+void Controller::rumble(std::string rumble_pattern) {
+    this->screen_buffer[3].push_back({.text = std::move(rumble_pattern), .duration = 0});
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {

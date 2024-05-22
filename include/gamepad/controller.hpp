@@ -60,6 +60,8 @@ class Controller {
         void update();
 
         void print_line(std::uint8_t line, std::string str, std::uint32_t duration);
+
+        void rumble(std::string rumble_pattern);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
