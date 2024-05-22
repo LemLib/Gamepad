@@ -1,4 +1,9 @@
 #include "gamepad/controller.hpp"
+#include "pros/rtos.hpp"
+#include <cstdint>
+#include <cstdlib>
+#include <string>
+#include <utility>
 
 namespace Gamepad {
 void Controller::updateButton(pros::controller_digital_e_t button_id) {
@@ -15,6 +20,25 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
     }
 }
 
+void Controller::updateScreen() {
+    if (pros::millis() - this->last_print_time < 50) {
+        return;
+    }
+
+    for (int line = 0; line < 3; line++) {
+        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].second) {
+            continue;
+        }
+
+        this->controller.clear_line(line);
+        this->controller.set_text(line, 0, this->screen_buffer[line][0].first.c_str());
+        this->screen_contents[line] = this->screen_buffer[line][0];
+        this->screen_buffer[line].pop_front();
+        this->last_print_time = pros::millis();
+        break;
+    }
+}
+
 void Controller::update() {
     for(int i = DIGITAL_L1; i != DIGITAL_A; ++i) {
         this->updateButton(static_cast<pros::controller_digital_e_t>(i));
@@ -24,6 +48,14 @@ void Controller::update() {
     this->LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
     this->RightX = this->controller.get_analog(ANALOG_RIGHT_X);
     this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
+
+    this->updateScreen();
+}
+
+void Controller::println(uint8_t line, std::string str, std::uint32_t duration) {
+    if (line > 2) std::exit(1); // TODO: change handling
+
+    screen_buffer[line].push_back(std::make_pair(str, duration));
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {

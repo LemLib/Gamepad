@@ -1,7 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <deque>
 #include <functional>
+#include <string>
+#include <utility>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
 #endif
@@ -47,6 +50,8 @@ class Controller {
          * @note Create a separate instance for each task.
          */
         void update();
+
+        void println(std::uint8_t line, std::string str, std::uint32_t duration);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
@@ -57,6 +62,7 @@ class Controller {
          * @param joystick Which joystick axis's value to return
          */
         float operator[](pros::controller_analog_e_t joystick);
+
         Button L1{}, L2{}, R1{}, R2{}, 
         Up{}, Down{}, Left{}, Right{}, 
         X{}, B{}, Y{}, A{};
@@ -64,6 +70,12 @@ class Controller {
     private:
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
+        void updateScreen();
+
+        std::deque<std::pair<std::string, std::uint32_t>> screen_buffer[3];
+        std::pair<std::string, std::uint32_t> screen_contents[3];
+        uint32_t line_set_time[3];
+        uint32_t last_print_time = 0;
         pros::Controller controller;
 }; // namespace Gamepad
 }
