@@ -36,10 +36,14 @@ class EventHandler {
         listeners.erase(id);
         return true;
     }
+    bool is_empty() {
+        std::lock_guard lock(mutex);
+        return listeners.empty();
+    }
     void fire(Args... args) {
         std::lock_guard lock(mutex);
-        for(Listener func : listeners) {
-            func(args...);
+        for(auto listener : listeners) {
+            listener.second(args...);
         }
     }
     private:
