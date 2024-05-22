@@ -30,12 +30,14 @@ void Controller::updateScreen() {
         if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].second)
             continue;
         
+        
         this->controller.clear_line(line);
         this->controller.set_text(line, 0, this->screen_buffer[line][0].first.c_str());
         this->screen_contents[line] = this->screen_buffer[line][0];
         this->screen_buffer[line].pop_front();
         
         this->last_printed_line = line;
+        this->line_set_time[line] = pros::millis();
         this->last_print_time = pros::millis();
         break;
     }
