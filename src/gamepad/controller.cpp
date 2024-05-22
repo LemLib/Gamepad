@@ -1,4 +1,5 @@
 #include "gamepad/controller.hpp"
+#include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <cstdint>
 #include <cstdlib>
@@ -6,18 +7,50 @@
 #include <utility>
 
 namespace Gamepad {
+
+uint32_t Button::onPress(std::function<void(void)> func) {
+    return this->onPressEvent.add_listener(std::move(func));
+}
+
+uint32_t Button::onLongPress(std::function<void(void)> func) {
+    return this->onLongPressEvent.add_listener(std::move(func));
+}
+
+uint32_t Button::onRelease(std::function<void(void)> func) {
+    return this->onReleaseEvent.add_listener(std::move(func));
+}
+
+void Button::update(const bool is_held) {
+    static uint32_t last_update_time = pros::millis();
+
+    this->rising_edge = !this->is_pressed && is_held;
+    this->falling_edge = this->is_pressed && !is_held;
+    this->is_pressed = is_held;
+    if (is_held) {
+        this->time_held += pros::millis() - last_update_time;
+    } else {
+        this->time_released += pros::millis() - last_update_time;
+    }
+    if (this->rising_edge) {
+        this->time_held = 0;
+    } 
+    if (this->falling_edge) {
+        this->time_released = 0;
+    }
+
+    if (this->rising_edge) {
+        onPressEvent.fire();
+    } else if (this->falling_edge) {
+        onReleaseEvent.fire();
+    }
+    TODO("implement longPress");
+    last_update_time = pros::millis();
+}
+
 void Controller::updateButton(pros::controller_digital_e_t button_id) {
     Button Controller::* button = Controller::button_to_ptr(button_id);
     bool is_held = this->controller.get_digital(button_id);
-    (this->*button).rising_edge = !(this->*button).is_pressed && is_held;
-    (this->*button).falling_edge = (this->*button).is_pressed && !is_held;
-    (this->*button).is_pressed = is_held;
-    if ((this->*button).rising_edge) {
-        (this->*button).last_press_time = pros::millis();
-    } 
-    if ((this->*button).falling_edge) {
-        (this->*button).last_release_time = pros::millis();
-    }
+    (this->*button).update(is_held);
 }
 
 void Controller::updateScreen() {
@@ -72,7 +105,8 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
         case ANALOG_LEFT_Y: return this->LeftY;
         case ANALOG_RIGHT_X: return this->RightX;
         case ANALOG_RIGHT_Y: return this->RightY;
-        default: std::exit(1); // TODO: change handling
+        TODO("change handling for default")
+        default: std::exit(1);
     }
 }
 
@@ -90,7 +124,8 @@ Button Controller::* Controller::button_to_ptr(pros::controller_digital_e_t butt
         case DIGITAL_B: return &Controller::B;
         case DIGITAL_Y: return &Controller::Y;
         case DIGITAL_A: return &Controller::A;
-        default: std::exit(1); // TODO: change handling
+        TODO("change handling for default")
+        default: std::exit(1);
     }
 }
 }

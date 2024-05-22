@@ -22,12 +22,16 @@ enum EventType {
 };
 
 class Button {
+    friend class Controller;
     public:
     bool rising_edge = false;
     bool falling_edge = false;
     bool is_pressed = false;
     uint32_t last_press_time = pros::millis();
     uint32_t last_release_time = last_press_time;
+    uint32_t time_held = 0;
+    uint32_t time_released = 0;
+    uint32_t long_press_threshold = 500;
 
     uint32_t onPress(std::function<void(void)> func);
     uint32_t onLongPress(std::function<void(void)> func);
@@ -35,6 +39,9 @@ class Button {
     uint32_t addListener(EventType event, std::function<void(void)> func);
     bool removeListener(uint32_t id);
     private:
+
+    void update(bool is_held);
+
     EventHandler<> onPressEvent;
     EventHandler<> onLongPressEvent;
     EventHandler<> onReleaseEvent;
@@ -62,6 +69,8 @@ class Controller {
          * @param joystick Which joystick axis's value to return
          */
         float operator[](pros::controller_analog_e_t joystick);
+
+        TODO("hide members and expose getters/const refs")
 
         Button L1{}, L2{}, R1{}, R2{}, 
         Up{}, Down{}, Left{}, Right{}, 
