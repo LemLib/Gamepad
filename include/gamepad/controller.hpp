@@ -1,9 +1,11 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <deque>
 #include <functional>
 #include <string>
+#include <sys/types.h>
 #include <utility>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
@@ -51,7 +53,7 @@ class Controller {
          */
         void update();
 
-        void println(std::uint8_t line, std::string str, std::uint32_t duration);
+        void print_line(std::uint8_t line, std::string str, std::uint32_t duration);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
@@ -68,13 +70,18 @@ class Controller {
         X{}, B{}, Y{}, A{};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
+        struct Line {
+            std::string text;
+            uint duration;
+        };
+
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         void updateScreen();
 
-        std::deque<std::pair<std::string, std::uint32_t>> screen_buffer[3];
-        std::pair<std::string, std::uint32_t> screen_contents[3];
-        uint32_t line_set_time[3];
+        std::array<std::deque<Line>, 4> screen_buffer{};
+        std::array<Line, 3> screen_contents{};
+        std::array<uint32_t, 3> line_set_time{};
         uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
         pros::Controller controller;

@@ -24,23 +24,26 @@ void Controller::updateScreen() {
     if (pros::millis() - this->last_print_time < 50)
         return;
 
-    for (int i = 1; i < 3; i++) {
+    for (int i = 1; i <= 3; i++) {
         int line = (this->last_printed_line + i) % 3;
         
-        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].second)
+        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].duration)
             continue;
-        
-        
-        this->controller.clear_line(line);
-        this->controller.set_text(line, 0, this->screen_buffer[line][0].first.c_str());
+
+        this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));  
         this->screen_contents[line] = this->screen_buffer[line][0];
         this->screen_buffer[line].pop_front();
         
         this->last_printed_line = line;
         this->line_set_time[line] = pros::millis();
         this->last_print_time = pros::millis();
-        break;
+        return;
     }
+
+    // nothing to print to screen this update so rumble controller
+    this->controller.rumble(this->screen_buffer[4][0].text.c_str());
+    this->screen_buffer[4].pop_front();
+    this->last_print_time = pros::millis();
 }
 
 void Controller::update() {
@@ -56,10 +59,10 @@ void Controller::update() {
     this->updateScreen();
 }
 
-void Controller::println(uint8_t line, std::string str, std::uint32_t duration) {
+void Controller::print_line(uint8_t line, std::string str, std::uint32_t duration) {
     if (line > 2) std::exit(1); // TODO: change handling
 
-    screen_buffer[line].push_back(std::make_pair(str, duration));
+    screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });  
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {
