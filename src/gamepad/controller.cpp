@@ -100,6 +100,9 @@ void Controller::print_line(uint8_t line, std::string str, std::uint32_t duratio
 }
 
 void Controller::rumble(std::string rumble_pattern) {
+    TODO("change handling for too long rumble patterns")
+    if (rumble_pattern.size() > 8) std::exit(1);
+
     this->screen_buffer[3].push_back({.text = std::move(rumble_pattern), .duration = 0});
 }
 
