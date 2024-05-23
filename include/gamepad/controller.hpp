@@ -74,7 +74,6 @@ class Controller {
         float operator[](pros::controller_analog_e_t joystick);
 
         TODO("hide members and expose getters/const refs")
-
         Button L1{}, L2{}, R1{}, R2{}, 
         Up{}, Down{}, Left{}, Right{}, 
         X{}, B{}, Y{}, A{};
