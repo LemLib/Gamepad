@@ -24,24 +24,25 @@ class Button {
     bool rising_edge = false;
     bool falling_edge = false;
     bool is_pressed = false;
-    uint32_t last_press_time = pros::millis();
-    uint32_t last_release_time = last_press_time;
+    //uint32_t last_press_time = pros::millis();
+    //uint32_t last_release_time = last_press_time;
     uint32_t time_held = 0;
     uint32_t time_released = 0;
     uint32_t long_press_threshold = 500;
 
-    uint32_t onPress(std::function<void(void)> func);
-    uint32_t onLongPress(std::function<void(void)> func);
-    uint32_t onRelease(std::function<void(void)> func);
-    uint32_t addListener(EventType event, std::function<void(void)> func);
-    bool removeListener(uint32_t id);
+    uint32_t onPress(std::function<void(void)> func) const;
+    uint32_t onLongPress(std::function<void(void)> func) const;
+    uint32_t onRelease(std::function<void(void)> func) const;
+    uint32_t addListener(EventType event, std::function<void(void)> func) const;
+    bool removeListener(uint32_t id) const;
     private:
 
     void update(bool is_held);
 
-    EventHandler<> onPressEvent;
-    EventHandler<> onLongPressEvent;
-    EventHandler<> onReleaseEvent;
+    uint32_t last_update_time = pros::millis();
+    mutable EventHandler<> onPressEvent{};
+    mutable EventHandler<> onLongPressEvent{};
+    mutable EventHandler<> onReleaseEvent{};
 };
 
 class Controller {

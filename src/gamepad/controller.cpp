@@ -3,28 +3,41 @@
 
 namespace Gamepad {
 
-uint32_t Button::onPress(std::function<void(void)> func) {
+uint32_t Button::onPress(std::function<void(void)> func) const {
     return this->onPressEvent.add_listener(std::move(func));
 }
 
-uint32_t Button::onLongPress(std::function<void(void)> func) {
+uint32_t Button::onLongPress(std::function<void(void)> func) const {
     return this->onLongPressEvent.add_listener(std::move(func));
 }
 
-uint32_t Button::onRelease(std::function<void(void)> func) {
+uint32_t Button::onRelease(std::function<void(void)> func) const {
     return this->onReleaseEvent.add_listener(std::move(func));
 }
 
-void Button::update(const bool is_held) {
-    static uint32_t last_update_time = pros::millis();
+uint32_t Button::addListener(EventType event, std::function<void(void)> func) const {
+    switch (event) {
+        case Gamepad::EventType::ON_PRESS:
+        this->onPress(std::move(func));
+        case Gamepad::EventType::ON_LONG_PRESS:
+        this->onLongPress(std::move(func));
+        case Gamepad::EventType::ON_RELEASE:
+        this->onRelease(std::move(func));
+    }
+}
 
+bool Button::removeListener(uint32_t id) const {
+    return this->onPressEvent.remove_listener(id) || this->onLongPressEvent.remove_listener(id) || this->onReleaseEvent.remove_listener(id);
+}
+
+void Button::update(const bool is_held) {
     this->rising_edge = !this->is_pressed && is_held;
     this->falling_edge = this->is_pressed && !is_held;
     this->is_pressed = is_held;
     if (is_held) {
-        this->time_held += pros::millis() - last_update_time;
+        this->time_held += pros::millis() - this->last_update_time;
     } else {
-        this->time_released += pros::millis() - last_update_time;
+        this->time_released += pros::millis() - this->last_update_time;
     }
     if (this->rising_edge) {
         this->time_held = 0;
@@ -34,12 +47,14 @@ void Button::update(const bool is_held) {
     }
 
     if (this->rising_edge) {
-        onPressEvent.fire();
-    } else if (this->falling_edge) {
-        onReleaseEvent.fire();
+        this->onPressEvent.fire();
+    } else if (this->is_pressed && this->time_held >= this->long_press_threshold) {
+        TODO("change onLongPress handling if onPress is present")
+        this->onLongPressEvent.fire();
+    }else if (this->falling_edge) {
+        this->onReleaseEvent.fire();
     }
-    TODO("implement longPress");
-    last_update_time = pros::millis();
+    this->last_update_time = pros::millis();
 }
 
 void Controller::updateButton(pros::controller_digital_e_t button_id) {
