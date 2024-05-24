@@ -74,7 +74,7 @@ void Controller::updateScreen() {
     }
 
     // nothing to print to screen this update so rumble controller
-    this->controller.rumble(this->screen_buffer[4][0].text.c_str());
+    this->controller.rumble(this->screen_buffer[3][0].text.c_str());
     this->screen_buffer[3].pop_front();
     this->last_print_time = pros::millis();
 }
