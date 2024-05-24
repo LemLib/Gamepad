@@ -19,38 +19,38 @@ enum EventType {
 };
 
 class Button {
-    friend class Controller;
+        friend class Controller;
     public:
-    bool rising_edge = false;
-    bool falling_edge = false;
-    bool is_pressed = false;
-    //uint32_t last_press_time = pros::millis();
-    //uint32_t last_release_time = last_press_time;
-    uint32_t time_held = 0;
-    uint32_t time_released = 0;
-    uint32_t long_press_threshold = 500;
+        bool rising_edge = false;
+        bool falling_edge = false;
+        bool is_pressed = false;
+        // uint32_t last_press_time = pros::millis();
+        // uint32_t last_release_time = last_press_time;
+        uint32_t time_held = 0;
+        uint32_t time_released = 0;
+        uint32_t long_press_threshold = 500;
 
-    uint32_t onPress(std::function<void(void)> func) const;
-    uint32_t onLongPress(std::function<void(void)> func) const;
-    uint32_t onRelease(std::function<void(void)> func) const;
-    uint32_t addListener(EventType event, std::function<void(void)> func) const;
-    bool removeListener(uint32_t id) const;
-    explicit operator bool() const { 
-        return is_pressed;
-    }
+        uint32_t onPress(std::function<void(void)> func) const;
+        uint32_t onLongPress(std::function<void(void)> func) const;
+        uint32_t onRelease(std::function<void(void)> func) const;
+        uint32_t addListener(EventType event, std::function<void(void)> func) const;
+        bool removeListener(uint32_t id) const;
+
+        explicit operator bool() const { return is_pressed; }
     private:
+        void update(bool is_held);
 
-    void update(bool is_held);
-
-    uint32_t last_update_time = pros::millis();
-    mutable EventHandler<> onPressEvent{};
-    mutable EventHandler<> onLongPressEvent{};
-    mutable EventHandler<> onReleaseEvent{};
+        uint32_t last_update_time = pros::millis();
+        mutable EventHandler<> onPressEvent {};
+        mutable EventHandler<> onLongPressEvent {};
+        mutable EventHandler<> onReleaseEvent {};
 };
 
 class Controller {
     public:
-        explicit Controller(pros::controller_id_e_t id): controller(id) {}
+        explicit Controller(pros::controller_id_e_t id)
+            : controller(id) {}
+
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
          * any registered handlers.
@@ -69,13 +69,11 @@ class Controller {
          */
         float operator[](pros::controller_analog_e_t joystick);
         TODO("hide memebrs and expose getters/const refs")
-        Button L1{}, L2{}, R1{}, R2{}, 
-        Up{}, Down{}, Left{}, Right{}, 
-        X{}, B{}, Y{}, A{};
+        Button L1 {}, L2 {}, R1 {}, R2 {}, Up {}, Down {}, Left {}, Right {}, X {}, B {}, Y {}, A {};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
-        static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
+        static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
 }; // namespace Gamepad
-}
+} // namespace Gamepad
