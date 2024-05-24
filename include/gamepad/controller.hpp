@@ -35,6 +35,9 @@ class Button {
     uint32_t onRelease(std::function<void(void)> func) const;
     uint32_t addListener(EventType event, std::function<void(void)> func) const;
     bool removeListener(uint32_t id) const;
+    explicit operator bool() const { 
+        return is_pressed;
+    }
     private:
 
     void update(bool is_held);
