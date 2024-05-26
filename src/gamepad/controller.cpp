@@ -57,9 +57,19 @@ void Controller::updateScreen() {
     if (pros::millis() - this->last_print_time < 50)
         return;
 
-    for (int i = 1; i <= 3; i++) {
-        int line = (this->last_printed_line + i) % 3;
-        
+    for (int i = 1; i <= 4; i++) {
+        int line = (this->last_printed_line + i) % 4;
+
+        // not part of the screen so rumble
+        if (line == 3) {
+            this->controller.rumble(this->screen_buffer[line][0].text.c_str());
+            this->screen_buffer[line].pop_front();
+            this->last_printed_line = line;
+            this->last_print_time = pros::millis();
+            return;
+        }
+
+        // else print to screen
         if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].duration)
             continue;
 
@@ -72,11 +82,6 @@ void Controller::updateScreen() {
         this->last_print_time = pros::millis();
         return;
     }
-
-    // nothing to print to screen this update so rumble controller
-    this->controller.rumble(this->screen_buffer[4][0].text.c_str());
-    this->screen_buffer[3].pop_front();
-    this->last_print_time = pros::millis();
 }
 
 void Controller::update() {
