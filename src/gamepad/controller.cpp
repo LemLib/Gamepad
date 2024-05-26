@@ -82,6 +82,7 @@ void Controller::updateScreen() {
         this->last_print_time = pros::millis();
         return;
     }
+    
 }
 
 void Controller::update() {
