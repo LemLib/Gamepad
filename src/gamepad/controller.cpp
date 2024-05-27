@@ -64,10 +64,10 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 void Controller::update() {
     for (int i = DIGITAL_L1; i != DIGITAL_A; ++i) { this->updateButton(static_cast<pros::controller_digital_e_t>(i)); }
 
-    this->LeftX = this->controller.get_analog(ANALOG_LEFT_X);
-    this->LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
-    this->RightX = this->controller.get_analog(ANALOG_RIGHT_X);
-    this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
+    this->m_LeftX = this->controller.get_analog(ANALOG_LEFT_X);
+    this->m_LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
+    this->m_RightX = this->controller.get_analog(ANALOG_RIGHT_X);
+    this->m_RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {
@@ -89,18 +89,18 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
 
 Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
-        case DIGITAL_L1: return &Controller::L1;
-        case DIGITAL_L2: return &Controller::L2;
-        case DIGITAL_R1: return &Controller::R1;
-        case DIGITAL_R2: return &Controller::R2;
-        case DIGITAL_UP: return &Controller::Up;
-        case DIGITAL_DOWN: return &Controller::Down;
-        case DIGITAL_LEFT: return &Controller::Left;
-        case DIGITAL_RIGHT: return &Controller::Right;
-        case DIGITAL_X: return &Controller::X;
-        case DIGITAL_B: return &Controller::B;
-        case DIGITAL_Y: return &Controller::Y;
-        case DIGITAL_A: return &Controller::A;
+        case DIGITAL_L1: return &Controller::m_L1;
+        case DIGITAL_L2: return &Controller::m_L2;
+        case DIGITAL_R1: return &Controller::m_R1;
+        case DIGITAL_R2: return &Controller::m_R2;
+        case DIGITAL_UP: return &Controller::m_Up;
+        case DIGITAL_DOWN: return &Controller::m_Down;
+        case DIGITAL_LEFT: return &Controller::m_Left;
+        case DIGITAL_RIGHT: return &Controller::m_Right;
+        case DIGITAL_X: return &Controller::m_X;
+        case DIGITAL_B: return &Controller::m_B;
+        case DIGITAL_Y: return &Controller::m_Y;
+        case DIGITAL_A: return &Controller::m_A;
         default:
             TODO("add error logging")
             errno = EINVAL;
