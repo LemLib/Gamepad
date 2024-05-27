@@ -75,8 +75,11 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
         case ANALOG_LEFT_X: return this->LeftX;
         case ANALOG_LEFT_Y: return this->LeftY;
         case ANALOG_RIGHT_X: return this->RightX;
-        case ANALOG_RIGHT_Y: return this->RightY; TODO("change handling for default")
-        default: std::exit(1);
+        case ANALOG_RIGHT_Y: return this->RightY;
+        default:
+        TODO("add error logging")
+        errno = EINVAL;
+        return 0;
     }
 }
 
@@ -94,7 +97,10 @@ Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t butto
         case DIGITAL_B: return &Controller::B;
         case DIGITAL_Y: return &Controller::Y;
         case DIGITAL_A: return &Controller::A; TODO("change handling for default")
-        default: std::exit(1);
+        default:
+        TODO("add error logging")
+        errno = EINVAL;
+        return &Controller::Fake;
     }
 }
 } // namespace Gamepad

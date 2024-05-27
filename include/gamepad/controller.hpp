@@ -72,6 +72,7 @@ class Controller {
         Button L1 {}, L2 {}, R1 {}, R2 {}, Up {}, Down {}, Left {}, Right {}, X {}, B {}, Y {}, A {};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
+        Button Fake{};
         static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
