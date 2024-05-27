@@ -100,7 +100,7 @@ Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t butto
         case DIGITAL_X: return &Controller::X;
         case DIGITAL_B: return &Controller::B;
         case DIGITAL_Y: return &Controller::Y;
-        case DIGITAL_A: return &Controller::A; TODO("change handling for default")
+        case DIGITAL_A: return &Controller::A;
         default:
             TODO("add error logging")
             errno = EINVAL;
