@@ -21,9 +21,9 @@ uint32_t Button::addListener(EventType event, std::function<void(void)> func) co
         case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(func));
         case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(func));
         default:
-        TODO("add error logging")
-        errno = EINVAL;
-        return 0;
+            TODO("add error logging")
+            errno = EINVAL;
+            return 0;
     }
 }
 
@@ -81,9 +81,9 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
         case ANALOG_RIGHT_X: return this->RightX;
         case ANALOG_RIGHT_Y: return this->RightY;
         default:
-        TODO("add error logging")
-        errno = EINVAL;
-        return 0;
+            TODO("add error logging")
+            errno = EINVAL;
+            return 0;
     }
 }
 
@@ -102,9 +102,9 @@ Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t butto
         case DIGITAL_Y: return &Controller::Y;
         case DIGITAL_A: return &Controller::A; TODO("change handling for default")
         default:
-        TODO("add error logging")
-        errno = EINVAL;
-        return &Controller::Fake;
+            TODO("add error logging")
+            errno = EINVAL;
+            return &Controller::Fake;
     }
 }
 } // namespace Gamepad
