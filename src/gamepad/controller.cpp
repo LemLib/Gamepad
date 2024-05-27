@@ -17,9 +17,13 @@ uint32_t Button::onRelease(std::function<void(void)> func) const {
 
 uint32_t Button::addListener(EventType event, std::function<void(void)> func) const {
     switch (event) {
-        case Gamepad::EventType::ON_PRESS: this->onPress(std::move(func));
-        case Gamepad::EventType::ON_LONG_PRESS: this->onLongPress(std::move(func));
-        case Gamepad::EventType::ON_RELEASE: this->onRelease(std::move(func));
+        case Gamepad::EventType::ON_PRESS: return this->onPress(std::move(func));
+        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(func));
+        case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(func));
+        default:
+        TODO("add error logging")
+        errno = EINVAL;
+        return 0;
     }
 }
 
