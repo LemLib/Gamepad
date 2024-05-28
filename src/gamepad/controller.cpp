@@ -1,7 +1,34 @@
 #include "gamepad/controller.hpp"
 #include "gamepad/todo.hpp"
+#include "pros/misc.h"
+
+#include <new>
+#include <array>
+#include <cstddef>
 
 namespace Gamepad {
+
+static int nifty_counter; // zero initialized at load time
+static std::array<std::byte, sizeof(Controller)> master_buf alignas(Controller);
+Controller& master = *reinterpret_cast<Controller*> (&*master_buf.begin());
+static std::array<std::byte, sizeof(Controller)> partner_buf alignas(Controller);
+Controller& partner = *reinterpret_cast<Controller*> (&*partner_buf.begin());
+
+ControllerInit::ControllerInit() {
+    if(nifty_counter == 0) {
+        new (&*master_buf.begin()) Controller(pros::E_CONTROLLER_MASTER);
+        new (&*partner_buf.begin()) Controller(pros::E_CONTROLLER_PARTNER);
+    }
+    ++nifty_counter;
+}
+
+ControllerInit::~ControllerInit() {
+    --nifty_counter;
+    if(nifty_counter == 0) {
+        master.~Controller();
+        partner.~Controller();
+    }
+}
 
 uint32_t Button::onPress(std::function<void(void)> func) {
     return this->onPressEvent.add_listener(std::move(func));

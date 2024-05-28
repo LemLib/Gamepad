@@ -45,8 +45,8 @@ class Button {
 };
 
 class Controller {
+    friend struct ControllerInit;
     public:
-        explicit Controller(pros::controller_id_e_t id): controller(id) {}
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
          * any registered handlers.
@@ -70,8 +70,17 @@ class Controller {
         X{}, B{}, Y{}, A{};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
+        explicit Controller(pros::controller_id_e_t id): controller(id) {}
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
-}; // namespace Gamepad
+};
+
+static struct ControllerInit {
+    ControllerInit();
+    ~ControllerInit();
+} _controllerInit;
+
+extern Controller& master;
+extern Controller& partner;
 }
