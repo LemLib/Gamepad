@@ -21,7 +21,7 @@ Controller& master = master_buf.as_controller;
 ControllerBuf partner_buf {};
 Controller& partner = partner_buf.as_controller;
 
-ControllerInit::ControllerInit() {
+_impl::ControllerInit::ControllerInit() {
     // only initialize once, if we're the first ControllerInit instance
     if (nifty_counter == 0) {
         new (&master_buf.as_controller) Controller(pros::E_CONTROLLER_MASTER);
@@ -30,7 +30,7 @@ ControllerInit::ControllerInit() {
     ++nifty_counter;
 }
 
-ControllerInit::~ControllerInit() {
+_impl::ControllerInit::~ControllerInit() {
     --nifty_counter;
     // only destroy if we're the last ControllerInit instance
     if (nifty_counter == 0) {
