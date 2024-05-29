@@ -43,8 +43,15 @@ class Button {
         EventHandler<> onReleaseEvent;
 };
 
+namespace _impl {
+static struct ControllerInit {
+        ControllerInit();
+        ~ControllerInit();
+} _controllerInit;
+} // namespace _impl
+
 class Controller {
-        friend struct ControllerInit;
+        friend struct _impl::ControllerInit;
     public:
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
@@ -77,12 +84,5 @@ class Controller {
 
 extern Controller& master;
 extern Controller& partner;
-
-namespace _impl {
-static struct ControllerInit {
-        ControllerInit();
-        ~ControllerInit();
-} _controllerInit;
-} // namespace _impl
 
 } // namespace Gamepad
