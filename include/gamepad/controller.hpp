@@ -42,6 +42,7 @@ class Button {
 
         uint32_t last_update_time = pros::millis();
         mutable EventHandler<> onPressEvent {};
+        uint32_t last_long_press_time = 0;
         mutable EventHandler<> onLongPressEvent {};
         mutable EventHandler<> onReleaseEvent {};
 };
