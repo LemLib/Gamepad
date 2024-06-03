@@ -1,3 +1,3 @@
 {
-    "postCreateCommand": "chmod 777 .devcontainer/postCreateCommand.bash && .devcontainer/postCreateCommand.bash"
+    "postCreateCommand": "chmod 777 .devcontainer/postCreateCommand.bash && .devcontainer/postCreateCommand.bash && source ~/.bashrc"
 }
