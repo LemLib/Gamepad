@@ -3,6 +3,7 @@
 #include "pros/rtos.hpp"
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <utility>
 
@@ -60,6 +61,16 @@ void Controller::updateScreen() {
     for (int i = 1; i <= 4; i++) {
         int line = (this->last_printed_line + i) % 4;
 
+        if (this->screen_buffer[line].size() == 0 && next_print[line] != "") {
+            this->controller.set_text(line, 0, this->next_print[line]);
+            this->next_print[line] = "";
+            this->last_printed_line = line;
+            this->last_print_time = pros::millis();
+            return;
+        }
+
+        if (screen_buffer[line].size() == 0) return;
+
         // not part of the screen so rumble
         if (line == 3) {
             this->controller.rumble(this->screen_buffer[line][0].text.c_str());
@@ -98,11 +109,18 @@ void Controller::update() {
     this->updateScreen();
 }
 
-void Controller::print_line(uint8_t line, std::string str, uint32_t duration) {
+void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
     screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });  
+}
+
+void Controller::print_line(uint8_t line, std::string str) {
+    TODO("change handling for off screen lines")
+    if (line > 2) std::exit(1);
+
+    next_print[line] = str;
 }
 
 void Controller::rumble(std::string rumble_pattern) {

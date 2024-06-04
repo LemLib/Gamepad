@@ -59,7 +59,9 @@ class Controller {
          */
         void update();
 
-        void print_line(uint8_t line, std::string str, uint32_t duration);
+        void add_alert(uint8_t line, std::string str, uint32_t duration);
+
+        void print_line(uint8_t line, std::string str);
 
         void rumble(std::string rumble_pattern);
         /**
@@ -90,6 +92,7 @@ class Controller {
 
         std::array<std::deque<Line>, 4> screen_buffer{};
         std::array<Line, 3> screen_contents{};
+        std::array<std::string, 3> next_print{};
         std::array<uint32_t, 3> line_set_time{};
         uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
