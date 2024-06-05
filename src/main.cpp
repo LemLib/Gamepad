@@ -77,7 +77,7 @@ void opcontrol() {
 		printf("Up Release!\n");
 	});
 	master.Up.onRelease([=](){
-		// master.Up.removeListener(i);
+		master.Up.removeListener(i);
 		printf("Up Release 2!\n");
 	});
 	while (true) {
