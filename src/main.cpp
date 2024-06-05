@@ -1,5 +1,5 @@
 #include "main.h"
-#include "Gamepad/api.hpp"
+#include "gamepad/api.hpp"
 #include "pros/screen.hpp"
 
 Gamepad::Controller master(CONTROLLER_MASTER);
