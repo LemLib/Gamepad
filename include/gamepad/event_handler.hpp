@@ -7,6 +7,7 @@
 #include <atomic>
 
 #include "gamepad/todo.hpp"
+#include "gamepad/recursive_mutex.hpp"
 #include "pros/rtos.hpp"
 
 namespace Gamepad {
@@ -52,6 +53,6 @@ template <typename... Args> class EventHandler {
         }
     private:
         std::map<uint32_t, Listener> listeners;
-        pros::Mutex mutex;
+        Gamepad::RecursiveMutex mutex;
 };
 } // namespace Gamepad
