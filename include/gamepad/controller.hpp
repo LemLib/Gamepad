@@ -69,7 +69,6 @@ class Controller {
          * @param joystick Which joystick axis's value to return
          */
         float operator[](pros::controller_analog_e_t joystick);
-        TODO("hide memebrs and expose getters/const refs")
         const Button& L1 {m_L1};
         const Button& L2 {m_L2};
         const Button& R1 {m_R1};

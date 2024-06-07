@@ -6,9 +6,7 @@
 #include <map>
 #include <atomic>
 
-#include "gamepad/todo.hpp"
 #include "gamepad/recursive_mutex.hpp"
-#include "pros/rtos.hpp"
 
 namespace Gamepad {
 
@@ -35,7 +33,6 @@ template <typename... Args> class EventHandler {
         bool remove_listener(uint32_t id) {
             std::lock_guard lock(mutex);
             if (listeners.find(id) == listeners.end()) {
-                TODO("change handling maybe?")
                 return false;
             }
             listeners.erase(id);
