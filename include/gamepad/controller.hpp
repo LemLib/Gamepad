@@ -19,34 +19,39 @@ enum EventType {
 };
 
 class Button {
-    friend class Controller;
+        friend class Controller;
     public:
-    bool rising_edge = false;
-    bool falling_edge = false;
-    bool is_pressed = false;
-    uint32_t last_press_time = pros::millis();
-    uint32_t last_release_time = last_press_time;
-    uint32_t time_held = 0;
-    uint32_t time_released = 0;
-    uint32_t long_press_threshold = 500;
+        bool rising_edge = false;
+        bool falling_edge = false;
+        bool is_pressed = false;
+        // uint32_t last_press_time = pros::millis();
+        // uint32_t last_release_time = last_press_time;
+        uint32_t time_held = 0;
+        uint32_t time_released = 0;
+        uint32_t long_press_threshold = 500;
 
-    uint32_t onPress(std::function<void(void)> func);
-    uint32_t onLongPress(std::function<void(void)> func);
-    uint32_t onRelease(std::function<void(void)> func);
-    uint32_t addListener(EventType event, std::function<void(void)> func);
-    bool removeListener(uint32_t id);
+        uint32_t onPress(std::function<void(void)> func) const;
+        uint32_t onLongPress(std::function<void(void)> func) const;
+        uint32_t onRelease(std::function<void(void)> func) const;
+        uint32_t addListener(EventType event, std::function<void(void)> func) const;
+        bool removeListener(uint32_t id) const;
+
+        explicit operator bool() const { return is_pressed; }
     private:
+        void update(bool is_held);
 
-    void update(bool is_held);
-
-    EventHandler<> onPressEvent;
-    EventHandler<> onLongPressEvent;
-    EventHandler<> onReleaseEvent;
+        uint32_t last_update_time = pros::millis();
+        mutable EventHandler<> onPressEvent {};
+        uint32_t last_long_press_time = 0;
+        mutable EventHandler<> onLongPressEvent {};
+        mutable EventHandler<> onReleaseEvent {};
 };
 
 class Controller {
     public:
-        explicit Controller(pros::controller_id_e_t id): controller(id) {}
+        explicit Controller(pros::controller_id_e_t id)
+            : controller(id) {}
+
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
          * any registered handlers.
@@ -64,14 +69,29 @@ class Controller {
          * @param joystick Which joystick axis's value to return
          */
         float operator[](pros::controller_analog_e_t joystick);
-        TODO("hide memebrs and expose getters/const refs")
-        Button L1{}, L2{}, R1{}, R2{}, 
-        Up{}, Down{}, Left{}, Right{}, 
-        X{}, B{}, Y{}, A{};
-        float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
+        const Button& L1 {m_L1};
+        const Button& L2 {m_L2};
+        const Button& R1 {m_R1};
+        const Button& R2 {m_R2};
+        const Button& Up {m_Up};
+        const Button& Down {m_Down};
+        const Button& Left {m_Left};
+        const Button& Right {m_Right};
+        const Button& X {m_X};
+        const Button& B {m_B};
+        const Button& Y {m_Y};
+        const Button& A {m_Down};
+        const float& LeftX = m_LeftX;
+        const float& LeftY = m_LeftY;
+        const float& RightX = m_RightX;
+        const float& RightY = m_RightY;
     private:
-        static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
+        Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
+            m_A {};
+        float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
+        Button Fake {};
+        static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
 }; // namespace Gamepad
-}
+} // namespace Gamepad
