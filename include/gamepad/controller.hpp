@@ -90,10 +90,10 @@ class Controller {
         void updateButton(pros::controller_digital_e_t button_id);
         void updateScreen();
 
-        std::array<std::deque<Line>, 4> screen_buffer{};
+        std::array<std::deque<Line>, 3> screen_buffer{};
         std::array<Line, 3> screen_contents{};
-        std::array<std::string, 3> next_print{};
         std::array<uint32_t, 3> line_set_time{};
+        std::array<std::string, 4> next_print{};
         uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
         pros::Controller controller;
