@@ -35,7 +35,6 @@ class ExpoDriveCurve : public DriveCurve {
          * see https://www.desmos.com/calculator/umicbymbnl for an interactive graph
          * see https://www.vexforum.com/t/expo-drive-lemlibs-implementation for a detailed explanation
          *
-         * @param deadband range where input is considered to be input
          * @param minOutput the minimum output that can be returned
          * @param curve how "curved" the graph is
          *
@@ -48,7 +47,7 @@ class ExpoDriveCurve : public DriveCurve {
          * lemlib::ExpoDriveCurve driveCurve(5, 12, 1.132);
          * @endcode
          */
-        ExpoDriveCurve(float deadband, float minOutput, float curve);
+        ExpoDriveCurve(float minOutput, float curve);
         /**
          * @brief curve an input
          *
@@ -70,7 +69,6 @@ class ExpoDriveCurve : public DriveCurve {
          */
         float curve(float input);
     private:
-        const float deadband = 0;
         const float minOutput = 0;
         const float curveGain = 1;
 };
