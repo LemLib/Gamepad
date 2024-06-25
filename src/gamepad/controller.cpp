@@ -69,7 +69,7 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
     }
 }
 
-void Controller::setCurve(pros::controller_analog_e_t joystick, std::shared_ptr<DriveCurve> curve) {
+void Controller::setCurve(pros::controller_analog_e_t axis, std::shared_ptr<DriveCurve> curve) {
     switch (axis) {
         case ANALOG_LEFT_X: this->CurveLeftX = curve;
         case ANALOG_LEFT_Y: this->CurveLeftY = curve;
