@@ -2,6 +2,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -73,7 +74,7 @@ void Controller::updateScreen() {
 
         // no alerts so print from string
         if (this->screen_buffer[line].size() == 0 && next_print[line] != "") {
-            this->controller.set_text(line, 0, this->next_print[line]);
+            this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
             this->next_print[line] = "";
             this->last_printed_line = line;
             this->last_print_time = pros::millis();
@@ -111,11 +112,38 @@ void Controller::update() {
     this->updateScreen();
 }
 
-void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
+uint Controller::getTotalDuration(uint8_t line) {
+    uint total = 0; 
+    for (Line msg : this->screen_buffer[line])
+        total += msg.duration;
+    return total;
+}
+
+void Controller::add_alerts(uint8_t line, std::string str, uint32_t duration) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
-    this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });  
+    this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
+}
+
+void Controller::add_alerts(std::vector<uint8_t> lines, std::vector<std::string> strs, uint32_t duration) {
+    assert(lines.size() == strs.size());
+
+    // get nex available time slot for all lines
+    uint minSpot = -1; // max uint value
+    for (uint8_t line : lines) {
+        TODO("change handling for off screen lines")
+        if (line > 2) std::exit(1);
+
+        if (getTotalDuration(line) < minSpot)
+            minSpot = getTotalDuration(line);
+    }
+
+    for (int i = 0; i < lines.size(); i++) {
+        if (getTotalDuration(lines[i]) < minSpot)
+            this->screen_buffer[lines[i]].push_back({ .text = "", .duration = (minSpot - getTotalDuration(lines[i])) });
+        this->screen_buffer[lines[i]].push_back({ .text = std::move(strs[i]), .duration = duration });
+    }
 }
 
 void Controller::print_line(uint8_t line, std::string str) {

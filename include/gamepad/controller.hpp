@@ -59,7 +59,8 @@ class Controller {
          */
         void update();
 
-        void add_alert(uint8_t line, std::string str, uint32_t duration);
+        void add_alerts(uint8_t line, std::string str, uint32_t duration);
+        void add_alerts(std::vector<uint8_t> lines, std::vector<std::string> strs, uint32_t duration);
 
         void print_line(uint8_t line, std::string str);
 
@@ -89,6 +90,7 @@ class Controller {
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         void updateScreen();
+        uint getTotalDuration(uint8_t line);
 
         std::array<std::deque<Line>, 3> screen_buffer{};
         std::array<Line, 3> screen_contents{};
