@@ -6,8 +6,10 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <sstream>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace Gamepad {
 
@@ -122,6 +124,22 @@ uint Controller::getTotalDuration(uint8_t line) {
 void Controller::add_alerts(uint8_t line, std::string str, uint32_t duration) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
+
+    if (str.find('\n') != std::string::npos) {
+        std::vector<std::string> strs;
+        std::vector<uint8_t> lines;
+        std::stringstream ss(str);
+        uint8_t l = line;
+        std::string to;
+
+        while (std::getline(ss, to, '\n')) {
+            strs.push_back(to);
+            lines.push_back(l++);
+        }
+
+        add_alerts(lines, strs, duration);
+        return;
+    }
 
     this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
 }
