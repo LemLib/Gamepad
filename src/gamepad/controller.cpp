@@ -121,7 +121,7 @@ uint Controller::getTotalDuration(uint8_t line) {
     return total;
 }
 
-void Controller::add_alerts(uint8_t line, std::string str, uint32_t duration) {
+void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 

@@ -59,8 +59,7 @@ class Controller {
          */
         void update();
 
-        void add_alerts(uint8_t line, std::string str, uint32_t duration);
-        void add_alerts(std::vector<uint8_t> lines, std::vector<std::string> strs, uint32_t duration);
+        void add_alert(uint8_t line, std::string str, uint32_t duration);
 
         void print_line(uint8_t line, std::string str);
 
@@ -92,6 +91,8 @@ class Controller {
         void updateScreen();
         uint getTotalDuration(uint8_t line);
 
+        void add_alerts(std::vector<uint8_t> lines, std::vector<std::string> strs, uint32_t duration);
+        
         std::array<std::deque<Line>, 3> screen_buffer{};
         std::array<Line, 3> screen_contents{};
         std::array<uint32_t, 3> line_set_time{};
