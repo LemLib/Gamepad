@@ -126,41 +126,42 @@ void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
     if (line > 2) std::exit(1);
 
     if (str.find('\n') != std::string::npos) {
-        std::vector<std::string> strs;
-        std::vector<uint8_t> lines;
+        TODO("warn instead of throw error if there are too many lines")
+        if (std::ranges::count(str, '\n') > 2) std::exit(1);
+
+        std::vector<std::string> strs = {"", "", ""};
         std::stringstream ss(str);
-        uint8_t l = line;
         std::string to;
 
-        while (std::getline(ss, to, '\n')) {
-            strs.push_back(to);
-            lines.push_back(l++);
+        for (int i = line; i < 3; i++) {
+            if (!std::getline(ss, to, '\n')) break;
+            strs[i] = std::move(to);
         }
 
-        add_alerts(lines, strs, duration);
+        add_alerts(strs, duration);
         return;
     }
 
     this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
 }
 
-void Controller::add_alerts(std::vector<uint8_t> lines, std::vector<std::string> strs, uint32_t duration) {
-    assert(lines.size() == strs.size());
+void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration) {
+    TODO("change handling for too many lines")
+    if (strs.size() > 3) std::exit(1);
+
 
     // get nex available time slot for all lines
     uint minSpot = -1; // max uint value
-    for (uint8_t line : lines) {
-        TODO("change handling for off screen lines")
-        if (line > 2) std::exit(1);
+    for (uint8_t line = 0; line < 3; line++) {
 
         if (getTotalDuration(line) < minSpot)
             minSpot = getTotalDuration(line);
     }
 
-    for (int i = 0; i < lines.size(); i++) {
-        if (getTotalDuration(lines[i]) < minSpot)
-            this->screen_buffer[lines[i]].push_back({ .text = "", .duration = (minSpot - getTotalDuration(lines[i])) });
-        this->screen_buffer[lines[i]].push_back({ .text = std::move(strs[i]), .duration = duration });
+    for (int i = 0; i < 3; i++) {
+        if (getTotalDuration(i) < minSpot)
+            this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
+        this->screen_buffer[i].push_back({ .text = std::move(strs[i]), .duration = duration });
     }
 }
 
