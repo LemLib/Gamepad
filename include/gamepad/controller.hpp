@@ -17,6 +17,7 @@ enum EventType {
     ON_PRESS,
     ON_LONG_PRESS,
     ON_RELEASE,
+    ON_SHORT_RELEASE,
 };
 
 class Button {
@@ -34,6 +35,7 @@ class Button {
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
         bool onLongPress(std::string listenerName, std::function<void(void)> func) const;
         bool onRelease(std::string listenerName, std::function<void(void)> func) const;
+        bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
         bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
         bool removeListener(std::string listenerName) const;
 
@@ -46,6 +48,7 @@ class Button {
         uint32_t last_long_press_time = 0;
         mutable EventHandler<std::string> onLongPressEvent {};
         mutable EventHandler<std::string> onReleaseEvent {};
+        mutable EventHandler<std::string> onShortReleaseEvent {};
 };
 
 class Controller {

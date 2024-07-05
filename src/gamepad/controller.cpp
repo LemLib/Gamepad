@@ -15,11 +15,17 @@ bool Button::onRelease(std::string listenerName, std::function<void(void)> func)
     return this->onReleaseEvent.add_listener(std::move(listenerName), std::move(func));
 }
 
+bool Button::onShortRelease(std::string listenerName, std::function<void(void)> func) const {
+    return this->onShortReleaseEvent.add_listener(std::move(listenerName), std::move(func));
+}
+
 bool Button::addListener(EventType event, std::string listenerName, std::function<void(void)> func) const {
     switch (event) {
         case Gamepad::EventType::ON_PRESS: return this->onPress(std::move(listenerName), std::move(func));
         case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(listenerName), std::move(func));
         case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(listenerName), std::move(func));
+        case Gamepad::EventType::ON_SHORT_RELEASE:
+            return this->onShortRelease(std::move(listenerName), std::move(func));
         default:
             TODO("add error logging")
             errno = EINVAL;
@@ -29,7 +35,8 @@ bool Button::addListener(EventType event, std::string listenerName, std::functio
 
 bool Button::removeListener(std::string listenerName) const {
     return this->onPressEvent.remove_listener(listenerName) || this->onLongPressEvent.remove_listener(listenerName) ||
-           this->onReleaseEvent.remove_listener(listenerName);
+           this->onReleaseEvent.remove_listener(listenerName) ||
+           this->onShortReleaseEvent.remove_listener(listenerName);
 }
 
 void Button::update(const bool is_held) {
@@ -41,8 +48,6 @@ void Button::update(const bool is_held) {
     } else {
         this->time_released += pros::millis() - this->last_update_time;
     }
-    if (this->rising_edge) { this->time_held = 0; }
-    if (this->falling_edge) { this->time_released = 0; }
 
     if (this->rising_edge) {
         this->onPressEvent.fire();
@@ -53,7 +58,10 @@ void Button::update(const bool is_held) {
         this->last_long_press_time = pros::millis();
     } else if (this->falling_edge) {
         this->onReleaseEvent.fire();
+        if (this->time_held < this->long_press_threshold) { this->onShortReleaseEvent.fire(); }
     }
+    if (this->rising_edge) { this->time_held = 0; }
+    if (this->falling_edge) { this->time_released = 0; }
     this->last_update_time = pros::millis();
 }
 
