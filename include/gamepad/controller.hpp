@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
 #endif
@@ -30,21 +31,21 @@ class Button {
         uint32_t time_released = 0;
         uint32_t long_press_threshold = 500;
 
-        uint32_t onPress(std::function<void(void)> func) const;
-        uint32_t onLongPress(std::function<void(void)> func) const;
-        uint32_t onRelease(std::function<void(void)> func) const;
-        uint32_t addListener(EventType event, std::function<void(void)> func) const;
-        bool removeListener(uint32_t id) const;
+        bool onPress(std::string listenerName, std::function<void(void)> func) const;
+        bool onLongPress(std::string listenerName, std::function<void(void)> func) const;
+        bool onRelease(std::string listenerName, std::function<void(void)> func) const;
+        bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
+        bool removeListener(std::string listenerName) const;
 
         explicit operator bool() const { return is_pressed; }
     private:
         void update(bool is_held);
 
         uint32_t last_update_time = pros::millis();
-        mutable EventHandler<> onPressEvent {};
+        mutable EventHandler<std::string> onPressEvent {};
         uint32_t last_long_press_time = 0;
-        mutable EventHandler<> onLongPressEvent {};
-        mutable EventHandler<> onReleaseEvent {};
+        mutable EventHandler<std::string> onLongPressEvent {};
+        mutable EventHandler<std::string> onReleaseEvent {};
 };
 
 class Controller {

@@ -1,42 +1,35 @@
 #pragma once
 
 #include <mutex>
-#include <utility>
 #include <functional>
-#include <map>
-#include <atomic>
+#include <vector>
+#include <algorithm>
 
 #include "gamepad/recursive_mutex.hpp"
 
 namespace Gamepad {
 
-class MonotonicCounter {
-        template <typename... Args> friend class EventHandler;
-
-        static uint32_t next_value() {
-            static std::atomic<uint32_t> counter = 0;
-            return ++counter;
-        }
-};
-
-template <typename... Args> class EventHandler {
+template <typename Key, typename... Args> class EventHandler {
     public:
         using Listener = std::function<void(Args...)>;
 
-        uint32_t add_listener(Listener func) {
+        bool add_listener(Key key, Listener func) {
             std::lock_guard lock(mutex);
-            uint32_t id = MonotonicCounter::next_value();
-            listeners.emplace(id, std::move(func));
-            return id;
+            if (std::find(keys.begin(), keys.end(), key) == keys.end()) return false;
+            keys.push_back(key);
+            listeners.push_back(func);
+            return true;
         }
 
-        bool remove_listener(uint32_t id) {
+        bool remove_listener(Key key) {
             std::lock_guard lock(mutex);
-            if (listeners.find(id) == listeners.end()) {
-                return false;
+            auto i = std::find(keys.begin(), keys.end(), key);
+            if (i != keys.end()) {
+                keys.erase(i);
+                listeners.erase(listeners.begin() + (i - keys.begin()));
+                return true;
             }
-            listeners.erase(id);
-            return true;
+            return false;
         }
 
         bool is_empty() {
@@ -46,10 +39,11 @@ template <typename... Args> class EventHandler {
 
         void fire(Args... args) {
             std::lock_guard lock(mutex);
-            for (auto listener : listeners) { listener.second(args...); }
+            for (auto listener : listeners) { listener(args...); }
         }
     private:
-        std::map<uint32_t, Listener> listeners;
-        Gamepad::RecursiveMutex mutex;
+        std::vector<Key> keys {};
+        std::vector<Listener> listeners {};
+        Gamepad::RecursiveMutex mutex {};
 };
 } // namespace Gamepad

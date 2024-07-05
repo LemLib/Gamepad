@@ -10,8 +10,7 @@ Gamepad::Controller master(CONTROLLER_MASTER);
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
-}
+void initialize() {}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -58,31 +57,19 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	master.Down.onPress([](){
-		printf("Down Press!\n");
-	});
-	master.Down.onLongPress([](){
-		printf("Down longPress!\n");
-	});
-	master.Down.onRelease([](){
-		printf("Down Release!\n");
-	});
-	master.Up.onPress([](){
-		printf("Up Press!\n");
-	});
-	master.Up.onLongPress([](){
-		printf("Up longPress!\n");
-	});
-	auto i = master.Up.onRelease([](){
-		printf("Up Release!\n");
-	});
-	master.Up.onRelease([=](){
-		master.Up.removeListener(i);
-		printf("Up Release 2!\n");
-	});
-	while (true) {
-		master.update();
-		pros::screen::print(TEXT_MEDIUM, 3, "%f %f %f %f", master.LeftX, master.LeftY, master.RightX, master.RightY);
-		pros::delay(20);
-	}
+    master.Down.onPress("downPress1", []() { printf("Down Press!\n"); });
+    master.Down.onLongPress("downLongPress1", []() { printf("Down longPress!\n"); });
+    master.Down.onRelease("downRelease1", []() { printf("Down Release!\n"); });
+    master.Up.onPress("uppress1", []() { printf("Up Press!\n"); });
+    master.Up.onLongPress("upLongPress1", []() { printf("Up longPress!\n"); });
+    master.Up.onRelease("upRelease1", []() { printf("Up Release!\n"); });
+    master.Up.onRelease("upRelease2", [=]() {
+        master.Up.removeListener("upRelease1");
+        printf("Up Release 2!\n");
+    });
+    while (true) {
+        master.update();
+        pros::screen::print(TEXT_MEDIUM, 3, "%f %f %f %f", master.LeftX, master.LeftY, master.RightX, master.RightY);
+        pros::delay(20);
+    }
 }

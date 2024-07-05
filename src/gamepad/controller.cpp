@@ -3,33 +3,33 @@
 
 namespace Gamepad {
 
-uint32_t Button::onPress(std::function<void(void)> func) const {
-    return this->onPressEvent.add_listener(std::move(func));
+bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
+    return this->onPressEvent.add_listener(std::move(listenerName), std::move(func));
 }
 
-uint32_t Button::onLongPress(std::function<void(void)> func) const {
-    return this->onLongPressEvent.add_listener(std::move(func));
+bool Button::onLongPress(std::string listenerName, std::function<void(void)> func) const {
+    return this->onLongPressEvent.add_listener(std::move(listenerName), std::move(func));
 }
 
-uint32_t Button::onRelease(std::function<void(void)> func) const {
-    return this->onReleaseEvent.add_listener(std::move(func));
+bool Button::onRelease(std::string listenerName, std::function<void(void)> func) const {
+    return this->onReleaseEvent.add_listener(std::move(listenerName), std::move(func));
 }
 
-uint32_t Button::addListener(EventType event, std::function<void(void)> func) const {
+bool Button::addListener(EventType event, std::string listenerName, std::function<void(void)> func) const {
     switch (event) {
-        case Gamepad::EventType::ON_PRESS: return this->onPress(std::move(func));
-        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(func));
-        case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(func));
+        case Gamepad::EventType::ON_PRESS: return this->onPress(std::move(listenerName), std::move(func));
+        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(listenerName), std::move(func));
+        case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(listenerName), std::move(func));
         default:
             TODO("add error logging")
             errno = EINVAL;
-            return 0;
+            return false;
     }
 }
 
-bool Button::removeListener(uint32_t id) const {
-    return this->onPressEvent.remove_listener(id) || this->onLongPressEvent.remove_listener(id) ||
-           this->onReleaseEvent.remove_listener(id);
+bool Button::removeListener(std::string listenerName) const {
+    return this->onPressEvent.remove_listener(listenerName) || this->onLongPressEvent.remove_listener(listenerName) ||
+           this->onReleaseEvent.remove_listener(listenerName);
 }
 
 void Button::update(const bool is_held) {
