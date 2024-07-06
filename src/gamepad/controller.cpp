@@ -129,13 +129,11 @@ void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
         TODO("warn instead of throw error if there are too many lines")
         if (std::ranges::count(str, '\n') > 2) std::exit(1);
 
-        std::vector<std::string> strs = {"", "", ""};
+        std::vector<std::string> strs(3);
         std::stringstream ss(str);
-        std::string to;
 
         for (int i = line; i < 3; i++) {
-            if (!std::getline(ss, to, '\n')) break;
-            strs[i] = std::move(to);
+            if (!std::getline(ss, strs[i], '\n')) break;
         }
 
         add_alerts(strs, duration);
@@ -149,15 +147,12 @@ void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration) {
     TODO("change handling for too many lines")
     if (strs.size() > 3) std::exit(1);
 
-
     // get nex available time slot for all lines
     uint minSpot = -1; // max uint value
-    for (uint8_t line = 0; line < 3; line++) {
+    for (uint8_t line = 0; line < 3; line++)
+        minSpot = std::min(minSpot, getTotalDuration(line));
 
-        if (getTotalDuration(line) < minSpot)
-            minSpot = getTotalDuration(line);
-    }
-
+    // Schedule alerts
     for (int i = 0; i < 3; i++) {
         if (getTotalDuration(i) < minSpot)
             this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
@@ -168,6 +163,22 @@ void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration) {
 void Controller::print_line(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
+
+    if (str.find('\n') != std::string::npos) {
+        TODO("warn instead of throw error if there are too many lines")
+        if (std::ranges::count(str, '\n') > 2) std::exit(1);
+
+        std::vector<std::string> strs(3);
+        std::stringstream ss(str);
+
+        for (int i = line; i < 3; i++) {
+            if (!std::getline(ss, strs[i], '\n')) break;
+        }
+
+        for (uint8_t l = 0; l < 3; l++)
+            this->next_print[l] = std::move(strs[l]);
+        return;
+    }
 
     this->next_print[line] = std::move(str);
 }
