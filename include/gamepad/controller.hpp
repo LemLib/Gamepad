@@ -97,12 +97,17 @@ class Controller {
 
         // alert queue
         std::array<std::deque<Line>, 4> screen_buffer{};
-        std::array<Line, 4> screen_contents{};
-        std::array<uint32_t, 4> line_set_time{};
+        pros::Mutex alert_mut;
+        
 
         std::array<std::string, 4> next_print{};
+        pros::Mutex print_mut;
+
+        std::array<Line, 4> screen_contents{};
+        std::array<uint32_t, 4> line_set_time{};
         uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
+        pros::Mutex scheduling_mut;
 
 }; // namespace Gamepad
 }

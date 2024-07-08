@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -59,6 +60,10 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::updateScreen() {
+    std::lock_guard<pros::Mutex> guard_scheduling(this->scheduling_mut);
+    std::lock_guard<pros::Mutex> guard_print(this->print_mut);
+    std::lock_guard<pros::Mutex> guard_alert(this->alert_mut);
+
     if (pros::millis() - this->last_print_time < 50)
         return;
 
@@ -150,12 +155,15 @@ void Controller::add_alert(uint8_t line, std::string str, uint32_t duration, std
         return;
     }
 
+    std::lock_guard<pros::Mutex> guard(this->alert_mut);
     this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
 }
 
 void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble) {
     TODO("change handling for too many lines")
     if (strs.size() > 3) std::exit(1);
+
+    std::lock_guard<pros::Mutex> guard(this->alert_mut);
 
     // get nex available time slot for all lines
     uint minSpot = -1; // max uint value
@@ -174,6 +182,8 @@ void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, st
 void Controller::print_line(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
+
+    std::lock_guard<pros::Mutex> guard(this->print_mut);
 
     if (str.find('\n') != std::string::npos) {
         TODO("warn instead of throw error if there are too many lines")
@@ -198,6 +208,7 @@ void Controller::rumble(std::string rumble_pattern) {
     TODO("change handling for too long rumble patterns")
     if (rumble_pattern.size() > 8) std::exit(1);
 
+    std::lock_guard<pros::Mutex> guard(this->print_mut);
     this->next_print[3] = std::move(rumble_pattern);
 }
 
