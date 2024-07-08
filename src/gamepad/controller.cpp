@@ -67,6 +67,18 @@ void Controller::updateScreen() {
 
         // not part of the screen so rumble
         if (line == 3) {
+            if (this->screen_buffer[line].size() != 0) {
+                if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].duration)
+                    continue;
+
+                this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));  
+                this->screen_contents[line] = this->screen_buffer[line][0];
+                this->screen_buffer[line].pop_front();
+                
+                this->last_printed_line = line;
+                this->line_set_time[line] = pros::millis();
+                this->last_print_time = pros::millis();
+            }
             this->controller.rumble(this->next_print[line].c_str());
             this->next_print[line] = "";
             this->last_printed_line = line;
@@ -121,7 +133,7 @@ uint Controller::getTotalDuration(uint8_t line) {
     return total;
 }
 
-void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
+void Controller::add_alert(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
@@ -136,27 +148,28 @@ void Controller::add_alert(uint8_t line, std::string str, uint32_t duration) {
             if (!std::getline(ss, strs[i], '\n')) break;
         }
 
-        add_alerts(strs, duration);
+        add_alerts(strs, duration, rumble);
         return;
     }
 
     this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
 }
 
-void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration) {
+void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble) {
     TODO("change handling for too many lines")
     if (strs.size() > 3) std::exit(1);
 
     // get nex available time slot for all lines
     uint minSpot = -1; // max uint value
-    for (uint8_t line = 0; line < 3; line++)
-        minSpot = std::min(minSpot, getTotalDuration(line));
+    for (uint8_t line = 0; line < 4; line++) minSpot = std::min(minSpot, getTotalDuration(line));
 
     // Schedule alerts
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         if (getTotalDuration(i) < minSpot)
             this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
-        this->screen_buffer[i].push_back({ .text = std::move(strs[i]), .duration = duration });
+
+        if (i == 3) this->screen_buffer[i].push_back({.text = std::move(rumble), .duration = duration});
+        else this->screen_buffer[i].push_back({.text = std::move(strs[i]), .duration = 0});
     }
 }
 

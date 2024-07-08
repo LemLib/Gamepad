@@ -59,7 +59,7 @@ class Controller {
          */
         void update();
 
-        void add_alert(uint8_t line, std::string str, uint32_t duration);
+        void add_alert(uint8_t line, std::string str, uint32_t duration, std::string rumble = "");
 
         void print_line(uint8_t line, std::string str);
 
@@ -88,17 +88,21 @@ class Controller {
 
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
+        
         void updateScreen();
+        void add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble = "");
         uint getTotalDuration(uint8_t line);
 
-        void add_alerts(std::vector<std::string> strs, uint32_t duration);
+        pros::Controller controller;
 
-        std::array<std::deque<Line>, 3> screen_buffer{};
-        std::array<Line, 3> screen_contents{};
-        std::array<uint32_t, 3> line_set_time{};
+        // alert queue
+        std::array<std::deque<Line>, 4> screen_buffer{};
+        std::array<Line, 4> screen_contents{};
+        std::array<uint32_t, 4> line_set_time{};
+
         std::array<std::string, 4> next_print{};
         uint8_t last_printed_line = 0;
         uint32_t last_print_time = 0;
-        pros::Controller controller;
+
 }; // namespace Gamepad
 }
