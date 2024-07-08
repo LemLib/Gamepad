@@ -65,52 +65,50 @@ void Controller::updateScreen() {
     for (int i = 1; i <= 4; i++) {
         int line = (this->last_printed_line + i) % 4;
 
-        // not part of the screen so rumble
-        if (line == 3) {
-            if (this->screen_buffer[line].size() != 0) {
-                if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].duration)
+        // duration expired
+        if (pros::millis() - this->line_set_time[line] >= this->screen_contents[line].duration) {
+            if (this->screen_buffer[line].size() == 0) {
+                // no need to update text
+                if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
+                    this->next_print[line] = "";
                     continue;
+                }
+                
+                if (line == 3) this->controller.rumble(this->next_print[line].c_str());
+                else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
+                this->screen_contents[line].text = std::move(this->next_print[line]);
+                this->next_print[line] = "";
+            } else {
+                // no need to update text
+                if (this->screen_contents[line].text == this->screen_buffer[line][0].text && line != 3) {
+                    this->screen_contents[line] = this->screen_buffer[line][0];
+                    this->screen_buffer[line].pop_front();
+                    this->line_set_time[line] = pros::millis();
+                    continue;
+                }
 
-                this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));  
+                if (line == 3) this->controller.rumble(this->screen_buffer[line][0].text.c_str());
+                else this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));
                 this->screen_contents[line] = this->screen_buffer[line][0];
                 this->screen_buffer[line].pop_front();
-                
-                this->last_printed_line = line;
                 this->line_set_time[line] = pros::millis();
-                this->last_print_time = pros::millis();
             }
-            this->controller.rumble(this->next_print[line].c_str());
+            this->last_printed_line = line;
+            this->last_print_time = pros::millis();
+        } else if (this->screen_contents[line].text == "") {
+            // no need to update text
+            if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
+                this->next_print[line] = "";
+                continue;
+            }
+
+            if (line == 3) this->controller.rumble(this->next_print[line].c_str());
+            else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
             this->next_print[line] = "";
             this->last_printed_line = line;
             this->last_print_time = pros::millis();
-            return;
         }
-
-        // no alerts so print from string
-        if (this->screen_buffer[line].size() == 0 && next_print[line] != "") {
-            this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
-            this->next_print[line] = "";
-            this->last_printed_line = line;
-            this->last_print_time = pros::millis();
-            return;
-        }
-
-        if (screen_buffer[line].size() == 0) return;
-
-        // else print to screen
-        if (pros::millis() - this->line_set_time[line] < this->screen_contents[line].duration)
-            continue;
-
-        this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));  
-        this->screen_contents[line] = this->screen_buffer[line][0];
-        this->screen_buffer[line].pop_front();
-        
-        this->last_printed_line = line;
-        this->line_set_time[line] = pros::millis();
-        this->last_print_time = pros::millis();
-        return;
     }
-    
 }
 
 void Controller::update() {
