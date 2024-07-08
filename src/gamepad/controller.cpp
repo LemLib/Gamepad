@@ -1,22 +1,23 @@
 #include "gamepad/controller.hpp"
 #include "gamepad/todo.hpp"
+#include <atomic>
 
 namespace Gamepad {
 
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
-    return this->onPressEvent.add_listener(std::move(listenerName), std::move(func));
+    return this->onPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onLongPress(std::string listenerName, std::function<void(void)> func) const {
-    return this->onLongPressEvent.add_listener(std::move(listenerName), std::move(func));
+    return this->onLongPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onRelease(std::string listenerName, std::function<void(void)> func) const {
-    return this->onReleaseEvent.add_listener(std::move(listenerName), std::move(func));
+    return this->onReleaseEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onShortRelease(std::string listenerName, std::function<void(void)> func) const {
-    return this->onShortReleaseEvent.add_listener(std::move(listenerName), std::move(func));
+    return this->onShortReleaseEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::addListener(EventType event, std::string listenerName, std::function<void(void)> func) const {
@@ -34,9 +35,9 @@ bool Button::addListener(EventType event, std::string listenerName, std::functio
 }
 
 bool Button::removeListener(std::string listenerName) const {
-    return this->onPressEvent.remove_listener(listenerName) || this->onLongPressEvent.remove_listener(listenerName) ||
-           this->onReleaseEvent.remove_listener(listenerName) ||
-           this->onShortReleaseEvent.remove_listener(listenerName);
+    return this->onPressEvent.remove_listener(listenerName + "_user") || this->onLongPressEvent.remove_listener(listenerName + "_user") ||
+           this->onReleaseEvent.remove_listener(listenerName + "_user") ||
+           this->onShortReleaseEvent.remove_listener(listenerName + "_user");
 }
 
 void Button::update(const bool is_held) {
@@ -95,6 +96,11 @@ float Controller::operator[](pros::controller_analog_e_t axis) {
             errno = EINVAL;
             return 0;
     }
+}
+
+std::string Controller::unique_name() {
+    static std::atomic<uint32_t> i = 0;
+    return std::to_string(i++) + "_internal";
 }
 
 Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t button) {

@@ -94,6 +94,7 @@ class Controller {
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
         Button Fake {};
+        static std::string unique_name();
         static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
