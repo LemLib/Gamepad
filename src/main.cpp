@@ -57,12 +57,14 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    master.Down.onPress("downPress1", []() { printf("Down Press!\n"); });
+    auto i = master.Down.onPress("downPress1", []() { printf("Down Press!\n"); });
+    if (!i) std::cout << "opcontrol ran again, event did not register!" << std::endl;
     master.Down.onLongPress("downLongPress1", []() { printf("Down longPress!\n"); });
     master.Down.onRelease("downRelease1", []() { printf("Down Release!\n"); });
     master.Up.onPress("uppress1", []() { printf("Up Press!\n"); });
     master.Up.onLongPress("upLongPress1", []() { printf("Up longPress!\n"); });
     master.Up.onRelease("upRelease1", []() { printf("Up Release!\n"); });
+    master.Up.onShortRelease("upShortRelease1", []() { printf("Up Short Release!\n"); });
     master.Up.onRelease("upRelease2", [=]() {
         master.Up.removeListener("upRelease1");
         printf("Up Release 2!\n");
