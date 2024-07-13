@@ -15,7 +15,7 @@ template <typename Key, typename... Args> class EventHandler {
 
         bool add_listener(Key key, Listener func) {
             std::lock_guard lock(mutex);
-            if (std::find(keys.begin(), keys.end(), key) == keys.end()) return false;
+            if (std::find(keys.begin(), keys.end(), key) != keys.end()) return false;
             keys.push_back(key);
             listeners.push_back(func);
             return true;
