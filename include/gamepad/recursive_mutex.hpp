@@ -2,7 +2,7 @@
 #include "pros/rtos.h"
 #include <system_error>
 
-namespace Gamepad {
+namespace Gamepad::_impl {
 
 class RecursiveMutex {
     public:

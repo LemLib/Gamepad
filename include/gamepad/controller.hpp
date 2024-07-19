@@ -134,10 +134,10 @@ class Button {
          *
          */
         uint32_t last_long_press_time = 0;
-        mutable EventHandler<std::string> onPressEvent {};
-        mutable EventHandler<std::string> onLongPressEvent {};
-        mutable EventHandler<std::string> onReleaseEvent {};
-        mutable EventHandler<std::string> onShortReleaseEvent {};
+        mutable _impl::EventHandler<std::string> onPressEvent {};
+        mutable _impl::EventHandler<std::string> onLongPressEvent {};
+        mutable _impl::EventHandler<std::string> onReleaseEvent {};
+        mutable _impl::EventHandler<std::string> onShortReleaseEvent {};
 };
 
 class Controller {
