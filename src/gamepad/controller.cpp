@@ -1,5 +1,16 @@
 #include "gamepad/controller.hpp"
 #include "gamepad/todo.hpp"
+#include "pros/rtos.hpp"
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <mutex>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace Gamepad {
 
@@ -48,6 +59,63 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
     (this->*button).update(is_held);
 }
 
+void Controller::updateScreen() {
+    std::lock_guard<pros::Mutex> guard_scheduling(this->scheduling_mut);
+    std::lock_guard<pros::Mutex> guard_print(this->print_mut);
+    std::lock_guard<pros::Mutex> guard_alert(this->alert_mut);
+
+    if (pros::millis() - this->last_print_time < 50)
+        return;
+
+    for (int i = 1; i <= 4; i++) {
+        int line = (this->last_printed_line + i) % 4;
+
+        // duration expired
+        if (pros::millis() - this->line_set_time[line] >= this->screen_contents[line].duration) {
+            if (this->screen_buffer[line].size() == 0) {
+                // no need to update text
+                if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
+                    this->next_print[line] = "";
+                    continue;
+                }
+                
+                if (line == 3) this->controller.rumble(this->next_print[line].c_str());
+                else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
+                this->screen_contents[line].text = std::move(this->next_print[line]);
+                this->next_print[line] = "";
+            } else {
+                // no need to update text
+                if (this->screen_contents[line].text == this->screen_buffer[line][0].text && line != 3) {
+                    this->screen_contents[line] = this->screen_buffer[line][0];
+                    this->screen_buffer[line].pop_front();
+                    this->line_set_time[line] = pros::millis();
+                    continue;
+                }
+
+                if (line == 3) this->controller.rumble(this->screen_buffer[line][0].text.c_str());
+                else this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));
+                this->screen_contents[line] = this->screen_buffer[line][0];
+                this->screen_buffer[line].pop_front();
+                this->line_set_time[line] = pros::millis();
+            }
+            this->last_printed_line = line;
+            this->last_print_time = pros::millis();
+        } else if (this->screen_contents[line].text == "") {
+            // no need to update text
+            if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
+                this->next_print[line] = "";
+                continue;
+            }
+
+            if (line == 3) this->controller.rumble(this->next_print[line].c_str());
+            else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
+            this->next_print[line] = "";
+            this->last_printed_line = line;
+            this->last_print_time = pros::millis();
+        }
+    }
+}
+
 void Controller::update() {
     for(int i = DIGITAL_L1; i != DIGITAL_A; ++i) {
         this->updateButton(static_cast<pros::controller_digital_e_t>(i));
@@ -57,6 +125,91 @@ void Controller::update() {
     this->LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
     this->RightX = this->controller.get_analog(ANALOG_RIGHT_X);
     this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
+
+    this->updateScreen();
+}
+
+uint Controller::getTotalDuration(uint8_t line) {
+    uint total = 0; 
+    for (Line msg : this->screen_buffer[line])
+        total += msg.duration;
+    return total;
+}
+
+void Controller::add_alert(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
+    TODO("change handling for off screen lines")
+    if (line > 2) std::exit(1);
+
+    if (str.find('\n') != std::string::npos) {
+        TODO("warn instead of throw error if there are too many lines")
+        if (std::ranges::count(str, '\n') > 2) std::exit(1);
+
+        std::vector<std::string> strs(3);
+        std::stringstream ss(str);
+
+        for (int i = line; i < 3; i++) {
+            if (!std::getline(ss, strs[i], '\n')) break;
+        }
+
+        add_alerts(strs, duration, rumble);
+        return;
+    }
+
+    std::lock_guard<pros::Mutex> guard(this->alert_mut);
+    this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
+}
+
+void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble) {
+    TODO("change handling for too many lines")
+    if (strs.size() > 3) std::exit(1);
+
+    std::lock_guard<pros::Mutex> guard(this->alert_mut);
+
+    // get nex available time slot for all lines
+    uint minSpot = -1; // max uint value
+    for (uint8_t line = 0; line < 4; line++) minSpot = std::min(minSpot, getTotalDuration(line));
+
+    // Schedule alerts
+    for (int i = 0; i < 4; i++) {
+        if (getTotalDuration(i) < minSpot)
+            this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
+
+        if (i == 3) this->screen_buffer[i].push_back({.text = std::move(rumble), .duration = duration});
+        else this->screen_buffer[i].push_back({.text = std::move(strs[i]), .duration = 0});
+    }
+}
+
+void Controller::print_line(uint8_t line, std::string str) {
+    TODO("change handling for off screen lines")
+    if (line > 2) std::exit(1);
+
+    std::lock_guard<pros::Mutex> guard(this->print_mut);
+
+    if (str.find('\n') != std::string::npos) {
+        TODO("warn instead of throw error if there are too many lines")
+        if (std::ranges::count(str, '\n') > 2) std::exit(1);
+
+        std::vector<std::string> strs(3);
+        std::stringstream ss(str);
+
+        for (int i = line; i < 3; i++) {
+            if (!std::getline(ss, strs[i], '\n')) break;
+        }
+
+        for (uint8_t l = 0; l < 3; l++)
+            this->next_print[l] = std::move(strs[l]);
+        return;
+    }
+
+    this->next_print[line] = std::move(str);
+}
+
+void Controller::rumble(std::string rumble_pattern) {
+    TODO("change handling for too long rumble patterns")
+    if (rumble_pattern.size() > 8) std::exit(1);
+
+    std::lock_guard<pros::Mutex> guard(this->print_mut);
+    this->next_print[3] = std::move(rumble_pattern);
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {
