@@ -26,7 +26,7 @@ jobs:
 
               const old_marker = new RegExp(marker.replace("\r\n", "\r?\n")).exec(old_body)?.[0] ?? marker;
               
-              body = (old_body.split(old_marker)[0] ?? "") + marker + body;
+              body = (old_body ?? "").split(old_marker)[0] + marker + body;
               await github.request('PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
                 owner: owner,
                 repo: repo,
