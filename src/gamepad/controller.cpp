@@ -60,31 +60,35 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::updateScreen() {
+    // Lock Mutexes for Thread Safety
     std::lock_guard<pros::Mutex> guard_scheduling(this->scheduling_mut);
     std::lock_guard<pros::Mutex> guard_print(this->print_mut);
     std::lock_guard<pros::Mutex> guard_alert(this->alert_mut);
 
+    // Check if enough time has passed for the controller to poll for updates
     if (pros::millis() - this->last_print_time < 50)
         return;
 
     for (int i = 1; i <= 4; i++) {
+        // start from the line thats after the line thats been set so we dont get stuck setting the first line
         int line = (this->last_printed_line + i) % 4;
 
-        // duration expired
+        // if the last alert's duration expired
         if (pros::millis() - this->line_set_time[line] >= this->screen_contents[line].duration) {
+            // No alerts to print
             if (this->screen_buffer[line].size() == 0) {
-                // no need to update text
+                // text on screen is the same as last frame's text so no use updating
                 if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
                     this->next_print[line] = "";
                     continue;
                 }
-                
+                // UPDATE TEXT/RUMBLE
                 if (line == 3) this->controller.rumble(this->next_print[line].c_str());
                 else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
                 this->screen_contents[line].text = std::move(this->next_print[line]);
                 this->next_print[line] = "";
             } else {
-                // no need to update text
+                // text on screen is the same as the alert's text so just set vars, dont update controller
                 if (this->screen_contents[line].text == this->screen_buffer[line][0].text && line != 3) {
                     this->screen_contents[line] = this->screen_buffer[line][0];
                     this->screen_buffer[line].pop_front();
@@ -92,6 +96,7 @@ void Controller::updateScreen() {
                     continue;
                 }
 
+                // SET ALERT/RUMBLE ALERT
                 if (line == 3) this->controller.rumble(this->screen_buffer[line][0].text.c_str());
                 else this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));
                 this->screen_contents[line] = this->screen_buffer[line][0];
@@ -101,14 +106,16 @@ void Controller::updateScreen() {
             this->last_printed_line = line;
             this->last_print_time = pros::millis();
         } else if (this->screen_contents[line].text == "") {
-            // no need to update text
+            // text is the same as last frame's text so no use updating
             if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
                 this->next_print[line] = "";
                 continue;
             }
 
+            // UPDATE TEXT/RUMBLE
             if (line == 3) this->controller.rumble(this->next_print[line].c_str());
             else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
+            this->screen_contents[line].text = std::move(this->next_print[line]);
             this->next_print[line] = "";
             this->last_printed_line = line;
             this->last_print_time = pros::millis();
@@ -165,12 +172,13 @@ void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, st
 
     std::lock_guard<pros::Mutex> guard(this->alert_mut);
 
-    // get nex available time slot for all lines
+    // get next available time slot for all lines
     uint minSpot = -1; // max uint value
     for (uint8_t line = 0; line < 4; line++) minSpot = std::min(minSpot, getTotalDuration(line));
 
     // Schedule alerts
     for (int i = 0; i < 4; i++) {
+        // add delay until theres a spot for all lines together
         if (getTotalDuration(i) < minSpot)
             this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
 
