@@ -13,6 +13,6 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      - uses: LemLib/pros-build@e0f3251974c2f5b044b8e5d8665db7cfcb5dfad7
+      - uses: LemLib/pros-build@v2.0.2
         with:
           library-path: gamepad
