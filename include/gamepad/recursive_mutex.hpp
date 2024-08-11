@@ -12,7 +12,7 @@ class RecursiveMutex {
         bool take(std::uint32_t timeout = TIMEOUT_MAX) { return pros::c::mutex_recursive_take(mutex, timeout); }
 
         void lock() {
-            if (!this->take()) throw std::system_error();
+            while (!this->take()) pros::delay(2);
         }
 
         bool try_lock() { return this->take(0); }
