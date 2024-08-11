@@ -55,7 +55,6 @@ void Button::update(const bool is_held) {
         this->onPressEvent.fire();
     } else if (this->is_pressed && this->time_held >= this->long_press_threshold &&
                this->last_long_press_time <= pros::millis() - this->time_held) {
-        TODO("change onLongPress handling if onPress is present")
         this->onLongPressEvent.fire();
         this->last_long_press_time = pros::millis();
     } else if (this->falling_edge) {
