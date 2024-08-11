@@ -78,4 +78,4 @@ template <typename Key, typename... Args> class EventHandler {
         std::vector<Listener> listeners {};
         Gamepad::_impl::RecursiveMutex mutex {};
 };
-} // namespace Gamepad
+} // namespace Gamepad::_impl

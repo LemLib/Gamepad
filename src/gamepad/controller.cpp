@@ -35,7 +35,8 @@ bool Button::addListener(EventType event, std::string listenerName, std::functio
 }
 
 bool Button::removeListener(std::string listenerName) const {
-    return this->onPressEvent.remove_listener(listenerName + "_user") || this->onLongPressEvent.remove_listener(listenerName + "_user") ||
+    return this->onPressEvent.remove_listener(listenerName + "_user") ||
+           this->onLongPressEvent.remove_listener(listenerName + "_user") ||
            this->onReleaseEvent.remove_listener(listenerName + "_user") ||
            this->onShortReleaseEvent.remove_listener(listenerName + "_user");
 }
