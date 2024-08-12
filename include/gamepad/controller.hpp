@@ -23,35 +23,17 @@ enum EventType {
 class Button {
         friend class Controller;
     public:
-        /**
-         * @brief Whether the button has just been pressed
-         *
-         */
+        /* Whether the button has just been pressed */
         bool rising_edge = false;
-        /**
-         * @brief Whether the button has just been released
-         *
-         */
+        /* Whether the button has just been released */
         bool falling_edge = false;
-        /**
-         * @brief Whether the button is currently held down
-         *
-         */
+        /* Whether the button is currently held down */
         bool is_pressed = false;
-        /**
-         * @brief How long the button has been held down
-         *
-         */
+        /* How long the button has been held down */
         uint32_t time_held = 0;
-        /**
-         * @brief How long the button has been released
-         *
-         */
+        /* How long the button has been released */
         uint32_t time_released = 0;
-        /**
-         * @brief How long the threshold should be for the longPress and shortRelease events
-         *
-         */
+        /* How long the threshold should be for the longPress and shortRelease events */
         uint32_t long_press_threshold = 500;
         /**
          * @brief Register a function to run when the button is pressed.
