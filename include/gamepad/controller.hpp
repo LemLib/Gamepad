@@ -1,15 +1,14 @@
 #pragma once
 
-#include <array>
 #include <cstdint>
-#include <deque>
 #include <functional>
-#include <string>
+#include <vector>
 #include <sys/types.h>
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
 #endif
 
+#include "gamepad/screens/abstractScreen.hpp"
 #include "event_handler.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
@@ -58,12 +57,6 @@ class Controller {
          * @note Create a separate instance for each task.
          */
         void update();
-
-        void add_alert(uint8_t line, std::string str, uint32_t duration, std::string rumble = "");
-
-        void print_line(uint8_t line, std::string str);
-
-        void rumble(std::string rumble_pattern);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
@@ -81,33 +74,24 @@ class Controller {
         X{}, B{}, Y{}, A{};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
-        struct Line {
-            std::string text;
-            uint duration;
-        };
+
+    struct {
+        bool operator()(AbstractScreen &l, AbstractScreen &r) { return l.get_priority() < r.get_priority(); }
+    } AbstractScreenSort;
 
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         
-        void updateScreen();
-        void add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble = "");
-        uint getTotalDuration(uint8_t line);
+        void updateScreens();
 
+        std::vector<AbstractScreen> screens;
         pros::Controller controller;
 
-        // alert queue
-        std::array<std::deque<Line>, 4> screen_buffer{};
-        pros::Mutex alert_mut;
-        
 
-        std::array<std::string, 4> next_print{};
-        pros::Mutex print_mut;
-
-        std::array<Line, 4> screen_contents{};
-        std::array<uint32_t, 4> line_set_time{};
         uint8_t last_printed_line = 0;
-        uint32_t last_print_time = 0;
-        pros::Mutex scheduling_mut;
+        uint last_print_time = 0;
+        uint last_update_time = 0;
+        pros::Mutex mut;
 
 }; // namespace Gamepad
 }

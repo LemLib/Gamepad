@@ -59,11 +59,13 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
     (this->*button).update(is_held);
 }
 
-void Controller::updateScreen() {
+void Controller::updateScreens() {
     // Lock Mutexes for Thread Safety
-    std::lock_guard<pros::Mutex> guard_scheduling(this->scheduling_mut);
-    std::lock_guard<pros::Mutex> guard_print(this->print_mut);
-    std::lock_guard<pros::Mutex> guard_alert(this->alert_mut);
+    std::lock_guard<pros::Mutex> guard_scheduling(this->mut);
+
+    for (int i = 0; i < this->screens.size(); i++) {
+        this->screens[i].update(pros::millis() - this->last_update_time);
+    }
 
     // Check if enough time has passed for the controller to poll for updates
     if (pros::millis() - this->last_print_time < 50)
@@ -136,89 +138,6 @@ void Controller::update() {
     this->updateScreen();
 }
 
-uint Controller::getTotalDuration(uint8_t line) {
-    uint total = 0; 
-    for (Line msg : this->screen_buffer[line])
-        total += msg.duration;
-    return total;
-}
-
-void Controller::add_alert(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
-    TODO("change handling for off screen lines")
-    if (line > 2) std::exit(1);
-
-    if (str.find('\n') != std::string::npos) {
-        TODO("warn instead of throw error if there are too many lines")
-        if (std::ranges::count(str, '\n') > 2) std::exit(1);
-
-        std::vector<std::string> strs(3);
-        std::stringstream ss(str);
-
-        for (int i = line; i < 3; i++) {
-            if (!std::getline(ss, strs[i], '\n')) break;
-        }
-
-        add_alerts(strs, duration, rumble);
-        return;
-    }
-
-    std::lock_guard<pros::Mutex> guard(this->alert_mut);
-    this->screen_buffer[line].push_back({ .text = std::move(str), .duration = duration });
-}
-
-void Controller::add_alerts(std::vector<std::string> strs, uint32_t duration, std::string rumble) {
-    TODO("change handling for too many lines")
-    if (strs.size() > 3) std::exit(1);
-
-    std::lock_guard<pros::Mutex> guard(this->alert_mut);
-
-    // get next available time slot for all lines
-    uint minSpot = -1; // max uint value
-    for (uint8_t line = 0; line < 4; line++) minSpot = std::min(minSpot, getTotalDuration(line));
-
-    // Schedule alerts
-    for (int i = 0; i < 4; i++) {
-        // add delay until theres a spot for all lines together
-        if (getTotalDuration(i) < minSpot)
-            this->screen_buffer[i].push_back({ .text = "", .duration = (minSpot - getTotalDuration(i)) });
-
-        if (i == 3) this->screen_buffer[i].push_back({.text = std::move(rumble), .duration = duration});
-        else this->screen_buffer[i].push_back({.text = std::move(strs[i]), .duration = 0});
-    }
-}
-
-void Controller::print_line(uint8_t line, std::string str) {
-    TODO("change handling for off screen lines")
-    if (line > 2) std::exit(1);
-
-    std::lock_guard<pros::Mutex> guard(this->print_mut);
-
-    if (str.find('\n') != std::string::npos) {
-        TODO("warn instead of throw error if there are too many lines")
-        if (std::ranges::count(str, '\n') > 2) std::exit(1);
-
-        std::vector<std::string> strs(3);
-        std::stringstream ss(str);
-
-        for (int i = line; i < 3; i++) {
-            if (!std::getline(ss, strs[i], '\n')) break;
-        }
-
-        for (uint8_t l = 0; l < 3; l++)
-            this->next_print[l] = std::move(strs[l]);
-        return;
-    }
-
-    this->next_print[line] = std::move(str);
-}
-
-void Controller::rumble(std::string rumble_pattern) {
-    TODO("change handling for too long rumble patterns")
-    if (rumble_pattern.size() > 8) std::exit(1);
-
-    std::lock_guard<pros::Mutex> guard(this->print_mut);
-    this->next_print[3] = std::move(rumble_pattern);
-}
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {
     return this->*Controller::button_to_ptr(button);
