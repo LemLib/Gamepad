@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <vector>
 #include <sys/types.h>
 #ifndef PROS_USE_SIMPLE_NAMES
@@ -57,7 +58,7 @@ class Controller {
          */
         void update();
 
-        void add_screen(AbstractScreen& screen);
+        void add_screen(std::shared_ptr<AbstractScreen> screen);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
@@ -75,17 +76,12 @@ class Controller {
         X{}, B{}, Y{}, A{};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
     private:
-
-    struct {
-        bool operator()(AbstractScreen &l, AbstractScreen &r) { return l.get_priority() < r.get_priority(); }
-    } AbstractScreenSort;
-
         static Button Controller::* button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         
         void updateScreens();
 
-        std::vector<AbstractScreen> screens;
+        std::vector<std::shared_ptr<AbstractScreen>> screens;
         ScreenBuffer currentScreen;
         ScreenBuffer nextBuffer;
         pros::Controller controller;

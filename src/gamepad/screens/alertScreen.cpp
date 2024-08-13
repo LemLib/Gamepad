@@ -7,6 +7,11 @@
 
 namespace Gamepad {
 
+ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
+    ScreenBuffer output;
+    
+}
+
 
 uint AlertScreen::getTotalDuration(uint8_t line) {
     uint total = 0; 

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -66,7 +67,7 @@ void Controller::updateScreens() {
 
     // Update all screens and note deltatime
     for (int i = 0; i < this->screens.size(); i++)
-        this->screens[i].update(pros::millis() - this->last_update_time);
+        this->screens[i]->update(pros::millis() - this->last_update_time);
     last_update_time = pros::millis();
 
     // Check if enough time has passed for the controller to poll for updates
@@ -81,7 +82,7 @@ void Controller::updateScreens() {
                 visible_lines.emplace(j);
         
         // get the buffer of the next lower priority screen and set it to be printed
-        ScreenBuffer buffer = this->screens[i].get_screen(visible_lines);
+        ScreenBuffer buffer = this->screens[i]->get_screen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
             if (buffer[j].has_value() && !nextBuffer[j].has_value())
                 nextBuffer[j] = std::move(buffer[j]);
@@ -120,12 +121,12 @@ void Controller::update() {
     this->updateScreens();
 }
 
-void Controller::add_screen(AbstractScreen &screen) {
+void Controller::add_screen(std::shared_ptr<AbstractScreen> screen) {
     uint last = UINT32_MAX; uint pos = 0;
     for (pos = 0; pos < this->screens.size(); pos++) {
-        if (this->screens[pos].get_priority() < screen.get_priority() && last >= screen.get_priority())
+        if (this->screens[pos]->get_priority() < screen->get_priority() && last >= screen->get_priority())
             break;
-        last = this->screens[pos].get_priority();
+        last = this->screens[pos]->get_priority();
     }
     this->screens.emplace(this->screens.begin() + pos, screen);
 }

@@ -1,11 +1,21 @@
 #include "gamepad/screens/defaultScreen.hpp"
 #include <algorithm>
 #include <mutex>
+#include <optional>
 #include <sstream>
 #include "gamepad/todo.hpp"
 
 
 namespace Gamepad {
+
+ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
+    ScreenBuffer output;
+    for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
+        output[*i] = std::move(this->currentBuffer[*i].value_or(""));
+        this->currentBuffer[*i] = std::nullopt;
+    }
+    return output;
+}
 
 void DefaultScreen::print_line(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")

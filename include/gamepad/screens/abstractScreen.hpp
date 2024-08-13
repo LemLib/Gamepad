@@ -21,8 +21,6 @@ class AbstractScreen {
         virtual ScreenBuffer get_screen(std::set<uint8_t> visible_lines) = 0;
         virtual void handle_events(std::set<pros::controller_digital_e_t> button_events) = 0;
         const uint get_priority();
-
-        bool operator()(AbstractScreen *l, AbstractScreen *r) { return l->get_priority() < r->get_priority(); }
     private:
         const uint priority;
 };
