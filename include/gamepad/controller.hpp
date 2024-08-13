@@ -1,17 +1,16 @@
 #pragma once
 
+#include "screens/abstractScreen.hpp"
 #include <cstdint>
 #include <functional>
 #include <vector>
 #include <sys/types.h>
-#ifndef PROS_USE_SIMPLE_NAMES
-#define PROS_USE_SIMPLE_NAMES
-#endif
-
-#include "gamepad/screens/abstractScreen.hpp"
 #include "event_handler.hpp"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
+#ifndef PROS_USE_SIMPLE_NAMES
+#define PROS_USE_SIMPLE_NAMES
+#endif
 
 namespace Gamepad {
 
@@ -57,6 +56,8 @@ class Controller {
          * @note Create a separate instance for each task.
          */
         void update();
+
+        void add_screen(AbstractScreen& screen);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
@@ -85,8 +86,9 @@ class Controller {
         void updateScreens();
 
         std::vector<AbstractScreen> screens;
+        ScreenBuffer currentScreen;
+        ScreenBuffer nextBuffer;
         pros::Controller controller;
-
 
         uint8_t last_printed_line = 0;
         uint last_print_time = 0;

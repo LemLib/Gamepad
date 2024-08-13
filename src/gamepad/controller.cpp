@@ -1,14 +1,15 @@
 #include "gamepad/controller.hpp"
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
-#include <algorithm>
+#include "pros/misc.h"
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <mutex>
-#include <sstream>
+#include <optional>
 #include <string>
+#include <sys/types.h>
 #include <utility>
 #include <vector>
 
@@ -63,65 +64,46 @@ void Controller::updateScreens() {
     // Lock Mutexes for Thread Safety
     std::lock_guard<pros::Mutex> guard_scheduling(this->mut);
 
-    for (int i = 0; i < this->screens.size(); i++) {
+    // Update all screens and note deltatime
+    for (int i = 0; i < this->screens.size(); i++)
         this->screens[i].update(pros::millis() - this->last_update_time);
-    }
+    last_update_time = pros::millis();
 
     // Check if enough time has passed for the controller to poll for updates
     if (pros::millis() - this->last_print_time < 50)
         return;
 
+    for (int i = 0; i < this->screens.size(); i++) {
+        // get all lines that arent being used by a higher priority screen
+        std::set<uint8_t> visible_lines;
+        for (uint8_t j = 0; j < 4; j++)
+            if (!this->nextBuffer[j].has_value())
+                visible_lines.emplace(j);
+        
+        // get the buffer of the next lower priority screen and set it to be printed
+        ScreenBuffer buffer = this->screens[i].get_screen(visible_lines);
+        for (uint8_t j = 0; j < 4; j++)
+            if (buffer[j].has_value() && !nextBuffer[j].has_value())
+                nextBuffer[j] = std::move(buffer[j]);
+    }
+
     for (int i = 1; i <= 4; i++) {
         // start from the line thats after the line thats been set so we dont get stuck setting the first line
         int line = (this->last_printed_line + i) % 4;
 
-        // if the last alert's duration expired
-        if (pros::millis() - this->line_set_time[line] >= this->screen_contents[line].duration) {
-            // No alerts to print
-            if (this->screen_buffer[line].size() == 0) {
-                // text on screen is the same as last frame's text so no use updating
-                if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
-                    this->next_print[line] = "";
-                    continue;
-                }
-                // UPDATE TEXT/RUMBLE
-                if (line == 3) this->controller.rumble(this->next_print[line].c_str());
-                else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
-                this->screen_contents[line].text = std::move(this->next_print[line]);
-                this->next_print[line] = "";
-            } else {
-                // text on screen is the same as the alert's text so just set vars, dont update controller
-                if (this->screen_contents[line].text == this->screen_buffer[line][0].text && line != 3) {
-                    this->screen_contents[line] = this->screen_buffer[line][0];
-                    this->screen_buffer[line].pop_front();
-                    this->line_set_time[line] = pros::millis();
-                    continue;
-                }
-
-                // SET ALERT/RUMBLE ALERT
-                if (line == 3) this->controller.rumble(this->screen_buffer[line][0].text.c_str());
-                else this->controller.set_text(line, 0, this->screen_buffer[line][0].text + std::string(40, ' '));
-                this->screen_contents[line] = this->screen_buffer[line][0];
-                this->screen_buffer[line].pop_front();
-                this->line_set_time[line] = pros::millis();
-            }
-            this->last_printed_line = line;
-            this->last_print_time = pros::millis();
-        } else if (this->screen_contents[line].text == "") {
-            // text is the same as last frame's text so no use updating
-            if (this->screen_contents[line].text == this->next_print[line] && line != 3) {
-                this->next_print[line] = "";
-                continue;
-            }
-
-            // UPDATE TEXT/RUMBLE
-            if (line == 3) this->controller.rumble(this->next_print[line].c_str());
-            else this->controller.set_text(line, 0, this->next_print[line] + std::string(40, ' '));
-            this->screen_contents[line].text = std::move(this->next_print[line]);
-            this->next_print[line] = "";
-            this->last_printed_line = line;
-            this->last_print_time = pros::millis();
+        // text on screen is the same as last frame's text so no use updating
+        if (this->currentScreen[line] == this->nextBuffer[line] && line != 3) {
+            this->nextBuffer[line] = std::nullopt;
+            continue;
         }
+
+        // print to screen or rumble
+        if (line == 3) this->controller.rumble(this->nextBuffer[line].value_or("").c_str());
+        else this->controller.set_text(line, 0, this->nextBuffer[line].value_or("") + std::string(40, ' '));
+        this->currentScreen[line] = std::move(this->nextBuffer[line]);
+        this->nextBuffer[line] = std::nullopt;
+        this->last_printed_line = line;
+        this->last_print_time = pros::millis();
     }
 }
 
@@ -135,7 +117,17 @@ void Controller::update() {
     this->RightX = this->controller.get_analog(ANALOG_RIGHT_X);
     this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
 
-    this->updateScreen();
+    this->updateScreens();
+}
+
+void Controller::add_screen(AbstractScreen &screen) {
+    uint last = UINT32_MAX; uint pos = 0;
+    for (pos = 0; pos < this->screens.size(); pos++) {
+        if (this->screens[pos].get_priority() < screen.get_priority() && last >= screen.get_priority())
+            break;
+        last = this->screens[pos].get_priority();
+    }
+    this->screens.emplace(this->screens.begin() + pos, screen);
 }
 
 
