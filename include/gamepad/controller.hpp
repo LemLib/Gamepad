@@ -1,16 +1,16 @@
 #pragma once
 
-#include "screens/abstractScreen.hpp"
 #include <cstdint>
 #include <functional>
 #include <vector>
 #include <sys/types.h>
-#include "event_handler.hpp"
-#include "pros/misc.hpp"
-#include "pros/rtos.hpp"
 #ifndef PROS_USE_SIMPLE_NAMES
 #define PROS_USE_SIMPLE_NAMES
 #endif
+#include "screens/abstractScreen.hpp"
+#include "event_handler.hpp"
+#include "pros/misc.hpp"
+#include "pros/rtos.hpp"
 
 namespace Gamepad {
 
