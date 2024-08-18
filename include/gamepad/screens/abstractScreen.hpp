@@ -17,7 +17,7 @@ typedef std::array<std::optional<std::string>, 4> ScreenBuffer;
 class AbstractScreen {
     public:
         AbstractScreen(uint priority): priority(priority) {}
-        void update(double delta_time) {}
+        void update(uint delta_time) {}
         virtual ScreenBuffer get_screen(std::set<uint8_t> visible_lines) = 0;
         virtual void handle_events(std::set<pros::controller_digital_e_t> button_events) = 0;
         const uint get_priority() { return this->priority; }
