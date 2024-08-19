@@ -1,6 +1,5 @@
 #include "pros/apix.h"
 #include "pros/rtos.h"
-#include <system_error>
 
 namespace Gamepad::_impl {
 
