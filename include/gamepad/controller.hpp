@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pros/misc.h"
 #include <cstdint>
 #include <functional>
 #ifndef PROS_USE_SIMPLE_NAMES
@@ -43,15 +44,7 @@ class Button {
         EventHandler<> onReleaseEvent;
 };
 
-namespace _impl {
-static struct ControllerInit {
-        ControllerInit();
-        ~ControllerInit();
-} _controllerInit;
-} // namespace _impl
-
 class Controller {
-        friend struct _impl::ControllerInit;
     public:
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
@@ -73,6 +66,10 @@ class Controller {
         TODO("hide memebrs and expose getters/const refs")
         Button L1 {}, L2 {}, R1 {}, R2 {}, Up {}, Down {}, Left {}, Right {}, X {}, B {}, Y {}, A {};
         float LeftX = 0, LeftY = 0, RightX = 0, RightY = 0;
+        /// The master controller, same as @ref Gamepad::master
+        static Controller master;
+        /// The partner controller, same as @ref Gamepad::partner
+        static Controller partner;
     private:
         explicit Controller(pros::controller_id_e_t id)
             : controller(id) {}
@@ -82,7 +79,11 @@ class Controller {
         pros::Controller controller;
 };
 
-extern Controller& master;
-extern Controller& partner;
+inline Controller Controller::master {pros::E_CONTROLLER_MASTER};
+inline Controller Controller::partner {pros::E_CONTROLLER_PARTNER};
+/// The master controller
+inline Controller& master = Controller::master;
+/// The partner controller
+inline Controller& partner = Controller::partner;
 
 } // namespace Gamepad
