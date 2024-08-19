@@ -20,6 +20,8 @@ class RecursiveMutex {
         bool give() { return pros::c::mutex_recursive_give(mutex); }
 
         void unlock() { this->give(); }
+
+        ~RecursiveMutex() { pros::c::mutex_delete(mutex); }
     private:
         pros::mutex_t mutex;
 };
