@@ -43,7 +43,9 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::update() {
-    for (int i = pros::E_CONTROLLER_DIGITAL_L1; i != pros::E_CONTROLLER_DIGITAL_A; ++i) { this->updateButton(static_cast<pros::controller_digital_e_t>(i)); }
+    for (int i = pros::E_CONTROLLER_DIGITAL_L1; i != pros::E_CONTROLLER_DIGITAL_A; ++i) {
+        this->updateButton(static_cast<pros::controller_digital_e_t>(i));
+    }
 
     this->LeftX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     this->LeftY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
