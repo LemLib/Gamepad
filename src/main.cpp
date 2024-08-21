@@ -8,21 +8,13 @@
  * to keep execution time for this mode under a few seconds.
  */
 
-void downPress1() { 
-    printf("Down Press!\n");
-}
+void downPress1() { printf("Down Press!\n"); }
 
-void upRelease1() { 
-    printf("Up Release!\n");
-}
+void upRelease1() { printf("Up Release!\n"); }
 
-void leftLongPress1() { 
-    printf("Left Long Press!\n");
-}
+void leftLongPress1() { printf("Left Long Press!\n"); }
 
-void leftShortRelease1() {
-    printf("Left Short Release!\n");
-}
+void leftShortRelease1() { printf("Left Short Release!\n"); }
 
 void initialize() {
     // We can register functions to run when buttons are pressed
