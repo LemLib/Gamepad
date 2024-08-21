@@ -24,17 +24,17 @@ enum EventType {
 class Button {
         friend class Controller;
     public:
-        /* Whether the button has just been pressed */
+        /// Whether the button has just been pressed
         bool rising_edge = false;
-        /* Whether the button has just been released */
+        /// Whether the button has just been released
         bool falling_edge = false;
-        /* Whether the button is currently held down */
+        /// Whether the button is currently held down
         bool is_pressed = false;
-        /* How long the button has been held down */
+        /// How long the button has been held down
         uint32_t time_held = 0;
-        /* How long the button has been released */
+        /// How long the button has been released
         uint32_t time_released = 0;
-        /* How long the threshold should be for the longPress and shortRelease events */
+        /// How long the threshold should be for the longPress and shortRelease events 
         uint32_t long_press_threshold = 500;
         /**
          * @brief Register a function to run when the button is pressed.
@@ -43,16 +43,32 @@ class Button {
          * @param func The function to run when the button is pressed, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         * Example:
+         * @code {.cpp}
+         *   // Use a function...
+         *   Gamepad::master.Down.onPress("downPress1", downPress1);
+         *   // ...or a lambda
+         *   Gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
+         * @endcode
+         * 
          */
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
         /**
-         * @brief Register a function to run when the button is long pressed (The button has been held down for 500ms or
-         * more, this threshold can be adjusted by changing long_press_threshold).
+         * @brief Register a function to run when the button is long pressed. WARNING: When using this event along
+         * with onPress, both the onPress and onlongPress listeners may fire together. (The button has been held 
+         * down for 500ms or more, this threshold can be adjusted by changing long_press_threshold).
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long pressed, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         * Example:
+         * @code {.cpp}
+         *   // Use a function...
+         *   Gamepad::master.Left.onLongPress("fireCatapult", fireCatapult);
+         *   // ...or a lambda
+         *   Gamepad::master.Right.onLongPress("print_right", []() { std::cout << "Right button was long pressed!" << std::endl; });
+         * @endcode
          */
         bool onLongPress(std::string listenerName, std::function<void(void)> func) const;
         /**
@@ -62,16 +78,30 @@ class Button {
          * @param func The function to run when the button is released, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         * Example:
+         * @code {.cpp}
+         *   // Use a function...
+         *   Gamepad::master.X.onRelease("stopFlywheel", stopFlywheel);
+         *   // ...or a lambda
+         *   Gamepad::master.Y.onRelease("stopIntake", []() { intake.move(0); });
+         * @endcode
          */
         bool onRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
-         * @brief Register a function to run when the button is short released  (The button has been released before
-         * 500ms, this threshold can be adjusted by changing long_press_threshold).
+         * @brief Register a function to run when the button is short released. This event will most likely be
+         * used along with the longPress event.  (The default threshold for shortRelease to fire is 500ms or less,
+         * this threshold can be adjusted by changing long_press_threshold).
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is short released, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @code {.cpp}
+         *   // Use a function...
+         *   Gamepad::master.A.onShortRelease("raiseLiftOneLevel", raiseLiftOneLevel);
+         *   // ...or a lambda
+         *   Gamepad::master.B.onShortRelease("intakeOnePicce", []() { intake.move_relative(600, 100); });
+         * @endcode
          */
         bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
@@ -82,6 +112,12 @@ class Button {
          * @param func The function to run for the given event, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @code {.cpp}
+         *   // Use a function...
+         *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "start_spin", startSpin);
+         *   // ...or a lambda
+         *   Gamepad::master.L1.addListener(Gamepad::ON_RELEASE, "stop_spin", []() { motor1.brake(); });
+         * @endcode
          */
         bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
         /**
@@ -90,6 +126,12 @@ class Button {
          * @param listenerName The name of the listener to remove
          * @return true The listener was successfully removed
          * @return false The listener was not removed
+         * @code {.cpp}
+         *   // Add an event listener...
+         *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "do_something", doSomething);
+         *   // ...and now get rid of it
+         *   Gamepad::master.L1.removeListener("do_something");
+         * @endcode
          */
         bool removeListener(std::string listenerName) const;
 
