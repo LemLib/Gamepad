@@ -3,7 +3,6 @@
 #include <atomic>
 
 namespace Gamepad {
-
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
     return this->onPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
@@ -73,7 +72,9 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::update() {
-    for (int i = DIGITAL_L1; i != DIGITAL_A; ++i) { this->updateButton(static_cast<pros::controller_digital_e_t>(i)); }
+    for (int i = pros::E_CONTROLLER_DIGITAL_L1; i != pros::E_CONTROLLER_DIGITAL_A; ++i) {
+        this->updateButton(static_cast<pros::controller_digital_e_t>(i));
+    }
 
     this->m_LeftX = this->controller.get_analog(ANALOG_LEFT_X);
     this->m_LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
@@ -87,10 +88,10 @@ const Button& Controller::operator[](pros::controller_digital_e_t button) {
 
 float Controller::operator[](pros::controller_analog_e_t axis) {
     switch (axis) {
-        case ANALOG_LEFT_X: return this->LeftX;
-        case ANALOG_LEFT_Y: return this->LeftY;
-        case ANALOG_RIGHT_X: return this->RightX;
-        case ANALOG_RIGHT_Y: return this->RightY;
+        case pros::E_CONTROLLER_ANALOG_LEFT_X: return this->LeftX;
+        case pros::E_CONTROLLER_ANALOG_LEFT_Y: return this->LeftY;
+        case pros::E_CONTROLLER_ANALOG_RIGHT_X: return this->RightX;
+        case pros::E_CONTROLLER_ANALOG_RIGHT_Y: return this->RightY;
         default:
             TODO("add error logging")
             errno = EINVAL;
@@ -105,18 +106,18 @@ std::string Controller::unique_name() {
 
 Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
-        case DIGITAL_L1: return &Controller::m_L1;
-        case DIGITAL_L2: return &Controller::m_L2;
-        case DIGITAL_R1: return &Controller::m_R1;
-        case DIGITAL_R2: return &Controller::m_R2;
-        case DIGITAL_UP: return &Controller::m_Up;
-        case DIGITAL_DOWN: return &Controller::m_Down;
-        case DIGITAL_LEFT: return &Controller::m_Left;
-        case DIGITAL_RIGHT: return &Controller::m_Right;
-        case DIGITAL_X: return &Controller::m_X;
-        case DIGITAL_B: return &Controller::m_B;
-        case DIGITAL_Y: return &Controller::m_Y;
-        case DIGITAL_A: return &Controller::m_A;
+        case pros::E_CONTROLLER_DIGITAL_L1: return &Controller::L1;
+        case pros::E_CONTROLLER_DIGITAL_L2: return &Controller::L2;
+        case pros::E_CONTROLLER_DIGITAL_R1: return &Controller::R1;
+        case pros::E_CONTROLLER_DIGITAL_R2: return &Controller::R2;
+        case pros::E_CONTROLLER_DIGITAL_UP: return &Controller::Up;
+        case pros::E_CONTROLLER_DIGITAL_DOWN: return &Controller::Down;
+        case pros::E_CONTROLLER_DIGITAL_LEFT: return &Controller::Left;
+        case pros::E_CONTROLLER_DIGITAL_RIGHT: return &Controller::Right;
+        case pros::E_CONTROLLER_DIGITAL_X: return &Controller::X;
+        case pros::E_CONTROLLER_DIGITAL_B: return &Controller::B;
+        case pros::E_CONTROLLER_DIGITAL_Y: return &Controller::Y;
+        case pros::E_CONTROLLER_DIGITAL_A: return &Controller::A;
         default:
             TODO("add error logging")
             errno = EINVAL;

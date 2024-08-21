@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pros/misc.h"
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -124,9 +125,6 @@ class Button {
 
 class Controller {
     public:
-        explicit Controller(pros::controller_id_e_t id)
-            : controller(id) {}
-
         /**
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
          * any registered handlers.
@@ -159,6 +157,10 @@ class Controller {
         const float& LeftY = m_LeftY;
         const float& RightX = m_RightX;
         const float& RightY = m_RightY;
+        /// The master controller, same as @ref Gamepad::master
+        static Controller master;
+        /// The partner controller, same as @ref Gamepad::partner
+        static Controller partner;
     private:
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
@@ -175,5 +177,13 @@ class Controller {
         static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
         pros::Controller controller;
-}; // namespace Gamepad
+};
+
+inline Controller Controller::master {pros::E_CONTROLLER_MASTER};
+inline Controller Controller::partner {pros::E_CONTROLLER_PARTNER};
+/// The master controller
+inline Controller& master = Controller::master;
+/// The partner controller
+inline Controller& partner = Controller::partner;
+
 } // namespace Gamepad
