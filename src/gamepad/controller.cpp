@@ -1,8 +1,8 @@
 #include "gamepad/controller.hpp"
 #include "gamepad/todo.hpp"
+#include "pros/misc.h"
 
 namespace Gamepad {
-
 uint32_t Button::onPress(std::function<void(void)> func) { return this->onPressEvent.add_listener(std::move(func)); }
 
 uint32_t Button::onLongPress(std::function<void(void)> func) {
@@ -43,12 +43,14 @@ void Controller::updateButton(pros::controller_digital_e_t button_id) {
 }
 
 void Controller::update() {
-    for (int i = DIGITAL_L1; i != DIGITAL_A; ++i) { this->updateButton(static_cast<pros::controller_digital_e_t>(i)); }
+    for (int i = pros::E_CONTROLLER_DIGITAL_L1; i != pros::E_CONTROLLER_DIGITAL_A; ++i) {
+        this->updateButton(static_cast<pros::controller_digital_e_t>(i));
+    }
 
-    this->LeftX = this->controller.get_analog(ANALOG_LEFT_X);
-    this->LeftY = this->controller.get_analog(ANALOG_LEFT_Y);
-    this->RightX = this->controller.get_analog(ANALOG_RIGHT_X);
-    this->RightY = this->controller.get_analog(ANALOG_RIGHT_Y);
+    this->LeftX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    this->LeftY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    this->RightX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    this->RightY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 }
 
 const Button& Controller::operator[](pros::controller_digital_e_t button) {
@@ -57,28 +59,28 @@ const Button& Controller::operator[](pros::controller_digital_e_t button) {
 
 float Controller::operator[](pros::controller_analog_e_t axis) {
     switch (axis) {
-        case ANALOG_LEFT_X: return this->LeftX;
-        case ANALOG_LEFT_Y: return this->LeftY;
-        case ANALOG_RIGHT_X: return this->RightX;
-        case ANALOG_RIGHT_Y: return this->RightY; TODO("change handling for default")
+        case pros::E_CONTROLLER_ANALOG_LEFT_X: return this->LeftX;
+        case pros::E_CONTROLLER_ANALOG_LEFT_Y: return this->LeftY;
+        case pros::E_CONTROLLER_ANALOG_RIGHT_X: return this->RightX;
+        case pros::E_CONTROLLER_ANALOG_RIGHT_Y: return this->RightY; TODO("change handling for default")
         default: std::exit(1);
     }
 }
 
 Button Controller::*Controller::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
-        case DIGITAL_L1: return &Controller::L1;
-        case DIGITAL_L2: return &Controller::L2;
-        case DIGITAL_R1: return &Controller::R1;
-        case DIGITAL_R2: return &Controller::R2;
-        case DIGITAL_UP: return &Controller::Up;
-        case DIGITAL_DOWN: return &Controller::Down;
-        case DIGITAL_LEFT: return &Controller::Left;
-        case DIGITAL_RIGHT: return &Controller::Right;
-        case DIGITAL_X: return &Controller::X;
-        case DIGITAL_B: return &Controller::B;
-        case DIGITAL_Y: return &Controller::Y;
-        case DIGITAL_A: return &Controller::A; TODO("change handling for default")
+        case pros::E_CONTROLLER_DIGITAL_L1: return &Controller::L1;
+        case pros::E_CONTROLLER_DIGITAL_L2: return &Controller::L2;
+        case pros::E_CONTROLLER_DIGITAL_R1: return &Controller::R1;
+        case pros::E_CONTROLLER_DIGITAL_R2: return &Controller::R2;
+        case pros::E_CONTROLLER_DIGITAL_UP: return &Controller::Up;
+        case pros::E_CONTROLLER_DIGITAL_DOWN: return &Controller::Down;
+        case pros::E_CONTROLLER_DIGITAL_LEFT: return &Controller::Left;
+        case pros::E_CONTROLLER_DIGITAL_RIGHT: return &Controller::Right;
+        case pros::E_CONTROLLER_DIGITAL_X: return &Controller::X;
+        case pros::E_CONTROLLER_DIGITAL_B: return &Controller::B;
+        case pros::E_CONTROLLER_DIGITAL_Y: return &Controller::Y;
+        case pros::E_CONTROLLER_DIGITAL_A: return &Controller::A; TODO("change handling for default")
         default: std::exit(1);
     }
 }
