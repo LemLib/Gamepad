@@ -1,8 +1,5 @@
 #include "main.h"
 #include "gamepad/api.hpp"
-#include "pros/screen.hpp"
-
-Gamepad::Controller master(CONTROLLER_MASTER);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -10,7 +7,36 @@ Gamepad::Controller master(CONTROLLER_MASTER);
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {}
+
+void downPress1() { 
+    printf("Down Press!\n");
+}
+
+void upRelease1() { 
+    printf("Up Release!\n");
+}
+
+void leftLongPress1() { 
+    printf("Left Long Press!\n");
+}
+
+void leftShortRelease1() {
+    printf("Left Short Release!\n");
+}
+
+void initialize() {
+    // We can register functions to run when buttons are pressed
+    Gamepad::master.Down.onPress("downPress1", downPress1);
+    // ...or when they're released
+    Gamepad::master.Up.onRelease("downRelease1", upRelease1);
+    // There's also the longPress event
+    Gamepad::master.Left.onLongPress("leftLongPress1", leftLongPress1);
+    // We can have two functions on one button,
+    // just remember to give them different names
+    Gamepad::master.Left.onShortRelease("leftShortRelease", leftShortRelease1);
+    // And we can use lambda's too
+    Gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -57,21 +83,17 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    auto i = master.Down.onPress("downPress1", []() { printf("Down Press!\n"); });
-    if (!i) std::cout << "opcontrol ran again, event did not register!" << std::endl;
-    master.Down.onLongPress("downLongPress1", []() { printf("Down longPress!\n"); });
-    master.Down.onRelease("downRelease1", []() { printf("Down Release!\n"); });
-    master.Up.onPress("uppress1", []() { printf("Up Press!\n"); });
-    master.Up.onLongPress("upLongPress1", []() { printf("Up longPress!\n"); });
-    master.Up.onRelease("upRelease1", []() { printf("Up Release!\n"); });
-    master.Up.onShortRelease("upShortRelease1", []() { printf("Up Short Release!\n"); });
-    master.Up.onRelease("upRelease2", [=]() {
-        master.Up.removeListener("upRelease1");
-        printf("Up Release 2!\n");
-    });
+    pros::MotorGroup left_mg({1, -2, 3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+    pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
+
     while (true) {
-        master.update();
-        pros::screen::print(TEXT_MEDIUM, 3, "%f %f %f %f", master.LeftX, master.LeftY, master.RightX, master.RightY);
-        pros::delay(20);
+        // Remember to ALWAYS call update at the start of your while loop!
+        Gamepad::master.update();
+        // We'll use the arcade control scheme
+        int dir = Gamepad::master.LeftY; // Gets amount forward/backward from left joystick
+        int turn = Gamepad::master.RightX; // Gets the turn left/right from right joystick
+        left_mg.move(dir - turn); // Sets left motor voltage
+        right_mg.move(dir + turn); // Sets right motor voltage
+        pros::delay(25); // Wait for 25 ms, then update the motor values again
     }
 }
