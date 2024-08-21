@@ -162,6 +162,7 @@ class Controller {
         /// The partner controller, same as @ref Gamepad::partner
         static Controller partner;
     private:
+        Controller(pros::controller_id_e_t id): controller(id) {}
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
