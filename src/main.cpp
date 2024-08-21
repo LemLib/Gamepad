@@ -75,17 +75,16 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	
-	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 4 and reversed ports 4 & 6
+    pros::MotorGroup left_mg({1, -2, 3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+    pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
 
-	while (true) {
-		Gamepad::master.update();
-		// Arcade control scheme
-		int dir = Gamepad::master.LeftY;   // Gets amount forward/backward from left joystick
-		int turn = Gamepad::master.RightX;  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
-		pros::delay(20);                               // Run for 20 ms then update
-	}
+    while (true) {
+        Gamepad::master.update();
+        // Arcade control scheme
+        int dir = Gamepad::master.LeftY; // Gets amount forward/backward from left joystick
+        int turn = Gamepad::master.RightX; // Gets the turn left/right from right joystick
+        left_mg.move(dir - turn); // Sets left motor voltage
+        right_mg.move(dir + turn); // Sets right motor voltage
+        pros::delay(25); // Run for 25 ms then update
+    }
 }
