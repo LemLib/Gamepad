@@ -34,7 +34,7 @@ class Button {
         uint32_t time_held = 0;
         /// How long the button has been released
         uint32_t time_released = 0;
-        /// How long the threshold should be for the longPress and shortRelease events 
+        /// How long the threshold should be for the longPress and shortRelease events
         uint32_t long_press_threshold = 500;
         /**
          * @brief Register a function to run when the button is pressed.
@@ -50,12 +50,12 @@ class Button {
          *   // ...or a lambda
          *   Gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
          * @endcode
-         * 
+         *
          */
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is long pressed. WARNING: When using this event along
-         * with onPress, both the onPress and onlongPress listeners may fire together. (The button has been held 
+         * with onPress, both the onPress and onlongPress listeners may fire together. (The button has been held
          * down for 500ms or more, this threshold can be adjusted by changing long_press_threshold).
          *
          * @param listenerName The name of the listener, this must be a unique name
@@ -67,7 +67,8 @@ class Button {
          *   // Use a function...
          *   Gamepad::master.Left.onLongPress("fireCatapult", fireCatapult);
          *   // ...or a lambda
-         *   Gamepad::master.Right.onLongPress("print_right", []() { std::cout << "Right button was long pressed!" << std::endl; });
+         *   Gamepad::master.Right.onLongPress("print_right", []() { std::cout << "Right button was long pressed!" <<
+         * std::endl; });
          * @endcode
          */
         bool onLongPress(std::string listenerName, std::function<void(void)> func) const;
