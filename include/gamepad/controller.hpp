@@ -43,26 +43,29 @@ class Button {
          * @param func The function to run when the button is pressed, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
-         * Example:
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Use a function...
          *   Gamepad::master.Down.onPress("downPress1", downPress1);
          *   // ...or a lambda
          *   Gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
          * @endcode
-         *
          */
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
         /**
-         * @brief Register a function to run when the button is long pressed. WARNING: When using this event along
-         * with onPress, both the onPress and onlongPress listeners may fire together. (The button has been held
-         * down for 500ms or more, this threshold can be adjusted by changing long_press_threshold).
+         * @brief Register a function to run when the button is long pressed.
+         * By default, onLongPress will fire when the button has been held down for
+         * 500ms or more, this threshold can be adjusted by changing long_press_threshold.
+         * @warning When using this event along with onPress, both the onPress
+         * and onlongPress listeners may fire together.
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long pressed, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
-         * Example:
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Use a function...
          *   Gamepad::master.Left.onLongPress("fireCatapult", fireCatapult);
@@ -79,7 +82,8 @@ class Button {
          * @param func The function to run when the button is released, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
-         * Example:
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Use a function...
          *   Gamepad::master.X.onRelease("stopFlywheel", stopFlywheel);
@@ -89,14 +93,17 @@ class Button {
          */
         bool onRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
-         * @brief Register a function to run when the button is short released. This event will most likely be
-         * used along with the longPress event.  (The default threshold for shortRelease to fire is 500ms or less,
-         * this threshold can be adjusted by changing long_press_threshold).
+         * @brief Register a function to run when the button is short released.
+         * By default, shortRelease will fire when the button has been released before 500ms, this threshold can be
+         * adjusted by changing long_press_threshold.
+         * @note This event will most likely be used along with the longPress event.
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is short released, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Use a function...
          *   Gamepad::master.A.onShortRelease("raiseLiftOneLevel", raiseLiftOneLevel);
@@ -113,6 +120,8 @@ class Button {
          * @param func The function to run for the given event, the function MUST NOT block
          * @return true The listener was successfully registered
          * @return false The listener was not successfully registered (there is already a listener with this name)
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Use a function...
          *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "start_spin", startSpin);
@@ -123,10 +132,13 @@ class Button {
         bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Removes a listener from the button
+         * @warning Usage of this function is discouraged.
          *
          * @param listenerName The name of the listener to remove
-         * @return true The listener was successfully removed
-         * @return false The listener was not removed
+         * @return true The specified listener was successfully removed
+         * @return false The specified listener could not be removed
+         *
+         * @b Example:
          * @code {.cpp}
          *   // Add an event listener...
          *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "do_something", doSomething);
@@ -150,15 +162,9 @@ class Button {
          * @param is_held Whether or not the button is currently held down
          */
         void update(bool is_held);
-        /**
-         * @brief The last time the update function was called
-         *
-         */
+        /// he last time the update function was called
         uint32_t last_update_time = pros::millis();
-        /**
-         * @brief The last time the long press event was fired
-         *
-         */
+        /// The last time the long press event was fired
         uint32_t last_long_press_time = 0;
         mutable _impl::EventHandler<std::string> onPressEvent {};
         mutable _impl::EventHandler<std::string> onLongPressEvent {};
@@ -172,16 +178,41 @@ class Controller {
          * Updates the state of the gamepad (all joysticks and buttons), and also runs
          * any registered handlers.
          * @note This function should be called at the beginning of every loop iteration.
+         *
+         * @b Example:
+         * @code {.cpp}
+         * while (true) {
+         *   Gamepad::master.update();
+         *   // do robot control stuff here...
+         *   pros::delay(25);
+         * }
+         * @endcode
+         *
          */
         void update();
         /**
          * Get the state of a button on the controller.
-         * @param button Which button's state you want.
+         * @param button Which button to return
+         *
+         * @b Example:
+         * @code {.cpp}
+         * if(Gamepad::master[DIGITAL_L1]) {
+         *   // do something here...
+         * }
+         * @endcode
+         *
          */
         const Button& operator[](pros::controller_digital_e_t button);
         /**
          * Get the value of a joystick axis on the controller.
-         * @param joystick Which joystick axis's value to return
+         * @param joystick Which joystick axis to return
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // control a motor with a joystick
+         * intake.move(Gamepad::master[ANALOG_RIGHT_Y]);
+         * @endcode
+         *
          */
         float operator[](pros::controller_analog_e_t joystick);
         const Button& L1 {m_L1};
