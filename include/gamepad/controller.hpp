@@ -55,8 +55,10 @@ class Button {
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is long pressed.
+         *
          * By default, onLongPress will fire when the button has been held down for
          * 500ms or more, this threshold can be adjusted by changing long_press_threshold.
+         *
          * @warning When using this event along with onPress, both the onPress
          * and onlongPress listeners may fire together.
          *
@@ -94,8 +96,10 @@ class Button {
         bool onRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is short released.
+         *
          * By default, shortRelease will fire when the button has been released before 500ms, this threshold can be
          * adjusted by changing long_press_threshold.
+         *
          * @note This event will most likely be used along with the longPress event.
          *
          * @param listenerName The name of the listener, this must be a unique name
@@ -175,8 +179,9 @@ class Button {
 class Controller {
     public:
         /**
-         * Updates the state of the gamepad (all joysticks and buttons), and also runs
-         * any registered handlers.
+         * @brief Updates the state of the gamepad (all joysticks and buttons), and also runs
+         * any registered listeners.
+         *
          * @note This function should be called at the beginning of every loop iteration.
          *
          * @b Example:
@@ -191,7 +196,8 @@ class Controller {
          */
         void update();
         /**
-         * Get the state of a button on the controller.
+         * @brief Get the state of a button on the controller.
+         *
          * @param button Which button to return
          *
          * @b Example:
@@ -204,7 +210,8 @@ class Controller {
          */
         const Button& operator[](pros::controller_digital_e_t button);
         /**
-         * Get the value of a joystick axis on the controller.
+         * @brief Get the value of a joystick axis on the controller.
+         *
          * @param joystick Which joystick axis to return
          *
          * @b Example:
@@ -244,9 +251,10 @@ class Controller {
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
         Button Fake {};
         /**
-         * @brief Gets a unique name for a listener that will not conflict with user listener names. IMPORTANT: when
-         * using the function, you must register the listener by directly calling add_listener on the EventHandler, do
-         * NOT use onPress/addListener,etc.
+         * @brief Gets a unique name for a listener that will not conflict with user listener names.
+         *
+         * @important: when using the function, you must register the listener by
+         * directly calling add_listener on the EventHandler, do NOT use onPress/addListener,etc.
          *
          * @return std::string A unique listener name
          */
