@@ -1,0 +1,13 @@
+name: Update Organization-wide Files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash .github/workflows/update-files.sh
+      - uses: peter-evans/create-pull-request@v6
