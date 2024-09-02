@@ -18,6 +18,7 @@ jobs:
           # This snippet is public-domain, taken from
           # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
           script: |
+            try {
             async function upsertComment(owner, repo, issue_number, purpose,old_body, body) {
               const {data: comments} = await github.rest.issues.listComments(
                 {owner, repo, issue_number});
@@ -58,16 +59,16 @@ jobs:
             if (issue_number) {
               core.info(`Using pull request ${issue_number}`);
             } else {
-              return core.error(`No matching pull request found`);
+                return core.setFailed(`No matching pull request found`);
             }
             
             let old_sha = /\<\!-- commit-sha: (?<sha>[a-z0-9]+) --\>/i.exec(old_body)?.groups?.sha
-            if (old_sha != undefined && pull_head_sha == old_sha) return core.error("Comment is already up-to-date!")
+              if (old_sha != undefined && pull_head_sha == old_sha) return core.setFailed("Comment is already up-to-date!")
             
             const artifacts = await github.paginate(
               github.rest.actions.listWorkflowRunArtifacts, {owner, repo, run_id});
             if (!artifacts.length) {
-              return core.error(`No artifacts found, perhaps Build Template was skipped`);
+                return core.setFailed(`No artifacts found, perhaps Build Template was skipped`);
             }
             const template = artifacts[0];
             
@@ -87,3 +88,6 @@ jobs:
             
             await upsertComment(owner, repo, issue_number,
               "nightly-link", old_body, body);
+            } catch (error) {
+              core.setFailed(`Action failed with error ${err}`);
+            }
