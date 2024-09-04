@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 #include <sys/types.h>
 #ifndef PROS_USE_SIMPLE_NAMES
@@ -57,8 +58,18 @@ class Controller {
          * @note Create a separate instance for each task.
          */
         void update();
-
+        /**
+         * Add a screen to the sceen update loop that can update the controller's screen
+         * 
+         * @param screen the `AbstractScreen` to 
+         */
         void add_screen(std::shared_ptr<AbstractScreen> screen);
+        void remove_screen(); // TODO: Find a good way to access the screen to remove
+
+        // TODO: Change this to be a better access point
+        std::vector<std::shared_ptr<AbstractScreen>> get_screens();
+        std::vector<std::shared_ptr<AbstractScreen>> get_screens(uint priority);
+        std::vector<std::shared_ptr<AbstractScreen>> get_screens(uint min_priority, uint max_priority);
         /**
          * Get the state of a button on the controller.
          * @param button Which button's state you want.
