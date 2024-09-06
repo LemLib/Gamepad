@@ -233,7 +233,7 @@ class Controller {
         const Button& X {m_X};
         const Button& B {m_B};
         const Button& Y {m_Y};
-        const Button& A {m_Down};
+        const Button& A {m_A};
         const float& LeftX = m_LeftX;
         const float& LeftY = m_LeftY;
         const float& RightX = m_RightX;
