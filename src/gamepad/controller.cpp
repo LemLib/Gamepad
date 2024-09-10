@@ -128,10 +128,7 @@ void Controller::add_screen(std::shared_ptr<AbstractScreen> screen) {
 }
 
 void Controller::print_line(uint8_t line, std::string str) {
-    if (std::count(this->screens.begin(), this->screens.end(), this->defaultScreen) == 0) {
-        this->add_screen(this->defaultScreen);
-    }
-    printf("%i elements in screens\n", this->screens.size());
+    printf("wrapping print_line(line:%i, string:%s)\n", line, str.c_str());
 
     this->defaultScreen->print_line(line, str);
 }
