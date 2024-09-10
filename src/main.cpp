@@ -1,20 +1,5 @@
 #include "main.h"
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
+#include "gamepad/api.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -22,11 +7,27 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
 
-	pros::lcd::register_btn1_cb(on_center_button);
+void downPress1() { printf("Down Press!\n"); }
+
+void upRelease1() { printf("Up Release!\n"); }
+
+void leftLongPress1() { printf("Left Long Press!\n"); }
+
+void leftShortRelease1() { printf("Left Short Release!\n"); }
+
+void initialize() {
+    // We can register functions to run when buttons are pressed
+    Gamepad::master.Down.onPress("downPress1", downPress1);
+    // ...or when they're released
+    Gamepad::master.Up.onRelease("downRelease1", upRelease1);
+    // There's also the longPress event
+    Gamepad::master.Left.onLongPress("leftLongPress1", leftLongPress1);
+    // We can have two functions on one button,
+    // just remember to give them different names
+    Gamepad::master.Left.onShortRelease("leftShortRelease", leftShortRelease1);
+    // And we can use lambda's too
+    Gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
 }
 
 /**
@@ -74,21 +75,17 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 4 and reversed ports 4 & 6
+    pros::MotorGroup left_mg({1, -2, 3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+    pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
-
-		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
-		pros::delay(20);                               // Run for 20 ms then update
-	}
+    while (true) {
+        // Remember to ALWAYS call update at the start of your while loop!
+        Gamepad::master.update();
+        // We'll use the arcade control scheme
+        int dir = Gamepad::master.LeftY; // Gets amount forward/backward from left joystick
+        int turn = Gamepad::master.RightX; // Gets the turn left/right from right joystick
+        left_mg.move(dir - turn); // Sets left motor voltage
+        right_mg.move(dir + turn); // Sets right motor voltage
+        pros::delay(25); // Wait for 25 ms, then update the motor values again
+    }
 }
