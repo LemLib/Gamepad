@@ -12,7 +12,10 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
 
-WARNFLAGS+=
+WARNFLAGS+= -Wall -Wextra -Wpedantic
+ifndef ALLOW_WARN
+WARNFLAGS+= -Werror
+endif
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
 
@@ -25,7 +28,6 @@ EXCLUDE_COLD_LIBRARIES:=
 
 # Set this to 1 to add additional rules to compile your project as a PROS library template
 IS_LIBRARY:=1
-# TODO: CHANGE THIS!
 LIBNAME:=gamepad
 VERSION:=0.0.1
 # EXCLUDE_SRC_FROM_LIB= $(SRCDIR)/unpublishedfile.c

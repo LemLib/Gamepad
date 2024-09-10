@@ -1,5 +1,8 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter" // apix.h includes llemu headers (???) which trigger this warning
 #include "pros/apix.h"
 #include "pros/rtos.h"
+#pragma GCC diagnostic pop
 
 namespace Gamepad::_impl {
 
