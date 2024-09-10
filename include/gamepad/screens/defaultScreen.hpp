@@ -5,9 +5,9 @@
 
 namespace Gamepad {
 
-class DefaultScreen : AbstractScreen {
+class DefaultScreen : public AbstractScreen {
     public:
-        DefaultScreen() : AbstractScreen(1) {}
+        DefaultScreen();
         ScreenBuffer get_screen(std::set<uint8_t> visible_lines);
         void handle_events(std::set<pros::controller_digital_e_t> button_events) {}
 

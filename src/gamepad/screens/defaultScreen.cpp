@@ -3,13 +3,23 @@
 #include <mutex>
 #include <optional>
 #include <sstream>
+#include "abstractScreen.hpp"
 #include "gamepad/todo.hpp"
 
 
 namespace Gamepad {
 
+DefaultScreen::DefaultScreen() : AbstractScreen(1) {
+    printf("ran constructor\n");
+}
+
 ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
+    printf("{%s, %s, %s, %s}\n", 
+                currentBuffer.at(0).value_or("N/A").c_str(), 
+                currentBuffer.at(1).value_or("N/A").c_str(), 
+                currentBuffer.at(2).value_or("N/A").c_str(),
+                currentBuffer.at(3).value_or("N/A").c_str());
     for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
         output[*i] = std::move(this->currentBuffer[*i].value_or(""));
         this->currentBuffer[*i] = std::nullopt;
@@ -18,6 +28,7 @@ ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
 }
 
 void DefaultScreen::print_line(uint8_t line, std::string str) {
+    printf("print_line(line: %i, string: %s)\n", line, str.c_str());
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
@@ -30,12 +41,12 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
         std::vector<std::string> strs(3);
         std::stringstream ss(str);
 
-        for (int i = line; i < 3; i++) {
+        for (int i = line; i < 3; i++)
             if (!std::getline(ss, strs[i], '\n')) break;
-        }
 
         for (uint8_t l = 0; l < 3; l++)
             this->currentBuffer[l] = std::move(strs[l]);
+
         return;
     }
 

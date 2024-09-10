@@ -2,3 +2,4 @@
 
 #include "gamepad/event_handler.hpp" // IWYU pragma: export
 #include "gamepad/controller.hpp" // IWYU pragma: export
+#include "gamepad/screens/alertScreen.hpp" // IWYU pragma: export

@@ -18,8 +18,8 @@ class AbstractScreen {
     public:
         AbstractScreen(uint priority): priority(priority) {}
         void update(uint delta_time) {}
-        virtual ScreenBuffer get_screen(std::set<uint8_t> visible_lines) = 0;
-        virtual void handle_events(std::set<pros::controller_digital_e_t> button_events) = 0;
+        ScreenBuffer get_screen(std::set<uint8_t> visible_lines) {return {};}
+        void handle_events(std::set<pros::controller_digital_e_t> button_events) {}
         const uint get_priority() { return this->priority; }
     private:
         const uint priority;

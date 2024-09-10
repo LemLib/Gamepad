@@ -2,8 +2,11 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include "pros/misc.h"
+#include "screens/defaultScreen.hpp"
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
@@ -122,6 +125,19 @@ void Controller::add_screen(std::shared_ptr<AbstractScreen> screen) {
         last = this->screens[pos]->get_priority();
     }
     this->screens.emplace(this->screens.begin() + pos, screen);
+}
+
+void Controller::print_line(uint8_t line, std::string str) {
+    if (std::count(this->screens.begin(), this->screens.end(), this->defaultScreen) == 0) {
+        this->add_screen(this->defaultScreen);
+    }
+    printf("%i elements in screens\n", this->screens.size());
+
+    this->defaultScreen->print_line(line, str);
+}
+
+void Controller::rumble(std::string rumble_pattern) {
+    this->defaultScreen->rumble(rumble_pattern);
 }
 
 

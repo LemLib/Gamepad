@@ -4,14 +4,13 @@
 #include <deque>
 #include <optional>
 #include <string>
-#include <vector>
 #include "abstractScreen.hpp"
 #include "pros/rtos.hpp"
 #include "gamepad/screens/abstractScreen.hpp"
 
 namespace Gamepad {
 
-class AlertScreen : AbstractScreen {
+class AlertScreen : public AbstractScreen {
     public:
         AlertScreen() : AbstractScreen(UINT32_MAX - 100) {}
         void update(uint delta_time);
