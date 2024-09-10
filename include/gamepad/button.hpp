@@ -126,6 +126,15 @@ class Button {
          */
         bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
         /**
+         * @brief
+         *
+         * @param event
+         * @param listenerName
+         * @return true
+         * @return false
+         */
+        bool hasListener(EventType event, std::string listenerName) const;
+        /**
          * @brief Removes a listener from the button
          * @warning Usage of this function is discouraged.
          *
@@ -141,7 +150,7 @@ class Button {
          *   Gamepad::master.L1.removeListener("do_something");
          * @endcode
          */
-        bool removeListener(std::string listenerName) const;
+        bool removeListener(EventType event, std::string listenerName) const;
 
         /**
          * @brief Returns a value indicating whether the button is currently being held.

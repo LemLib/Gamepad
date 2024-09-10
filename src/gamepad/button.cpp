@@ -33,11 +33,32 @@ bool Button::addListener(EventType event, std::string listenerName, std::functio
     }
 }
 
-bool Button::removeListener(std::string listenerName) const {
-    return this->onPressEvent.remove_listener(listenerName + "_user") ||
-           this->onLongPressEvent.remove_listener(listenerName + "_user") ||
-           this->onReleaseEvent.remove_listener(listenerName + "_user") ||
-           this->onShortReleaseEvent.remove_listener(listenerName + "_user");
+bool Button::removeListener(EventType event, std::string listenerName) const {
+    switch (event) {
+        case Gamepad::EventType::ON_PRESS: return this->onPressEvent.remove_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPressEvent.remove_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_RELEASE: return this->onReleaseEvent.remove_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_SHORT_RELEASE:
+            return this->onShortReleaseEvent.remove_listener(listenerName + "_user");
+        default:
+            TODO("add error logging")
+            errno = EINVAL;
+            return false;
+    }
+}
+
+bool Button::hasListener(EventType event, std::string listenerName) const {
+    switch (event) {
+        case Gamepad::EventType::ON_PRESS: return this->onPressEvent.has_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPressEvent.has_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_RELEASE: return this->onReleaseEvent.has_listener(listenerName + "_user");
+        case Gamepad::EventType::ON_SHORT_RELEASE:
+            return this->onShortReleaseEvent.has_listener(listenerName + "_user");
+        default:
+            TODO("add error logging")
+            errno = EINVAL;
+            return false;
+    }
 }
 
 void Button::update(const bool is_held) {
