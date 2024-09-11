@@ -53,6 +53,11 @@ template <typename Key, typename... Args> class EventHandler {
             return false;
         }
 
+        bool has_listener(Key key) {
+            auto i = std::find(keys.begin(), keys.end(), std::move(key));
+            return i != keys.end();
+        }
+
         /**
          * @brief Whther or not there are any listeners registered
          *

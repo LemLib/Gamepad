@@ -34,7 +34,10 @@
  */
 #define PROS_USE_LITERALS
 
+#pragma GCC diagnostic push 
+#pragma GCC diagnostic ignored "-Wunused-parameter" // api.h includes llemu headers which trigger this warning
 #include "api.h"
+#pragma GCC diagnostic pop
 
 /**
  * You should add more #includes here
