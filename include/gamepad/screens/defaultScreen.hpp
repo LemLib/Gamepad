@@ -2,6 +2,7 @@
 
 #include "gamepad/screens/abstractScreen.hpp"
 #include "pros/rtos.hpp"
+#include <optional>
 
 namespace Gamepad {
 
@@ -15,7 +16,7 @@ class DefaultScreen : public AbstractScreen {
         void rumble(std::string rumble_pattern);
 
     private:
-        ScreenBuffer currentBuffer;
+        ScreenBuffer currentBuffer{std::nullopt, std::nullopt, std::nullopt, std::nullopt};
         pros::Mutex mut;
 
 };
