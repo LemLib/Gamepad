@@ -16,7 +16,7 @@ class DefaultScreen : public AbstractScreen {
         void rumble(std::string rumble_pattern);
 
     private:
-        ScreenBuffer currentBuffer{std::nullopt, std::nullopt, std::nullopt, std::nullopt};
+        ScreenBuffer currentBuffer;
         pros::Mutex mut;
 
 };

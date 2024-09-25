@@ -62,7 +62,7 @@ void opcontrol() {
         // Remember to ALWAYS call update at the start of your while loop!
         Gamepad::master.update();
 
-        // Gamepad::master.print_line(0, "hello\n\nhi");
+        Gamepad::master.print_line(0, "hello\n\nhi");
 
         pros::delay(25); // Wait for 25 ms, then update the motor values again
     }
