@@ -3,7 +3,7 @@
 #include "pros/apix.h"
 #include "pros/rtos.h"
 
-namespace Gamepad::_impl {
+namespace gamepad::_impl {
 
 class RecursiveMutex {
     public:
@@ -61,4 +61,4 @@ class RecursiveMutex {
         pros::mutex_t mutex;
 };
 
-} // namespace Gamepad::_impl
+} // namespace gamepad::_impl

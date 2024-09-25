@@ -2,7 +2,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/misc.h"
 
-namespace Gamepad {
+namespace gamepad {
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
     return this->onPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
 }
@@ -21,10 +21,10 @@ bool Button::onShortRelease(std::string listenerName, std::function<void(void)> 
 
 bool Button::addListener(EventType event, std::string listenerName, std::function<void(void)> func) const {
     switch (event) {
-        case Gamepad::EventType::ON_PRESS: return this->onPress(std::move(listenerName), std::move(func));
-        case Gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(listenerName), std::move(func));
-        case Gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(listenerName), std::move(func));
-        case Gamepad::EventType::ON_SHORT_RELEASE:
+        case gamepad::EventType::ON_PRESS: return this->onPress(std::move(listenerName), std::move(func));
+        case gamepad::EventType::ON_LONG_PRESS: return this->onLongPress(std::move(listenerName), std::move(func));
+        case gamepad::EventType::ON_RELEASE: return this->onRelease(std::move(listenerName), std::move(func));
+        case gamepad::EventType::ON_SHORT_RELEASE:
             return this->onShortRelease(std::move(listenerName), std::move(func));
         default:
             TODO("add error logging")

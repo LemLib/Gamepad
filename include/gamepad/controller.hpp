@@ -9,8 +9,8 @@
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 
-namespace Gamepad {
-class Controller {
+namespace gamepad {
+class Gamepad {
     public:
         /**
          * @brief Updates the state of the gamepad (all joysticks and buttons), and also runs
@@ -21,7 +21,7 @@ class Controller {
          * @b Example:
          * @code {.cpp}
          * while (true) {
-         *   Gamepad::master.update();
+         *   gamepad::master.update();
          *   // do robot control stuff here...
          *   pros::delay(25);
          * }
@@ -36,7 +36,7 @@ class Controller {
          *
          * @b Example:
          * @code {.cpp}
-         * if(Gamepad::master[DIGITAL_L1]) {
+         * if(gamepad::master[DIGITAL_L1]) {
          *   // do something here...
          * }
          * @endcode
@@ -51,7 +51,7 @@ class Controller {
          * @b Example:
          * @code {.cpp}
          * // control a motor with a joystick
-         * intake.move(Gamepad::master[ANALOG_RIGHT_Y]);
+         * intake.move(gamepad::master[ANALOG_RIGHT_Y]);
          * @endcode
          *
          */
@@ -72,12 +72,12 @@ class Controller {
         const float& LeftY = m_LeftY;
         const float& RightX = m_RightX;
         const float& RightY = m_RightY;
-        /// The master controller, same as @ref Gamepad::master
-        static Controller master;
-        /// The partner controller, same as @ref Gamepad::partner
-        static Controller partner;
+        /// The master controller, same as @ref gamepad::master
+        static Gamepad master;
+        /// The partner controller, same as @ref gamepad::partner
+        static Gamepad partner;
     private:
-        Controller(pros::controller_id_e_t id)
+        Gamepad(pros::controller_id_e_t id)
             : controller(id) {}
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
@@ -93,16 +93,16 @@ class Controller {
          * @return std::string A unique listener name
          */
         static std::string unique_name();
-        static Button Controller::*button_to_ptr(pros::controller_digital_e_t button);
+        static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
-        pros::Controller controller;
+        pros::Gamepad controller;
 };
 
-inline Controller Controller::master {pros::E_CONTROLLER_MASTER};
-inline Controller Controller::partner {pros::E_CONTROLLER_PARTNER};
+inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};
+inline Gamepad Gamepad::partner {pros::E_CONTROLLER_PARTNER};
 /// The master controller
-inline Controller& master = Controller::master;
+inline Gamepad& master = Gamepad::master;
 /// The partner controller
-inline Controller& partner = Controller::partner;
+inline Gamepad& partner = Gamepad::partner;
 
-} // namespace Gamepad
+} // namespace gamepad

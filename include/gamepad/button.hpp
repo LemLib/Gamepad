@@ -4,7 +4,7 @@
 
 #include "event_handler.hpp"
 
-namespace Gamepad {
+namespace gamepad {
 enum EventType {
     ON_PRESS,
     ON_LONG_PRESS,
@@ -13,7 +13,7 @@ enum EventType {
 };
 
 class Button {
-        friend class Controller;
+        friend class Gamepad;
     public:
         /// Whether the button has just been pressed
         bool rising_edge = false;
@@ -38,9 +38,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Use a function...
-         *   Gamepad::master.Down.onPress("downPress1", downPress1);
+         *   gamepad::master.Down.onPress("downPress1", downPress1);
          *   // ...or a lambda
-         *   Gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
+         *   gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
          * @endcode
          */
         bool onPress(std::string listenerName, std::function<void(void)> func) const;
@@ -61,9 +61,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Use a function...
-         *   Gamepad::master.Left.onLongPress("fireCatapult", fireCatapult);
+         *   gamepad::master.Left.onLongPress("fireCatapult", fireCatapult);
          *   // ...or a lambda
-         *   Gamepad::master.Right.onLongPress("print_right", []() { std::cout << "Right button was long pressed!" <<
+         *   gamepad::master.Right.onLongPress("print_right", []() { std::cout << "Right button was long pressed!" <<
          * std::endl; });
          * @endcode
          */
@@ -79,9 +79,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Use a function...
-         *   Gamepad::master.X.onRelease("stopFlywheel", stopFlywheel);
+         *   gamepad::master.X.onRelease("stopFlywheel", stopFlywheel);
          *   // ...or a lambda
-         *   Gamepad::master.Y.onRelease("stopIntake", []() { intake.move(0); });
+         *   gamepad::master.Y.onRelease("stopIntake", []() { intake.move(0); });
          * @endcode
          */
         bool onRelease(std::string listenerName, std::function<void(void)> func) const;
@@ -101,9 +101,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Use a function...
-         *   Gamepad::master.A.onShortRelease("raiseLiftOneLevel", raiseLiftOneLevel);
+         *   gamepad::master.A.onShortRelease("raiseLiftOneLevel", raiseLiftOneLevel);
          *   // ...or a lambda
-         *   Gamepad::master.B.onShortRelease("intakeOnePicce", []() { intake.move_relative(600, 100); });
+         *   gamepad::master.B.onShortRelease("intakeOnePicce", []() { intake.move_relative(600, 100); });
          * @endcode
          */
         bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
@@ -119,9 +119,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Use a function...
-         *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "start_spin", startSpin);
+         *   gamepad::master.L1.addListener(gamepad::ON_PRESS, "start_spin", startSpin);
          *   // ...or a lambda
-         *   Gamepad::master.L1.addListener(Gamepad::ON_RELEASE, "stop_spin", []() { motor1.brake(); });
+         *   gamepad::master.L1.addListener(gamepad::ON_RELEASE, "stop_spin", []() { motor1.brake(); });
          * @endcode
          */
         bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
@@ -136,9 +136,9 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // Add an event listener...
-         *   Gamepad::master.L1.addListener(Gamepad::ON_PRESS, "do_something", doSomething);
+         *   gamepad::master.L1.addListener(gamepad::ON_PRESS, "do_something", doSomething);
          *   // ...and now get rid of it
-         *   Gamepad::master.L1.removeListener("do_something");
+         *   gamepad::master.L1.removeListener("do_something");
          * @endcode
          */
         bool removeListener(std::string listenerName) const;
