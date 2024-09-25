@@ -18,16 +18,16 @@ void leftShortRelease1() { printf("Left Short Release!\n"); }
 
 void initialize() {
     // We can register functions to run when buttons are pressed
-    Gamepad::master.Down.onPress("downPress1", downPress1);
+    gamepad::master.Down.onPress("downPress1", downPress1);
     // ...or when they're released
-    Gamepad::master.Up.onRelease("downRelease1", upRelease1);
+    gamepad::master.Up.onRelease("downRelease1", upRelease1);
     // There's also the longPress event
-    Gamepad::master.Left.onLongPress("leftLongPress1", leftLongPress1);
+    gamepad::master.Left.onLongPress("leftLongPress1", leftLongPress1);
     // We can have two functions on one button,
     // just remember to give them different names
-    Gamepad::master.Left.onShortRelease("leftShortRelease", leftShortRelease1);
+    gamepad::master.Left.onShortRelease("leftShortRelease", leftShortRelease1);
     // And we can use lambda's too
-    Gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+    gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
 }
 
 /**
@@ -80,10 +80,10 @@ void opcontrol() {
 
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
-        Gamepad::master.update();
+        gamepad::master.update();
         // We'll use the arcade control scheme
-        int dir = Gamepad::master.LeftY; // Gets amount forward/backward from left joystick
-        int turn = Gamepad::master.RightX; // Gets the turn left/right from right joystick
+        int dir = gamepad::master.LeftY; // Gets amount forward/backward from left joystick
+        int turn = gamepad::master.RightX; // Gets the turn left/right from right joystick
         left_mg.move(dir - turn); // Sets left motor voltage
         right_mg.move(dir + turn); // Sets right motor voltage
         pros::delay(25); // Wait for 25 ms, then update the motor values again
