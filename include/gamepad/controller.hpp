@@ -95,7 +95,7 @@ class Gamepad {
         static std::string unique_name();
         static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
-        pros::Gamepad controller;
+        pros::Controller controller;
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};
