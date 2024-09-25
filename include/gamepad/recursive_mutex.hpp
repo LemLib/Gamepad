@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pros/apix.h"
 #include "pros/rtos.h"
 
