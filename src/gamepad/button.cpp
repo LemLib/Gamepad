@@ -1,6 +1,6 @@
 #include "gamepad/button.hpp"
 #include "gamepad/todo.hpp"
-#include "pros/misc.h"
+#include "pros/rtos.hpp"
 
 namespace gamepad {
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
@@ -61,4 +61,4 @@ void Button::update(const bool is_held) {
     if (this->falling_edge) this->time_released = 0;
     this->last_update_time = pros::millis();
 }
-}
+} // namespace gamepad

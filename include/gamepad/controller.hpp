@@ -1,13 +1,10 @@
 #pragma once
 
 #include "pros/misc.h"
-#include <cstdint>
-#include <functional>
 #include <string>
 
 #include "button.hpp"
 #include "pros/misc.hpp"
-#include "pros/rtos.hpp"
 
 namespace gamepad {
 class Gamepad {

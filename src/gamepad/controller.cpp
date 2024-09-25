@@ -22,9 +22,7 @@ void Gamepad::update() {
     this->m_RightY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 }
 
-const Button& Gamepad::operator[](pros::controller_digital_e_t button) {
-    return this->*Gamepad::button_to_ptr(button);
-}
+const Button& Gamepad::operator[](pros::controller_digital_e_t button) { return this->*Gamepad::button_to_ptr(button); }
 
 float Gamepad::operator[](pros::controller_analog_e_t axis) {
     switch (axis) {

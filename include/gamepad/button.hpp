@@ -166,4 +166,4 @@ class Button {
         mutable _impl::EventHandler<std::string> onReleaseEvent {};
         mutable _impl::EventHandler<std::string> onShortReleaseEvent {};
 };
-}
+} // namespace gamepad
