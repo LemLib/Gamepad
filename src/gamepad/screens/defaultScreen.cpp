@@ -34,9 +34,7 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
-    printf("is this the problem\n");
     const std::lock_guard<pros::Mutex> guard(this->mut);
-    printf("or is this the problem\n");
 
     if (str.find('\n') != std::string::npos) {
         TODO("warn instead of throw error if there are too many lines")
@@ -50,7 +48,6 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
         }
 
         for (uint8_t l = 0; l < 3; l++) {
-            printf("iteration %i, str: %s, buffer: %s\n", l, strs[l].c_str(),  currentBuffer[l].value_or("nullopt").c_str());
             if (!strs[l].empty()) this->currentBuffer[l] = (strs[l]);
         }
         return;
