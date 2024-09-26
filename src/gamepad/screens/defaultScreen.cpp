@@ -35,27 +35,22 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
     if (line > 2) std::exit(1);
 
     printf("is this the problem\n");
-    // const std::lock_guard<pros::Mutex> guard(this->mut);
+    const std::lock_guard<pros::Mutex> guard(this->mut);
     printf("or is this the problem\n");
 
     if (str.find('\n') != std::string::npos) {
         TODO("warn instead of throw error if there are too many lines")
-        printf("1\n");
         if (std::ranges::count(str, '\n') > 2) std::exit(1);
 
-        printf("2\n");
         std::vector<std::string> strs(3);
         std::stringstream ss(str);
 
-        printf("3\n");
         for (int i = line; i < 3; i++) {
-            printf("iteration %i\n", i);
             if (!std::getline(ss, strs[i], '\n')) break;
         }
 
-        printf("4\n");
         for (uint8_t l = 0; l < 3; l++) {
-            printf("iteration %i, str: %s, buffer: %s\n", l, strs[l].c_str(), "test"); // currentBuffer[l].value_or("nullopt").c_str());
+            printf("iteration %i, str: %s, buffer: %s\n", l, strs[l].c_str(),  currentBuffer[l].value_or("nullopt").c_str());
             if (!strs[l].empty()) this->currentBuffer[l] = (strs[l]);
         }
         return;
