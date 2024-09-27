@@ -7,7 +7,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 
-namespace Gamepad {
+namespace gamepad {
 
 ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
     std::lock_guard<pros::Mutex> guard(this->mut);

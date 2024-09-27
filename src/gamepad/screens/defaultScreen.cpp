@@ -8,7 +8,7 @@
 #include "gamepad/todo.hpp"
 
 
-namespace Gamepad {
+namespace gamepad {
 
 DefaultScreen::DefaultScreen() : AbstractScreen(1), currentBuffer({}) {
     printf("ran constructor\n");

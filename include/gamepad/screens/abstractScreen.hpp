@@ -6,7 +6,7 @@
 #include <string>
 #include "pros/misc.h"
 
-namespace Gamepad {
+namespace gamepad {
 
 /**
  * @brief type for conveying a full screen with the first 3 being the lines
@@ -25,4 +25,4 @@ class AbstractScreen {
         const uint priority;
 };
 
-} // namespace Gamepad
+} // namespace gamepad

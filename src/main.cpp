@@ -1,7 +1,5 @@
 #include "main.h"
 #include "gamepad/api.hpp"
-#include "gamepad/controller.hpp"
-#include "pros/rtos.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -60,9 +58,9 @@ void autonomous() {}
 void opcontrol() {
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
-        Gamepad::master.update();
+        gamepad::master.update();
 
-        Gamepad::master.print_line(0, "hello\n\nhi");
+        gamepad::master.print_line(0, "hello\n\nhi");
 
         pros::delay(25); // Wait for 25 ms, then update the motor values again
     }

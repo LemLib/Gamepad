@@ -2,9 +2,8 @@
 
 #include "gamepad/screens/abstractScreen.hpp"
 #include "pros/rtos.hpp"
-#include <optional>
 
-namespace Gamepad {
+namespace gamepad {
 
 class DefaultScreen : public AbstractScreen {
     public:

@@ -8,7 +8,7 @@
 #include "pros/rtos.hpp"
 #include "gamepad/screens/abstractScreen.hpp"
 
-namespace Gamepad {
+namespace gamepad {
 
 class AlertScreen : public AbstractScreen {
     public:
