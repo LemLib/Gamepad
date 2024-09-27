@@ -63,5 +63,6 @@ void opcontrol() {
         gamepad::master.print_line(0, "hello\n\nhi");
 
         pros::delay(25); // Wait for 25 ms, then update the motor values again
+        exit(1);
     }
 }
