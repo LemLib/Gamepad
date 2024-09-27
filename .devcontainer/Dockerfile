@@ -1,6 +1,6 @@
 FROM rust:1.67 as builder
 
-RUN git clone https://github.com/vexide/vex-v5-qemu.git /vex-v5-qemu
+RUN git clone https://github.com/ion098/vex-v5-qemu.git -b feat/hot-cold --single-branch /vex-v5-qemu
 
 WORKDIR /vex-v5-qemu
 RUN cd packages/kernel; cargo build --target-dir /target/kernel
