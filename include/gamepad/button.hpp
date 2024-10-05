@@ -29,7 +29,7 @@ class Button {
         uint32_t time_held = 0;
         /// How long the button has been released
         uint32_t time_released = 0;
-        // How many times the button has been repeat-pressed
+        /// How many times the button has been repeat-pressed
         uint32_t repeat_iterations = 0;
         /// How long the threshold should be for the longPress and shortRelease events
         uint32_t long_press_threshold = 500;
