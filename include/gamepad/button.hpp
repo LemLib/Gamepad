@@ -138,8 +138,9 @@ class Button {
         bool onLongRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run periodically after its been held
+         *
          * By default repeatPress will start repeating after 500ms and repeat every 50ms, this can be changed by
-         * adjusting long_press_threshold and repeat_cooldown respectivly
+         * adjusting long_press_threshold and repeat_cooldown respectively
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func the function to run periodically when the button is held, the function MUST NOT block
