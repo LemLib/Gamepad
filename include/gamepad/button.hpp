@@ -33,7 +33,7 @@ class Button {
         uint32_t repeat_iterations = 0;
         /// How long the threshold should be for the longPress and shortRelease events
         uint32_t long_press_threshold = 500;
-        // How often the repeatPress is called
+        /// How often repeatPress is called
         uint32_t repeat_cooldown = 50;
         /**
          * @brief Register a function to run when the button is pressed.
