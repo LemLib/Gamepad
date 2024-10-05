@@ -117,6 +117,7 @@ class Button {
         bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is long released.
+         *
          * By default, longRelease will fire when the button has been released after 500ms, this threshold can be
          * adjusted by changing long_press_threshold.
          *
