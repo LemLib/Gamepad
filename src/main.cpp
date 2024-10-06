@@ -1,5 +1,9 @@
 #include "main.h"
 #include "gamepad/api.hpp"
+#include "gamepad/controller.hpp"
+#include "pros/rtos.hpp"
+#include <cstdint>
+#include <cstdio>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -7,6 +11,8 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+
+uint32_t last_repeat_press_time = pros::millis();
 
 void downPress1() { printf("Down Press!\n"); }
 
@@ -16,6 +22,18 @@ void leftLongPress1() { printf("Left Long Press!\n"); }
 
 void leftShortRelease1() { printf("Left Short Release!\n"); }
 
+void leftLongRelease1() { printf("Left Long Release!\n"); }
+
+void aPress1() {
+    last_repeat_press_time = pros::millis();
+    printf("A Pressed!\n");
+}
+
+void aRepeatPress1() {
+    printf("A Repeat Pressed %ims after last\n", pros::millis() - last_repeat_press_time);
+    last_repeat_press_time = pros::millis();
+}
+
 void initialize() {
     // We can register functions to run when buttons are pressed
     gamepad::master.Down.onPress("downPress1", downPress1);
@@ -23,9 +41,15 @@ void initialize() {
     gamepad::master.Up.onRelease("downRelease1", upRelease1);
     // There's also the longPress event
     gamepad::master.Left.onLongPress("leftLongPress1", leftLongPress1);
-    // We can have two functions on one button,
+    // We can have two or even more functions on one button,
     // just remember to give them different names
     gamepad::master.Left.onShortRelease("leftShortRelease", leftShortRelease1);
+    gamepad::master.Left.onLongRelease("leftLongRelease", leftLongRelease1);
+    // We also have the repeat press event, where we can adjust the timing
+    gamepad::master.A.set_long_press_threshold(1000); // in ms
+    gamepad::master.A.set_repeat_cooldown(100); // in ms
+    gamepad::master.A.onPress("aStartPress", aPress1);
+    gamepad::master.A.onRepeatPress("aRepeatPress", aRepeatPress1);
     // And we can use lambda's too
     gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
 }
