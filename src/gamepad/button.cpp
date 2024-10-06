@@ -67,7 +67,8 @@ void Button::update(const bool is_held) {
         this->last_long_press_time = pros::millis();
         this->last_repeat_time = pros::millis();
         this->repeat_iterations = 0;
-    } else if (this->is_pressed && this->time_held >= this->long_press_threshold && pros::millis() - this->last_repeat_time > this->repeat_cooldown) {
+    } else if (this->is_pressed && this->time_held >= this->long_press_threshold &&
+               pros::millis() - this->last_repeat_time > this->repeat_cooldown) {
         this->repeat_iterations++;
         this->onRepeatPressEvent.fire();
         this->last_repeat_time = pros::millis();
