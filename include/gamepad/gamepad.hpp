@@ -101,8 +101,8 @@ class Gamepad {
     private:
         Gamepad(pros::controller_id_e_t id)
             : controller(id) {
-                screens.push_back(defaultScreen);
-            }
+            screens.push_back(defaultScreen);
+        }
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
@@ -122,7 +122,7 @@ class Gamepad {
 
         void updateScreens();
 
-        std::shared_ptr<DefaultScreen> defaultScreen {};
+        std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
         std::vector<std::shared_ptr<AbstractScreen>> screens {};
         ScreenBuffer currentScreen {};
         ScreenBuffer nextBuffer {};
