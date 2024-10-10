@@ -1,8 +1,13 @@
 #pragma once
 
 #include "pros/misc.h"
+#include "screens/defaultScreen.hpp"
+#include <cstdint>
 #include <string>
-
+#include <memory>
+#include <vector>
+#include <sys/types.h>
+#include "screens/abstractScreen.hpp"
 #include "button.hpp"
 #include "pros/misc.hpp"
 
@@ -26,6 +31,25 @@ class Gamepad {
          *
          */
         void update();
+        /**
+         * Add a screen to the sceen update loop that can update the controller's screen
+         * 
+         * @param screen the `AbstractScreen` to add to the screen queue
+         */
+        void add_screen(std::shared_ptr<AbstractScreen> screen);
+        /**
+         * print a line to the console like pros (low priority)
+         * 
+         * @param line the line number to print the string on (0-2)
+         * @param str the string to print onto the controller (\n to go to the next line)
+         */
+        void print_line(uint8_t line, std::string str);
+        /**
+         * makes the controller rumble like pros (low priority)
+         * 
+         * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles, dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
+         */
+        void rumble(std::string rumble_pattern);
         /**
          * @brief Get the state of a button on the controller.
          *
@@ -92,7 +116,19 @@ class Gamepad {
         static std::string unique_name();
         static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
+        
+        void updateScreens();
+
+        std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
+        std::vector<std::shared_ptr<AbstractScreen>> screens{};
+        ScreenBuffer currentScreen{};
+        ScreenBuffer nextBuffer{};
         pros::Controller controller;
+
+        uint8_t last_printed_line = 0;
+        uint last_print_time = 0;
+        uint last_update_time = 0;
+        pros::Mutex mut{};
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};
