@@ -2,6 +2,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/misc.h"
 #include "pros/rtos.hpp"
+#include <sys/types.h>
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -9,7 +10,6 @@
 #include <cstring>
 #include <mutex>
 #include <atomic>
-#include <sys/types.h>
 
 
 namespace gamepad {

@@ -1,11 +1,11 @@
 #include "gamepad/screens/defaultScreen.hpp"
+#include "gamepad/screens/abstractScreen.hpp"
+#include "gamepad/todo.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <mutex>
 #include <optional>
 #include <sstream>
-#include "abstractScreen.hpp"
-#include "gamepad/todo.hpp"
 
 
 namespace gamepad {

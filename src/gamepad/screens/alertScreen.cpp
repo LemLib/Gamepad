@@ -1,11 +1,11 @@
 #include "gamepad/screens/alertScreen.hpp"
+#include "gamepad/todo.hpp"
+#include "pros/rtos.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <mutex>
 #include <optional>
 #include <sstream>
-#include "gamepad/todo.hpp"
-#include "pros/rtos.hpp"
 
 namespace gamepad {
 
