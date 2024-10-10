@@ -119,16 +119,16 @@ class Gamepad {
         
         void updateScreens();
 
-        std::shared_ptr<DefaultScreen> defaultScreen;
-        std::vector<std::shared_ptr<AbstractScreen>> screens;
-        ScreenBuffer currentScreen;
-        ScreenBuffer nextBuffer;
+        std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
+        std::vector<std::shared_ptr<AbstractScreen>> screens{};
+        ScreenBuffer currentScreen{};
+        ScreenBuffer nextBuffer{};
         pros::Controller controller;
 
         uint8_t last_printed_line = 0;
         uint last_print_time = 0;
         uint last_update_time = 0;
-        pros::Mutex mut;
+        pros::Mutex mut{};
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};
