@@ -5,13 +5,9 @@
 #include <sys/types.h>
 
 namespace gamepad {
-void Button::set_long_press_threshold(uint32_t threshold) const {
-    this->long_press_threshold = threshold;
-}
+void Button::set_long_press_threshold(uint32_t threshold) const { this->long_press_threshold = threshold; }
 
-void Button::set_repeat_cooldown(uint32_t cooldown) const {
-    this->repeat_cooldown = cooldown;
-}
+void Button::set_repeat_cooldown(uint32_t cooldown) const { this->repeat_cooldown = cooldown; }
 
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
     return this->onPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
