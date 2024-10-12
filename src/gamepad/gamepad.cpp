@@ -27,7 +27,7 @@ void Gamepad::updateScreens() {
     last_update_time = pros::millis();
 
     // Check if enough time has passed for the Gamepad to poll for updates
-    if (pros::millis() - this->last_print_time < 50) return;
+    if (pros::millis() - this->last_print_time <= 50) return;
 
     for (int i = 0; i < this->screens.size(); i++) {
         // get all lines that arent being used by a higher priority screen
@@ -45,15 +45,15 @@ void Gamepad::updateScreens() {
     for (int i = 0; i < 4; i++) {
         // start from the line thats after the line thats been set so we dont get stuck setting the first line
         int line = (this->last_printed_line + i) % 4;
-        printf("Line = %i\n", line);
 
-        printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
-               nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
-               nextBuffer.at(3).value_or("nullopt").c_str());
+        // theres nothing on this line so we can skip it
+        if (!this->nextBuffer[line].has_value()) continue;
 
-        printf("currentScreen = {%s, %s, %s, %s}\n", currentScreen.at(0).value_or("nullopt").c_str(),
-               currentScreen.at(1).value_or("nullopt").c_str(), currentScreen.at(2).value_or("nullopt").c_str(),
-               currentScreen.at(3).value_or("nullopt").c_str());
+        if (!this->screenCleared) {
+            this->controller.clear();
+            this->last_print_time = pros::millis();
+            return;
+        }
 
         // text on screen is the same as last frame's text so no use updating
         if (this->currentScreen[line] == this->nextBuffer[line] && line != 3) {
@@ -68,10 +68,8 @@ void Gamepad::updateScreens() {
         this->nextBuffer[line] = std::nullopt;
         this->last_printed_line = line;
         this->last_print_time = pros::millis();
+        return;
     }
-
-    // just to make the cycle more regular
-    this->last_printed_line = 0;
 }
 
 void Gamepad::update() {

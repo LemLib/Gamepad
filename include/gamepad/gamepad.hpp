@@ -142,6 +142,7 @@ class Gamepad {
         uint8_t last_printed_line = 0;
         uint last_print_time = 0;
         uint last_update_time = 0;
+        bool screenCleared = true;
         pros::Mutex mut {};
 };
 

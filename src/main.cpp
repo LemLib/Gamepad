@@ -1,8 +1,12 @@
 #include "main.h"
 #include "gamepad/api.hpp"
 #include "gamepad/gamepad.hpp"
-#include "pros/misc.h"
-#include "pros/misc.hpp"
+#include "gamepad/screens/alertScreen.hpp"
+#include "pros/rtos.hpp"
+#include <memory>
+#include <string>
+
+std::shared_ptr<gamepad::AlertScreen> alerts{};
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -11,7 +15,13 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+    gamepad::master.add_screen(alerts);
+    gamepad::master.A.onPress("alert", []() { alerts->add_alerts(0, "a very\nimportant\nalert", 3000, "-.-"); });
+    gamepad::master.B.onPress(
+        "print02", []() { gamepad::master.print_line(0, "the time is\n\n" + std::to_string(pros::millis()) + " ms"); });
     gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });
+    gamepad::master.Y.onPress("print1", []() { gamepad::master.print_line(1, "this should be cleared"); });
+    gamepad::master.Y.onRelease("clear1", []() { gamepad::master.clear(1); });
 }
 
 /**
@@ -62,8 +72,6 @@ void opcontrol() {
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
-
-        gamepad::master.print_line(0, "hello\n\nhi");
 
         pros::delay(25); // Wait for 25 ms, then update the motor values again
     }
