@@ -4,6 +4,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <sys/types.h>
 #include "pros/misc.h"
 
 namespace gamepad {
@@ -16,8 +17,7 @@ typedef std::array<std::optional<std::string>, 4> ScreenBuffer;
 
 class AbstractScreen {
     public:
-        AbstractScreen(uint priority)
-            : priority(priority) {}
+        AbstractScreen(uint priority) : priority(priority) {}
 
         virtual void update(uint delta_time) {}
 
@@ -25,8 +25,8 @@ class AbstractScreen {
 
         virtual void handle_events(std::set<pros::controller_digital_e_t> button_events) {}
 
-        const uint get_priority() { return this->priority; }
-    private:
+        uint get_priority() { return this->priority; }
+    protected:
         const uint priority;
 };
 

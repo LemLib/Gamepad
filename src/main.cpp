@@ -3,6 +3,7 @@
 #include "gamepad/gamepad.hpp"
 #include "gamepad/screens/alertScreen.hpp"
 #include "pros/rtos.hpp"
+#include <cstdio>
 #include <memory>
 #include <string>
 
@@ -15,8 +16,9 @@ std::shared_ptr<gamepad::AlertScreen> alerts{};
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    gamepad::master.add_screen(alerts);
-    gamepad::master.A.onPress("alert", []() { alerts->add_alerts(0, "a very\nimportant\nalert", 3000, "-.-"); });
+    printf("alert priority: %i\n", alerts->get_priority());
+    // gamepad::master.add_screen(alerts);
+    // gamepad::master.A.onPress("alert", []() { alerts->add_alerts(0, "a very\nimportant\nalert", 3000, "-.-"); });
     gamepad::master.B.onPress(
         "print02", []() { gamepad::master.print_line(0, "the time is\n\n" + std::to_string(pros::millis()) + " ms"); });
     gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });

@@ -18,8 +18,6 @@ class AlertScreen : public AbstractScreen {
         void update(uint delta_time);
         ScreenBuffer get_screen(std::set<uint8_t> visible_lines);
 
-        void handle_events(std::set<pros::controller_digital_e_t> button_events) {}
-
         void add_alerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
     private:
         struct AlertBuffer {

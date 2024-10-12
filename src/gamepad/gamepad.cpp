@@ -49,8 +49,9 @@ void Gamepad::updateScreens() {
         // theres nothing on this line so we can skip it
         if (!this->nextBuffer[line].has_value()) continue;
 
-        if (!this->screenCleared) {
+        if (!this->screenCleared && line != 3) {
             this->controller.clear();
+            screenCleared = true;
             this->last_print_time = pros::millis();
             return;
         }

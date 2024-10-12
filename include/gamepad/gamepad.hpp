@@ -112,7 +112,7 @@ class Gamepad {
     private:
         Gamepad(pros::controller_id_e_t id)
             : controller(id) {
-            screens.push_back(defaultScreen);
+            this->add_screen(defaultScreen);
         }
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
@@ -142,7 +142,7 @@ class Gamepad {
         uint8_t last_printed_line = 0;
         uint last_print_time = 0;
         uint last_update_time = 0;
-        bool screenCleared = true;
+        bool screenCleared = false;
         pros::Mutex mut {};
 };
 

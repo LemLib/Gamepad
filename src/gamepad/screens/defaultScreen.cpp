@@ -9,10 +9,6 @@
 
 namespace gamepad {
 
-DefaultScreen::DefaultScreen()
-    : AbstractScreen(1),
-      currentBuffer({}) {}
-
 ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
     const std::lock_guard<pros::Mutex> guard(this->mut);
