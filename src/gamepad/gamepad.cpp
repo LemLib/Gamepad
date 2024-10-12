@@ -11,40 +11,39 @@
 #include <mutex>
 #include <atomic>
 
-
 namespace gamepad {
 void Gamepad::updateButton(pros::controller_digital_e_t button_id) {
-    Button Gamepad::*button = Gamepad::button_to_ptr(button_id);
+    Button Gamepad::* button = Gamepad::button_to_ptr(button_id);
     bool is_held = this->controller.get_digital(button_id);
     (this->*button).update(is_held);
 }
-
 
 void Gamepad::updateScreens() {
     // Lock Mutexes for Thread Safety
     std::lock_guard<pros::Mutex> guard_scheduling(this->mut);
 
     // Update all screens and note deltatime
-    for (int i = 0; i < this->screens.size(); i++)
-        this->screens[i]->update(pros::millis() - this->last_update_time);
+    for (int i = 0; i < this->screens.size(); i++) this->screens[i]->update(pros::millis() - this->last_update_time);
     last_update_time = pros::millis();
 
     // Check if enough time has passed for the Gamepad to poll for updates
-    if (pros::millis() - this->last_print_time < 50)
-        return;
+    if (pros::millis() - this->last_print_time < 50) return;
 
     for (int i = 0; i < this->screens.size(); i++) {
         // get all lines that arent being used by a higher priority screen
         std::set<uint8_t> visible_lines;
         for (uint8_t j = 0; j < 4; j++)
-            if (!this->nextBuffer[j].has_value())
-                visible_lines.emplace(j);
-        
+            if (!this->nextBuffer[j].has_value()) visible_lines.emplace(j);
+
         // get the buffer of the next lower priority screen and set it to be printed
         ScreenBuffer buffer = this->screens[i]->get_screen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
-            if (buffer[j].has_value() && !nextBuffer[j].has_value())
-                nextBuffer[j] = std::move(buffer[j]);
+            if (buffer[j].has_value() && !nextBuffer[j].has_value()) nextBuffer[j] = std::move(buffer[j]);
+
+        printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
+           nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
+           nextBuffer.at(3).value_or("nullopt").c_str());
+
     }
 
     for (int i = 1; i <= 4; i++) {
@@ -81,28 +80,20 @@ void Gamepad::update() {
 }
 
 void Gamepad::add_screen(std::shared_ptr<AbstractScreen> screen) {
-    uint last = UINT32_MAX; uint pos = 0;
+    uint last = UINT32_MAX;
+    uint pos = 0;
     for (pos = 0; pos < this->screens.size(); pos++) {
-        if (this->screens[pos]->get_priority() < screen->get_priority() && last >= screen->get_priority())
-            break;
+        if (this->screens[pos]->get_priority() < screen->get_priority() && last >= screen->get_priority()) break;
         last = this->screens[pos]->get_priority();
     }
     this->screens.emplace(this->screens.begin() + pos, screen);
 }
 
-void Gamepad::print_line(uint8_t line, std::string str) {
-    printf("wrapping print_line(line:%i, string:%s)\n", line, str.c_str());
+void Gamepad::print_line(uint8_t line, std::string str) { this->defaultScreen->print_line(line, str); }
 
-    this->defaultScreen->print_line(line, str);
-}
+void Gamepad::rumble(std::string rumble_pattern) { this->defaultScreen->rumble(rumble_pattern); }
 
-void Gamepad::rumble(std::string rumble_pattern) {
-    this->defaultScreen->rumble(rumble_pattern);
-}
-
-const Button& Gamepad::operator[](pros::controller_digital_e_t button) {
-    return this->*Gamepad::button_to_ptr(button);
-}
+const Button& Gamepad::operator[](pros::controller_digital_e_t button) { return this->*Gamepad::button_to_ptr(button); }
 
 float Gamepad::operator[](pros::controller_analog_e_t axis) {
     switch (axis) {
@@ -122,7 +113,7 @@ std::string Gamepad::unique_name() {
     return std::to_string(i++) + "_internal";
 }
 
-Button Gamepad::*Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
+Button Gamepad::* Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
         case pros::E_CONTROLLER_DIGITAL_L2: return &Gamepad::m_L2;

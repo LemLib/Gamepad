@@ -7,21 +7,20 @@
 #include <optional>
 #include <sstream>
 
-
 namespace gamepad {
 
-DefaultScreen::DefaultScreen() : AbstractScreen(1), currentBuffer({}) {
-    printf("ran constructor\n");
-}
+DefaultScreen::DefaultScreen()
+    : AbstractScreen(1),
+      currentBuffer({}) {}
 
 ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
-    printf("{%s, %s, %s, %s}\n", 
-                currentBuffer.at(0).value_or("nullopt").c_str(), 
-                currentBuffer.at(1).value_or("nullopt").c_str(), 
-                currentBuffer.at(2).value_or("nullopt").c_str(),
-                currentBuffer.at(3).value_or("nullopt").c_str());
-    // const std::lock_guard<pros::Mutex> guard(this->mut);
+    
+    printf("currentBuffer = {%s, %s, %s, %s}\n", currentBuffer.at(0).value_or("nullopt").c_str(),
+           currentBuffer.at(1).value_or("nullopt").c_str(), currentBuffer.at(2).value_or("nullopt").c_str(),
+           currentBuffer.at(3).value_or("nullopt").c_str());
+
+    const std::lock_guard<pros::Mutex> guard(this->mut);
     for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
         output[*i] = std::move(this->currentBuffer[*i].value_or(""));
         this->currentBuffer[*i] = std::nullopt;
@@ -30,7 +29,6 @@ ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
 }
 
 void DefaultScreen::print_line(uint8_t line, std::string str) {
-    printf("print_line(line: %i, string: %s)\n", line, str.c_str());
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
@@ -53,7 +51,6 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
         return;
     }
 
-    printf("5\n");
     this->currentBuffer[line] = std::move(str);
 }
 
@@ -65,4 +62,4 @@ void DefaultScreen::rumble(std::string rumble_pattern) {
     this->currentBuffer[3] = std::move(rumble_pattern);
 }
 
-}
+} // namespace gamepad

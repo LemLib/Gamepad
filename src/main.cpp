@@ -1,5 +1,8 @@
 #include "main.h"
 #include "gamepad/api.hpp"
+#include "gamepad/gamepad.hpp"
+#include "pros/misc.h"
+#include "pros/misc.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -8,7 +11,7 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    // Gamepad::master.X.onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+    gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });
 }
 
 /**
@@ -56,6 +59,7 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+    pros::Controller controller(pros::E_CONTROLLER_MASTER);
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
@@ -63,6 +67,5 @@ void opcontrol() {
         gamepad::master.print_line(0, "hello\n\nhi");
 
         pros::delay(25); // Wait for 25 ms, then update the motor values again
-        exit(1);
     }
 }
