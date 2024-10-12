@@ -59,7 +59,6 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    pros::Controller controller(pros::E_CONTROLLER_MASTER);
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();

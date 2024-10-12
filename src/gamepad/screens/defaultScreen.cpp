@@ -15,14 +15,10 @@ DefaultScreen::DefaultScreen()
 
 ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
-    
-    printf("currentBuffer = {%s, %s, %s, %s}\n", currentBuffer.at(0).value_or("nullopt").c_str(),
-           currentBuffer.at(1).value_or("nullopt").c_str(), currentBuffer.at(2).value_or("nullopt").c_str(),
-           currentBuffer.at(3).value_or("nullopt").c_str());
-
     const std::lock_guard<pros::Mutex> guard(this->mut);
+
     for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
-        output[*i] = std::move(this->currentBuffer[*i].value_or(""));
+        output[*i] = std::move(this->currentBuffer[*i]);
         this->currentBuffer[*i] = std::nullopt;
     }
     return output;

@@ -38,17 +38,22 @@ void Gamepad::updateScreens() {
         // get the buffer of the next lower priority screen and set it to be printed
         ScreenBuffer buffer = this->screens[i]->get_screen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
-            if (buffer[j].has_value() && !nextBuffer[j].has_value()) nextBuffer[j] = std::move(buffer[j]);
-
-        printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
-           nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
-           nextBuffer.at(3).value_or("nullopt").c_str());
-
+            if (buffer[j].has_value() && !buffer[j]->empty() && !nextBuffer[j].has_value())
+                nextBuffer[j] = std::move(buffer[j]);
     }
 
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 0; i < 4; i++) {
         // start from the line thats after the line thats been set so we dont get stuck setting the first line
         int line = (this->last_printed_line + i) % 4;
+        printf("Line = %i\n", line);
+
+        printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
+               nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
+               nextBuffer.at(3).value_or("nullopt").c_str());
+
+        printf("currentScreen = {%s, %s, %s, %s}\n", currentScreen.at(0).value_or("nullopt").c_str(),
+               currentScreen.at(1).value_or("nullopt").c_str(), currentScreen.at(2).value_or("nullopt").c_str(),
+               currentScreen.at(3).value_or("nullopt").c_str());
 
         // text on screen is the same as last frame's text so no use updating
         if (this->currentScreen[line] == this->nextBuffer[line] && line != 3) {
@@ -64,6 +69,9 @@ void Gamepad::updateScreens() {
         this->last_printed_line = line;
         this->last_print_time = pros::millis();
     }
+
+    // just to make the cycle more regular
+    this->last_printed_line = 0;
 }
 
 void Gamepad::update() {
@@ -90,6 +98,10 @@ void Gamepad::add_screen(std::shared_ptr<AbstractScreen> screen) {
 }
 
 void Gamepad::print_line(uint8_t line, std::string str) { this->defaultScreen->print_line(line, str); }
+
+void Gamepad::clear() { this->defaultScreen->print_line(0, " \n \n "); }
+
+void Gamepad::clear(uint8_t line) { this->defaultScreen->print_line(line, " "); }
 
 void Gamepad::rumble(std::string rumble_pattern) { this->defaultScreen->rumble(rumble_pattern); }
 
