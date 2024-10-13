@@ -13,7 +13,7 @@ ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
     std::lock_guard<pros::Mutex> guard(this->mut);
     if (this->screen_contents.has_value()) return this->screen_contents->screen;
     if (this->screen_buffer.size() < 1) return ScreenBuffer();
-    
+
     for (uint8_t i = 0; i < 4; i++) {
         if (!this->screen_buffer[0].screen[i].has_value()) continue;
         if (this->screen_buffer[0].screen[i].has_value() && !visible_lines.contains(i)) return ScreenBuffer();
@@ -22,13 +22,11 @@ ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
     this->screen_buffer.pop_front();
     this->line_set_time = pros::millis();
     return this->screen_contents->screen;
-
 }
 
 void AlertScreen::update(uint delta_time) {
     std::lock_guard<pros::Mutex> guard(this->mut);
-    if (pros::millis() - this->line_set_time >= this->screen_contents->duration)
-        this->screen_contents = std::nullopt;
+    if (pros::millis() - this->line_set_time >= this->screen_contents->duration) this->screen_contents = std::nullopt;
 }
 
 void AlertScreen::add_alerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
@@ -46,8 +44,7 @@ void AlertScreen::add_alerts(uint8_t line, std::string str, uint32_t duration, s
         if (!std::getline(ss, strs[i], '\n')) break;
     }
 
-
-    ScreenBuffer buffer; 
+    ScreenBuffer buffer;
 
     if (strs[0] != "") buffer[0] = std::move(strs[0]);
     if (strs[1] != "") buffer[1] = std::move(strs[1]);
@@ -58,4 +55,4 @@ void AlertScreen::add_alerts(uint8_t line, std::string str, uint32_t duration, s
     this->screen_buffer.push_back({buffer, duration});
 }
 
-}
+} // namespace gamepad

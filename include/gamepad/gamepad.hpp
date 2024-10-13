@@ -46,12 +46,12 @@ class Gamepad {
         void print_line(uint8_t line, std::string str);
         /**
          * @brief clears all lines on the controller, similar to the pros function (low priority)
-         * 
+         *
          */
         void clear();
         /**
          * @brief clears the specific line on the controller, similar to the pros function clear_line (low priority)
-         * 
+         *
          * @param line the line to clear (0-2)
          */
         void clear(uint8_t line);

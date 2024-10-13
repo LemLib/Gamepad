@@ -17,7 +17,8 @@ typedef std::array<std::optional<std::string>, 4> ScreenBuffer;
 
 class AbstractScreen {
     public:
-        AbstractScreen(uint priority) : priority(priority) {}
+        AbstractScreen(uint priority)
+            : priority(priority) {}
 
         virtual void update(uint delta_time) {}
 
