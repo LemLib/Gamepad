@@ -16,7 +16,6 @@ std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertSc
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    printf("alert priority: %u\n", alerts->get_priority());
     gamepad::master.add_screen(alerts);
     gamepad::master.A.onPress(
         "alert", []() { alerts->add_alerts(0, "a very\nimportant alert\nat " + std::to_string(pros::millis()) + " ms", 3000, "-.-"); });
