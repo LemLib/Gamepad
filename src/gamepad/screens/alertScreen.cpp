@@ -11,7 +11,10 @@ namespace gamepad {
 
 ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
     std::lock_guard<pros::Mutex> guard(this->mut);
-    if (this->screen_contents.has_value()) return this->screen_contents->screen;
+    if (this->screen_contents.has_value()) {
+        this->screen_contents->screen.at(3) = std::nullopt;
+        return this->screen_contents->screen;
+    }
     if (this->screen_buffer.size() < 1) return ScreenBuffer();
 
     for (uint8_t i = 0; i < 4; i++) {

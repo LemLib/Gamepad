@@ -62,6 +62,16 @@ void Gamepad::updateScreens() {
             continue;
         }
 
+        printf("Line = %i\n", line);
+
+        printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
+               nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
+               nextBuffer.at(3).value_or("nullopt").c_str());
+
+        // printf("currentScreen = {%s, %s, %s, %s}\n", currentScreen.at(0).value_or("nullopt").c_str(),
+        //        currentScreen.at(1).value_or("nullopt").c_str(), currentScreen.at(2).value_or("nullopt").c_str(),
+        //        currentScreen.at(3).value_or("nullopt").c_str());
+
         // print to screen or rumble
         if (line == 3) this->controller.rumble(this->nextBuffer[line].value_or("").c_str());
         else this->controller.set_text(line, 0, this->nextBuffer[line].value_or("") + std::string(40, ' '));
