@@ -22,9 +22,35 @@ void Gamepad::updateScreens() {
     // Lock Mutexes for Thread Safety
     std::lock_guard<pros::Mutex> guard_scheduling(this->mut);
 
+    // Disable screen updates if the controller is disconnected
+    if (!this->controller.is_connected()) {
+        if (this->screenCleared) {
+            // printf("disconnected\n");
+
+            this->nextBuffer = std::move(this->currentScreen);
+            this->currentScreen = {};
+            this->screenCleared = false;
+        }
+        return;
+    }
+
+    // Clear current screen and reset last update time on reconnect
+    if (this->controller.is_connected() && !screenCleared) {
+        // printf("reconnected\n");
+
+        this->currentScreen = {};
+        this->last_update_time = pros::millis();
+
+        // printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
+        //        nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
+        //        nextBuffer.at(3).value_or("nullopt").c_str());
+    }
+
     // Update all screens and note deltatime
-    for (int i = 0; i < this->screens.size(); i++) this->screens[i]->update(pros::millis() - this->last_update_time);
-    last_update_time = pros::millis();
+    for (int i = 0; i < this->screens.size(); i++) {
+        this->screens[i]->update(pros::millis() - this->last_update_time);
+    }
+    this->last_update_time = pros::millis();
 
     // Check if enough time has passed for the Gamepad to poll for updates
     if (pros::millis() - this->last_print_time <= 50) return;
@@ -50,8 +76,10 @@ void Gamepad::updateScreens() {
         if (!this->nextBuffer[line].has_value()) continue;
 
         if (!this->screenCleared && line != 3) {
+            // printf("clearing screen for init\n");
             this->controller.clear();
-            screenCleared = true;
+            this->screenCleared = true;
+            this->currentScreen = {};
             this->last_print_time = pros::millis();
             return;
         }
@@ -62,10 +90,20 @@ void Gamepad::updateScreens() {
             continue;
         }
 
+        // printf("\nLine = %i\n", line);
+
+        // printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
+        //        nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
+        //        nextBuffer.at(3).value_or("nullopt").c_str());
+
+        // printf("currentScreen = {%s, %s, %s, %s}\n", currentScreen.at(0).value_or("nullopt").c_str(),
+        //        currentScreen.at(1).value_or("nullopt").c_str(), currentScreen.at(2).value_or("nullopt").c_str(),
+        //        currentScreen.at(3).value_or("nullopt").c_str());
+
         // print to screen or rumble
         if (line == 3) this->controller.rumble(this->nextBuffer[line].value_or("").c_str());
         else this->controller.set_text(line, 0, this->nextBuffer[line].value_or("") + std::string(40, ' '));
-        this->currentScreen[line] = std::move(this->nextBuffer[line]);
+        if (line != 3) this->currentScreen[line] = std::move(this->nextBuffer[line]);
         this->nextBuffer[line] = std::nullopt;
         this->last_printed_line = line;
         this->last_print_time = pros::millis();
