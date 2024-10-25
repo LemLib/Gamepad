@@ -2,7 +2,7 @@
 
 #include "pros/misc.h"
 #include <string>
-
+#include <memory>
 #include "button.hpp"
 #include "pros/misc.hpp"
 
@@ -53,6 +53,8 @@ class Gamepad {
          *
          */
         float operator[](pros::controller_analog_e_t joystick);
+        void setCurve(pros::controller_analog_e_t joystick, std::shared_ptr<DriveCurve> curve);
+        void setCurve(pros::controller_analog_e_t joystick, DriveCurve& curve);
         const Button& L1 {m_L1};
         const Button& L2 {m_L2};
         const Button& R1 {m_R1};
@@ -80,6 +82,10 @@ class Gamepad {
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
+        std::shared_ptr<DriveCurve> CurveLeftX {nullptr};
+        std::shared_ptr<DriveCurve> CurveLeftY {nullptr};
+        std::shared_ptr<DriveCurve> CurveRightX {nullptr};
+        std::shared_ptr<DriveCurve> CurveRightY {nullptr};
         Button Fake {};
         /**
          * @brief Gets a unique name for a listener that will not conflict with user listener names.

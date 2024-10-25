@@ -17,9 +17,13 @@ void Gamepad::update() {
     }
 
     this->m_LeftX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    if (this->CurveLeftX) this->LeftX = this->CurveLeftX->curve(this->LeftX);
     this->m_LeftY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    if (this->CurveLeftY) this->LeftY = this->CurveLeftY->curve(this->LeftY);
     this->m_RightX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    if (this->CurveRightX) this->RightX = this->CurveRightX->curve(this->RightX);
     this->m_RightY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+    if (this->CurveRightY) this->RightY = this->CurveRightY->curve(this->RightY);
 }
 
 const Button& Gamepad::operator[](pros::controller_digital_e_t button) { return this->*Gamepad::button_to_ptr(button); }
@@ -40,6 +44,22 @@ float Gamepad::operator[](pros::controller_analog_e_t axis) {
 std::string Gamepad::unique_name() {
     static std::atomic<uint32_t> i = 0;
     return std::to_string(i++) + "_internal";
+}
+
+void Gamepad::setCurve(pros::controller_analog_e_t axis, std::shared_ptr<DriveCurve> curve) {
+    switch (axis) {
+        case ANALOG_LEFT_X: this->CurveLeftX = curve;
+        case ANALOG_LEFT_Y: this->CurveLeftY = curve;
+        case ANALOG_RIGHT_X: this->CurveRightX = curve;
+        case ANALOG_RIGHT_Y: this->CurveRightY = curve;
+        default:
+            TODO("add error logging")
+            errno = EINVAL;
+    }
+}
+
+void Gamepad::setCurve(pros::controller_analog_e_t joystick, DriveCurve& curve) {
+    this->setCurve(joystick, std::shared_ptr<DriveCurve>(&curve, [](void*) {}));
 }
 
 Button Gamepad::*Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
