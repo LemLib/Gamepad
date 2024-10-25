@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <functional>
 #include <string>
 
 #include "event_handler.hpp"
@@ -10,6 +12,8 @@ enum EventType {
     ON_LONG_PRESS,
     ON_RELEASE,
     ON_SHORT_RELEASE,
+    ON_LONG_RELEASE,
+    ON_REPEAT_PRESS,
 };
 
 class Button {
@@ -25,8 +29,45 @@ class Button {
         uint32_t time_held = 0;
         /// How long the button has been released
         uint32_t time_released = 0;
-        /// How long the threshold should be for the longPress and shortRelease events
-        uint32_t long_press_threshold = 500;
+        /// How many times the button has been repeat-pressed
+        uint32_t repeat_iterations = 0;
+        /**
+         * @brief Set the time for a press to be considered a long press for the button
+         *
+         * @note this is likely to be used with the onLongPress(), onShortRelease(), onLongRelease(), or onRepeatPress()
+         * events
+         *
+         * @param threshold the time in ms that would be considered a long press
+         *
+         * @b Example:
+         * @code {.cpp}
+         *   // change the threshold
+         *   gamepad::master.Left.set_long_press_threshold(5000);
+         *   // then call the function
+         *   gamepad::master.Left.onLongPress("longPress1", []() {
+         *       std::cout << "I was held for 5000ms instead of the 500ms default!" << std::endl;
+         *   });
+         * @endcode
+         */
+        void set_long_press_threshold(uint32_t threshold) const;
+        /**
+         * @brief Set the interval for the repeatPress event to repeat
+         *
+         * @note this is likely to be used with the onRepeatPress() event
+         *
+         * @param cooldown the interval in ms
+         *
+         * @b Example:
+         * @code {.cpp}
+         *   // change the threshold
+         *   gamepad::master.Up.set_repeat_cooldown(100);
+         *   // then call the function
+         *   gamepad::master.Up.onRepeatPress("repeatPress1", []() {
+         *       std::cout << "I'm being repeated every 100ms instead of the 50ms default!" << std::endl;
+         *   });
+         * @endcode
+         */
+        void set_repeat_cooldown(uint32_t cooldown) const;
         /**
          * @brief Register a function to run when the button is pressed.
          *
@@ -48,7 +89,7 @@ class Button {
          * @brief Register a function to run when the button is long pressed.
          *
          * By default, onLongPress will fire when the button has been held down for
-         * 500ms or more, this threshold can be adjusted by changing long_press_threshold.
+         * 500ms or more, this threshold can be adjusted via the set_long_press_threshold() method.
          *
          * @warning When using this event along with onPress, both the onPress
          * and onlongPress listeners may fire together.
@@ -89,7 +130,7 @@ class Button {
          * @brief Register a function to run when the button is short released.
          *
          * By default, shortRelease will fire when the button has been released before 500ms, this threshold can be
-         * adjusted by changing long_press_threshold.
+         * adjusted via the set_long_press_threshold() method.
          *
          * @note This event will most likely be used along with the longPress event.
          *
@@ -103,10 +144,52 @@ class Button {
          *   // Use a function...
          *   gamepad::master.A.onShortRelease("raiseLiftOneLevel", raiseLiftOneLevel);
          *   // ...or a lambda
-         *   gamepad::master.B.onShortRelease("intakeOnePicce", []() { intake.move_relative(600, 100); });
+         *   gamepad::master.B.onShortRelease("intakeOnePiece", []() { intake.move_relative(600, 100); });
          * @endcode
          */
         bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
+        /**
+         * @brief Register a function to run when the button is long released.
+         *
+         * By default, longRelease will fire when the button has been released after 500ms, this threshold can be
+         * adjusted via the set_long_press_threshold() method.
+         *
+         * @param listenerName The name of the listener, this must be a unique name
+         * @param func The function to run when the button is long released, the function MUST NOT block
+         * @return true The listener was successfully registered
+         * @return false The listener was not successfully registered (there is already a listener with this name)
+         *
+         * @b Example:
+         * @code {.cpp}
+         *   // Use a function...
+         *   gamepad::master.Up.onLongRelease("moveLiftToGround", moveLiftToGround);
+         *   // ...or a lambda
+         *   gamepad::master.Left.onLongRelease("spinIntake", []() { intake.move(127); });
+         * @endcode
+         *
+         */
+        bool onLongRelease(std::string listenerName, std::function<void(void)> func) const;
+        /**
+         * @brief Register a function to run periodically after its been held
+         *
+         * By default repeatPress will start repeating after 500ms and repeat every 50ms, this can be adjusted via the
+         * set_long_press_threshold() and set_repeat_cooldown() methods respectively
+         *
+         * @param listenerName The name of the listener, this must be a unique name
+         * @param func the function to run periodically when the button is held, the function MUST NOT block
+         * @return true The listener was successfully registered
+         * @return false The listener was not successfully registered (there is already a listener with this name)
+         *
+         * @b Example:
+         * @code {.cpp}
+         *   // Use a function...
+         *   gamepad::master.X.onRepeatPress("shootDisk", shootOneDisk);
+         *   // ...or a lambda
+         *   gamepad::master.A.onRepeatPress("scoreOneRing", []() { intake.move_relative(200, 100); });
+         * @endcode
+         *
+         */
+        bool onRepeatPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run for a given event.
          *
@@ -157,13 +240,21 @@ class Button {
          * @param is_held Whether or not the button is currently held down
          */
         void update(bool is_held);
-        /// he last time the update function was called
+        /// How long the threshold should be for the longPress and shortRelease events
+        mutable uint32_t long_press_threshold = 500;
+        /// How often repeatPress is called
+        mutable uint32_t repeat_cooldown = 50;
+        /// The last time the update function was called
         uint32_t last_update_time = pros::millis();
         /// The last time the long press event was fired
         uint32_t last_long_press_time = 0;
+        /// The last time the repeat event was called
+        uint32_t last_repeat_time = 0;
         mutable _impl::EventHandler<std::string> onPressEvent {};
         mutable _impl::EventHandler<std::string> onLongPressEvent {};
         mutable _impl::EventHandler<std::string> onReleaseEvent {};
         mutable _impl::EventHandler<std::string> onShortReleaseEvent {};
+        mutable _impl::EventHandler<std::string> onLongReleaseEvent {};
+        mutable _impl::EventHandler<std::string> onRepeatPressEvent {};
 };
 } // namespace gamepad
