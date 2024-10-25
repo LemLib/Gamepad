@@ -7,7 +7,7 @@
 
 #include "gamepad/recursive_mutex.hpp"
 
-namespace Gamepad::_impl {
+namespace gamepad::_impl {
 
 /**
  * @brief Event handling class with thread safety that supports adding, removing, and running listeners
@@ -76,6 +76,6 @@ template <typename Key, typename... Args> class EventHandler {
     private:
         std::vector<Key> keys {};
         std::vector<Listener> listeners {};
-        Gamepad::_impl::RecursiveMutex mutex {};
+        gamepad::_impl::RecursiveMutex mutex {};
 };
-} // namespace Gamepad::_impl
+} // namespace gamepad::_impl
