@@ -12,7 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v4
-      - uses: LemLib/pros-build@v2.0.2
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Build Template
+        id: build_step
+        uses: LemLib/pros-build@v2.0.2
         with:
-          library-path: gamepad
+          lib_folder_name: "gamepad"
+          copy_readme_and_license_to_include: true
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build_step.outputs.name }}
+          path: ${{ github.workspace }}/template/*
