@@ -1,14 +1,11 @@
-name: Build Template
+name: Build Release
 
 on:
-  push:
-    branches: "**"
-  pull_request:
-    branches: "**"
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
     
     steps:
@@ -20,8 +17,8 @@ jobs:
         with:
           lib_folder_name: "gamepad"
           copy_readme_and_license_to_include: true
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+          no_commit_hash: true
+      - name: Upload Template To Release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: ${{ steps.build_step.outputs.name }}
-          path: ${{ github.workspace }}/template/*
+          file: ${{ github.workspace }}/${{ steps.build_step.outputs.name }}
