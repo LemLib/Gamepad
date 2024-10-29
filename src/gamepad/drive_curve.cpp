@@ -1,7 +1,7 @@
 #include "gamepad/drive_curve.hpp"
 #include <cmath>
 
-namespace Gamepad {
+namespace gamepad {
 ExpoDriveCurve::ExpoDriveCurve(float minOutput, float curve) :
       minOutput(minOutput),
       curveGain(curve) {}
@@ -13,4 +13,4 @@ float ExpoDriveCurve::curve(float input) {
     const float i = std::copysign(std::pow(curveGain, g - 127) * g, input);
     return (127.0 - minOutput) / (127) * i + std::copysign(minOutput, input);
 }
-} // namespace Gamepad
+} // namespace gamepad

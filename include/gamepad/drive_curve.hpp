@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Gamepad {
+namespace gamepad {
 
 /**
  * @brief abstract DriveCurve class
@@ -72,4 +72,4 @@ class ExpoDriveCurve : public DriveCurve {
         const float minOutput = 0;
         const float curveGain = 1;
 };
-} // namespace Gamepad
+} // namespace gamepad

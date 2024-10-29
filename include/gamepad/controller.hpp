@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "button.hpp"
+#include "drive_curve.hpp"
 #include "pros/misc.hpp"
 
 namespace gamepad {
