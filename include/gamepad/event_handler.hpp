@@ -9,38 +9,6 @@
 
 namespace gamepad::_impl {
 
-<<<<<<< HEAD
-class MonotonicCounter {
-        template <typename... Args> friend class EventHandler;
-
-        static uint32_t next_value() {
-            static std::atomic<uint32_t> counter = 0;
-            return ++counter;
-        }
-};
-
-template <typename... Args> class EventHandler {
-    public:
-        using Listener = std::function<void(Args...)>;
-
-        uint32_t add_listener(Listener func) {
-            std::lock_guard lock(mutex);
-            uint32_t id = MonotonicCounter::next_value();
-            listeners.emplace(id, std::move(func));
-            return id;
-        }
-
-        bool remove_listener(uint32_t id) {
-            std::lock_guard lock(mutex);
-            if (listeners.find(id) == listeners.end()) {
-                TODO("change handling maybe?")
-                return false;
-            }
-            listeners.erase(id);
-            return true;
-        }
-
-=======
 /**
  * @brief Event handling class with thread safety that supports adding, removing, and running listeners
  *
@@ -91,23 +59,11 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true There are listeners registered
          * @return false There are no listeners registered
          */
->>>>>>> b19f6224e83dcbbf6f3b02059fa6d64b57af4ac8
         bool is_empty() {
             std::lock_guard lock(mutex);
             return listeners.empty();
         }
 
-<<<<<<< HEAD
-        void fire(Args... args) {
-            std::lock_guard lock(mutex);
-            for (auto listener : listeners) { listener.second(args...); }
-        }
-    private:
-        std::map<uint32_t, Listener> listeners;
-        pros::Mutex mutex;
-};
-} // namespace Gamepad
-=======
         /**
          * @brief Runs each listener registered
          *
@@ -123,4 +79,3 @@ template <typename Key, typename... Args> class EventHandler {
         gamepad::_impl::RecursiveMutex mutex {};
 };
 } // namespace gamepad::_impl
->>>>>>> b19f6224e83dcbbf6f3b02059fa6d64b57af4ac8
