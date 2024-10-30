@@ -2,9 +2,8 @@
 
 #include "pros/misc.h"
 #include <string>
-#include <memory>
 #include "button.hpp"
-#include "drive_curve.hpp"
+#include "joystick_modifier.hpp"
 #include "pros/misc.hpp"
 
 namespace gamepad {
@@ -54,24 +53,39 @@ class Gamepad {
          *
          */
         float operator[](pros::controller_analog_e_t joystick);
-        void setCurve(pros::controller_analog_e_t joystick, std::shared_ptr<DriveCurve> curve);
-        void setCurve(pros::controller_analog_e_t joystick, DriveCurve& curve);
-        const Button& L1 {m_L1};
-        const Button& L2 {m_L2};
-        const Button& R1 {m_R1};
-        const Button& R2 {m_R2};
-        const Button& Up {m_Up};
-        const Button& Down {m_Down};
-        const Button& Left {m_Left};
-        const Button& Right {m_Right};
-        const Button& X {m_X};
-        const Button& B {m_B};
-        const Button& Y {m_Y};
-        const Button& A {m_A};
-        const float& LeftX = m_LeftX;
-        const float& LeftY = m_LeftY;
-        const float& RightX = m_RightX;
-        const float& RightY = m_RightY;
+
+        const Button& L1() { return m_L1; }
+
+        const Button& L2() { return m_L2; }
+
+        const Button& R1() { return m_R1; }
+
+        const Button& R2() { return m_R2; }
+
+        const Button& Up() { return m_Up; }
+
+        const Button& Down() { return m_Down; }
+
+        const Button& Left() { return m_Left; }
+
+        const Button& Right() { return m_Right; }
+
+        const Button& X() { return m_X; }
+
+        const Button& B() { return m_B; }
+
+        const Button& Y() { return m_Y; }
+
+        const Button& A() { return m_A; }
+
+        float LeftX() { return m_LeftX; }
+
+        float LeftY() { return m_LeftY; }
+
+        float RightX() { return m_RightX; }
+
+        float RightY() { return m_RightY; }
+
         /// The master controller, same as @ref gamepad::master
         static Gamepad master;
         /// The partner controller, same as @ref gamepad::partner
@@ -83,10 +97,6 @@ class Gamepad {
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
-        std::shared_ptr<DriveCurve> CurveLeftX {nullptr};
-        std::shared_ptr<DriveCurve> CurveLeftY {nullptr};
-        std::shared_ptr<DriveCurve> CurveRightX {nullptr};
-        std::shared_ptr<DriveCurve> CurveRightY {nullptr};
         Button Fake {};
         /**
          * @brief Gets a unique name for a listener that will not conflict with user listener names.
