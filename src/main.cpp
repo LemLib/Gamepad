@@ -25,6 +25,8 @@ void initialize() {
     gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });
     gamepad::master.Y.onPress("print1", []() { gamepad::master.print_line(1, "this should be cleared"); });
     gamepad::master.Y.onRelease("clear1", []() { gamepad::master.clear(1); });
+    gamepad::master.Up.onPress("long", []() { gamepad::master.print_line(0, "mmmmmmmmmmmmmmm"); });
+    gamepad::master.Up.onLongPress("short", []() { gamepad::master.print_line(0, "i"); });
 }
 
 /**
