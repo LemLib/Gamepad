@@ -27,6 +27,22 @@ std::pair<float, float> ExpoCurve::get_value(std::pair<float, float> value) {
     return {x, y};
 }
 
+std::pair<float, float> Fisheye::get_value(std::pair<float, float> value) {
+    float x = value.first;
+    float y = value.second;
+    float x_abs = abs(x);
+    float y_abs = abs(y);
+    float j = std::sqrt(m_radius * m_radius - 127 * 127);
+    if (x_abs >= j && y_abs >= j) {
+        float theta = std::atan2(y_abs, x_abs);
+        x_abs *= std::acos(abs(std::remainder(theta, 90)));
+        y_abs *= std::acos(abs(std::remainder(theta, 90)));
+    }
+    x = std::copysign(std::min(127.0f, x_abs), x);
+    y = std::copysign(std::min(127.0f, y_abs), y);
+    return {x, y};
+}
+
 std::pair<float, float> Transformation::get_value(std::pair<float, float> value) {
     std::pair<float, float> ret_value {};
     return std::accumulate(m_all_transforms.begin(), m_all_transforms.end(), ret_value,

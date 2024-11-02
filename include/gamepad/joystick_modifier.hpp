@@ -43,6 +43,16 @@ class ExpoCurve : public AbstractTransformation {
         float m_y_curve;
 };
 
+class Fisheye : public AbstractTransformation {
+    public:
+        Fisheye(float radius)
+            : m_radius(radius) {}
+
+        std::pair<float, float> get_value(std::pair<float, float>) override;
+    private:
+        float m_radius;
+};
+
 class Transformation final {
         friend class TransformationBuilder;
     public:
