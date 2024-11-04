@@ -64,14 +64,22 @@ class Transformation final {
 class TransformationBuilder final {
     public:
         template <std::derived_from<AbstractTransformation> T> TransformationBuilder(T first) {
-            m_transform.m_all_transforms.push_back(std::make_unique(std::move(first)));
+            m_transform.m_all_transforms.push_back(std::make_unique<T>(std::move(first)));
         }
 
         TransformationBuilder() = delete;
 
         template <std::derived_from<AbstractTransformation> T> TransformationBuilder& and_then(T next) {
-            m_transform.m_all_transforms.push_back(std::make_unique(std::move(next)));
+            m_transform.m_all_transforms.push_back(std::make_unique<T>(std::move(next)));
             return *this;
+        }
+
+        Transformation build() {
+            return std::move(m_transform);
+        }
+
+        operator Transformation() {
+            return std::move(m_transform);
         }
     private:
         Transformation m_transform {};

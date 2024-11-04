@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pros/misc.h"
+#include <optional>
 #include <string>
 #include "button.hpp"
 #include "joystick_modifier.hpp"
@@ -78,13 +79,35 @@ class Gamepad {
 
         const Button& A() { return m_A; }
 
-        float LeftX() { return m_LeftX; }
+        float LeftX(bool use_curve = true) {
+            if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).first;
+            else return m_LeftX;
+        }
 
-        float LeftY() { return m_LeftY; }
+        float LeftY(bool use_curve = true) {
+            if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).second;
+            else return m_LeftY;
+        }
 
-        float RightX() { return m_RightX; }
+        float RightX(bool use_curve = true) {
+            if (use_curve && m_right_transformation)
+                return m_right_transformation->get_value({m_RightX, m_RightY}).first;
+            else return m_RightX;
+        }
 
-        float RightY() { return m_RightY; }
+        float RightY(bool use_curve = true) {
+            if (use_curve && m_right_transformation)
+                return m_right_transformation->get_value({m_RightX, m_RightY}).second;
+            else return m_RightY;
+        }
+
+        void set_left_transform(Transformation left_transformation) {
+            m_left_transformation = std::move(left_transformation);
+        }
+
+        void set_right_transform(Transformation right_transformation) {
+            m_right_transformation = std::move(right_transformation);
+        }
 
         /// The master controller, same as @ref gamepad::master
         static Gamepad master;
@@ -98,6 +121,8 @@ class Gamepad {
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
         Button Fake {};
+        std::optional<Transformation> m_left_transformation {std::nullopt};
+        std::optional<Transformation> m_right_transformation {std::nullopt};
         /**
          * @brief Gets a unique name for a listener that will not conflict with user listener names.
          *

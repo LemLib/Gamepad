@@ -1,6 +1,7 @@
 #include "main.h"
 #include "gamepad/api.hpp"
 #include "gamepad/controller.hpp"
+#include "gamepad/joystick_modifier.hpp"
 #include "pros/rtos.hpp"
 #include <cstdint>
 #include <cstdio>
@@ -52,6 +53,10 @@ void initialize() {
     gamepad::master.A().onRepeatPress("aRepeatPress", aRepeatPress1);
     // And we can use lambda's too
     gamepad::master.X().onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+
+    // set up controller curves:
+    gamepad::master.set_left_transform(
+        gamepad::TransformationBuilder(gamepad::Deadband(5, 5)).and_then(gamepad::ExpoCurve(2, 2)));
 }
 
 /**
