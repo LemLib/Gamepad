@@ -74,13 +74,9 @@ class TransformationBuilder final {
             return *this;
         }
 
-        Transformation build() {
-            return std::move(m_transform);
-        }
+        Transformation build() { return std::move(m_transform); }
 
-        operator Transformation() {
-            return std::move(m_transform);
-        }
+        operator Transformation() { return std::move(m_transform); }
     private:
         Transformation m_transform {};
 };
