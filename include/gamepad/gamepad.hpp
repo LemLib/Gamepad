@@ -35,24 +35,45 @@ class Gamepad {
          * @brief Add a screen to the sceen update loop that can update the controller's screen
          *
          * @param screen the `AbstractScreen` to add to the screen queue
+         *
+         * @b Example: 
+         * @code {.cpp}
+         * // initialize the alerts screen so we can have alerts on the controller
+         * std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertScreen>();
+         *
+         * gamepad::master.add_screen(alerts);
          */
         void add_screen(std::shared_ptr<AbstractScreen> screen);
         /**
          * @brief print a line to the console like pros (low priority)
-         *
+         * 
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * gamepad::master.print_line(1, "This will print on the middle line");
+         * gamepad::master.print_line(0, "this will print\n\naround the middle line");
          */
         void print_line(uint8_t line, std::string str);
         /**
          * @brief clears all lines on the controller, similar to the pros function (low priority)
          *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the whole screen on the controller
+         * gamepad::master.clear()
          */
         void clear();
         /**
          * @brief clears the specific line on the controller, similar to the pros function clear_line (low priority)
          *
          * @param line the line to clear (0-2)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the center line on the controller
+         * gamepad::master.clear(1);
          */
         void clear(uint8_t line);
         /**
@@ -60,6 +81,11 @@ class Gamepad {
          *
          * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // rumbles in the folllowing pattern: short, pause, long, short short
+         * gamepad::master.rumble(". -..");
          */
         void rumble(std::string rumble_pattern);
         /**
