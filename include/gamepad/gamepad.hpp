@@ -32,13 +32,13 @@ class Gamepad {
          */
         void update();
         /**
-         * Add a screen to the sceen update loop that can update the controller's screen
+         * @brief Add a screen to the sceen update loop that can update the controller's screen
          *
          * @param screen the `AbstractScreen` to add to the screen queue
          */
         void add_screen(std::shared_ptr<AbstractScreen> screen);
         /**
-         * print a line to the console like pros (low priority)
+         * @brief print a line to the console like pros (low priority)
          *
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
@@ -110,10 +110,7 @@ class Gamepad {
         /// The partner controller, same as @ref gamepad::partner
         static Gamepad partner;
     private:
-        Gamepad(pros::controller_id_e_t id)
-            : controller(id) {
-            this->add_screen(defaultScreen);
-        }
+        Gamepad(pros::controller_id_e_t id);
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
@@ -128,15 +125,15 @@ class Gamepad {
          * @return std::string A unique listener name
          */
         static std::string unique_name();
-        static Button Gamepad::* button_to_ptr(pros::controller_digital_e_t button);
+        static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
 
         void updateScreens();
 
         std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
-        std::vector<std::shared_ptr<AbstractScreen>> screens {};
-        ScreenBuffer currentScreen {};
-        ScreenBuffer nextBuffer {};
+        std::vector<std::shared_ptr<AbstractScreen>> screens = {};
+        ScreenBuffer currentScreen = {};
+        ScreenBuffer nextBuffer = {};
         pros::Controller controller;
 
         uint8_t last_printed_line = 0;

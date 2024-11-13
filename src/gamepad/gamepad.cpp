@@ -12,8 +12,13 @@
 #include <atomic>
 
 namespace gamepad {
+Gamepad::Gamepad(pros::controller_id_e_t id)
+    : controller(id) {
+    this->add_screen(defaultScreen);
+}
+
 void Gamepad::updateButton(pros::controller_digital_e_t button_id) {
-    Button Gamepad::* button = Gamepad::button_to_ptr(button_id);
+    Button Gamepad::*button = Gamepad::button_to_ptr(button_id);
     bool is_held = this->controller.get_digital(button_id);
     (this->*button).update(is_held);
 }
@@ -25,8 +30,6 @@ void Gamepad::updateScreens() {
     // Disable screen updates if the controller is disconnected
     if (!this->controller.is_connected()) {
         if (this->screenCleared) {
-            // printf("disconnected\n");
-
             this->nextBuffer = std::move(this->currentScreen);
             this->currentScreen = {};
             this->screenCleared = false;
@@ -36,14 +39,8 @@ void Gamepad::updateScreens() {
 
     // Clear current screen and reset last update time on reconnect
     if (this->controller.is_connected() && !screenCleared) {
-        // printf("reconnected\n");
-
         this->currentScreen = {};
         this->last_update_time = pros::millis();
-
-        // printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
-        //        nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
-        //        nextBuffer.at(3).value_or("nullopt").c_str());
     }
 
     // Update all screens and note deltatime
@@ -76,7 +73,6 @@ void Gamepad::updateScreens() {
         if (!this->nextBuffer[line].has_value()) continue;
 
         if (!this->screenCleared && line != 3) {
-            // printf("clearing screen for init\n");
             this->controller.clear();
             this->screenCleared = true;
             this->currentScreen = {};
@@ -89,16 +85,6 @@ void Gamepad::updateScreens() {
             this->nextBuffer[line] = std::nullopt;
             continue;
         }
-
-        // printf("\nLine = %i\n", line);
-
-        // printf("nextBuffer = {%s, %s, %s, %s}\n", nextBuffer.at(0).value_or("nullopt").c_str(),
-        //        nextBuffer.at(1).value_or("nullopt").c_str(), nextBuffer.at(2).value_or("nullopt").c_str(),
-        //        nextBuffer.at(3).value_or("nullopt").c_str());
-
-        // printf("currentScreen = {%s, %s, %s, %s}\n", currentScreen.at(0).value_or("nullopt").c_str(),
-        //        currentScreen.at(1).value_or("nullopt").c_str(), currentScreen.at(2).value_or("nullopt").c_str(),
-        //        currentScreen.at(3).value_or("nullopt").c_str());
 
         // print to screen or rumble
         if (line == 3) this->controller.rumble(this->nextBuffer[line].value_or("").c_str());
@@ -162,7 +148,7 @@ std::string Gamepad::unique_name() {
     return std::to_string(i++) + "_internal";
 }
 
-Button Gamepad::* Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
+Button Gamepad::*Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
         case pros::E_CONTROLLER_DIGITAL_L2: return &Gamepad::m_L2;
