@@ -43,9 +43,18 @@ void Gamepad::updateScreens() {
         this->last_update_time = pros::millis();
     }
 
-    // Update all screens and note deltatime
+    // Get new button presses
+    std::set<pros::controller_digital_e_t> buttonUpdates;
+    for (int i = pros::E_CONTROLLER_DIGITAL_L1; i <= pros::E_CONTROLLER_DIGITAL_A; ++i) {
+        if ((this->*this->button_to_ptr(static_cast<pros::controller_digital_e_t>(i))).rising_edge) {
+            buttonUpdates.emplace(static_cast<pros::controller_id_e_t>(i));
+        }
+    }
+
+    // Update all screens, and send new button presses, also note deltatime
     for (int i = 0; i < this->screens.size(); i++) {
         this->screens[i]->update(pros::millis() - this->last_update_time);
+        this->screens[i]->handle_events(buttonUpdates);
     }
     this->last_update_time = pros::millis();
 
