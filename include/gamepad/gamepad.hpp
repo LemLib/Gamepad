@@ -36,7 +36,7 @@ class Gamepad {
          *
          * @param screen the `AbstractScreen` to add to the screen queue
          *
-         * @b Example: 
+         * @b Example:
          * @code {.cpp}
          * // initialize the alerts screen so we can have alerts on the controller
          * std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertScreen>();
@@ -46,7 +46,7 @@ class Gamepad {
         void add_screen(std::shared_ptr<AbstractScreen> screen);
         /**
          * @brief print a line to the console like pros (low priority)
-         * 
+         *
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
          *

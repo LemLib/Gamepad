@@ -47,7 +47,7 @@ void Gamepad::updateScreens() {
     std::set<pros::controller_digital_e_t> buttonUpdates;
     for (int i = pros::E_CONTROLLER_DIGITAL_L1; i <= pros::E_CONTROLLER_DIGITAL_A; ++i) {
         if ((this->*this->button_to_ptr(static_cast<pros::controller_digital_e_t>(i))).rising_edge) {
-            buttonUpdates.emplace(static_cast<pros::controller_id_e_t>(i));
+            buttonUpdates.emplace(static_cast<pros::controller_digital_e_t>(i));
         }
     }
 

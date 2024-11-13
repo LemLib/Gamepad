@@ -17,11 +17,11 @@ std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertSc
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-    // VERY IMPORTANT, this actually adds the alerts screen to the gamepad 
+    // VERY IMPORTANT, this actually adds the alerts screen to the gamepad
     // it wouldnt work without this line
     gamepad::master.add_screen(alerts);
 
-    // When the A button is pressed, schedule an alert that spans all three 
+    // When the A button is pressed, schedule an alert that spans all three
     // lines, lasts 3 seconds and rumbles in a long-short-long pattern
     gamepad::master.A.onPress("alert", []() {
         alerts->add_alerts(0, "a very\nimportant alert\nat " + std::to_string(pros::millis()) + " ms", 3000, "-.-");
@@ -31,7 +31,7 @@ void initialize() {
     // the second line when the B button is pressed
     gamepad::master.B.onPress(
         "print02", []() { gamepad::master.print_line(0, "the time is\n\n" + std::to_string(pros::millis()) + " ms"); });
-    
+
     // rumbles 3 times for a short duration when the X button is pressed
     gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });
 
