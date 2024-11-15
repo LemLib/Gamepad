@@ -6,7 +6,6 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <sys/types.h>
 #include "screens/abstractScreen.hpp"
 #include "button.hpp"
 #include "pros/misc.hpp"
@@ -163,8 +162,8 @@ class Gamepad {
         pros::Controller controller;
 
         uint8_t last_printed_line = 0;
-        uint last_print_time = 0;
-        uint last_update_time = 0;
+        uint32_t last_print_time = 0;
+        uint32_t last_update_time = 0;
         bool screenCleared = false;
         pros::Mutex mut {};
 };

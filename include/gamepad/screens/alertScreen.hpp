@@ -25,7 +25,7 @@ class AlertScreen : public AbstractScreen {
          *
          * @param delta_time the time since the last update
          */
-        void update(uint delta_time);
+        void update(uint32_t delta_time);
 
         /**
          * @brief return the next alert to print if there is space for it on the screen
@@ -51,12 +51,12 @@ class AlertScreen : public AbstractScreen {
     private:
         struct AlertBuffer {
                 ScreenBuffer screen;
-                uint duration;
+                uint32_t duration;
         };
 
         std::deque<AlertBuffer> screen_buffer {};
         std::optional<AlertBuffer> screen_contents {};
-        uint line_set_time = 0;
+        uint32_t line_set_time = 0;
         pros::Mutex mut {};
 };
 

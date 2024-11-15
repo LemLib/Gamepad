@@ -27,7 +27,7 @@ ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
     return this->screen_contents->screen;
 }
 
-void AlertScreen::update(uint delta_time) {
+void AlertScreen::update(uint32_t delta_time) {
     std::lock_guard<pros::Mutex> guard(this->mut);
     if (pros::millis() - this->line_set_time >= this->screen_contents->duration) this->screen_contents = std::nullopt;
 }

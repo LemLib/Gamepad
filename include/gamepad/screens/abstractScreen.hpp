@@ -1,10 +1,10 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <optional>
 #include <set>
 #include <string>
-#include <sys/types.h>
 #include "pros/misc.h"
 
 namespace gamepad {
@@ -21,7 +21,7 @@ typedef std::array<std::optional<std::string>, 4> ScreenBuffer;
  */
 class AbstractScreen {
     public:
-        AbstractScreen(uint priority)
+        AbstractScreen(uint32_t priority)
             : priority(priority) {}
 
         /**
@@ -31,7 +31,7 @@ class AbstractScreen {
          *
          * @param delta_time the time since the last update in milliseconds
          */
-        virtual void update(uint delta_time) {}
+        virtual void update(uint32_t delta_time) {}
 
         /**
          * @brief runs if there is an empty line that is available to print
@@ -55,9 +55,9 @@ class AbstractScreen {
          *
          * @important it is not reccomended to override this function
          */
-        uint get_priority() { return this->priority; }
+        uint32_t get_priority() { return this->priority; }
     protected:
-        const uint priority;
+        const uint32_t priority;
 };
 
 } // namespace gamepad

@@ -2,12 +2,13 @@
 #include "gamepad/todo.hpp"
 #include "pros/misc.h"
 #include "pros/rtos.hpp"
-#include <sys/types.h>
+#include "screens/abstractScreen.hpp"
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <atomic>
 
@@ -52,23 +53,23 @@ void Gamepad::updateScreens() {
     }
 
     // Update all screens, and send new button presses, also note deltatime
-    for (int i = 0; i < this->screens.size(); i++) {
-        this->screens[i]->update(pros::millis() - this->last_update_time);
-        this->screens[i]->handle_events(buttonUpdates);
+    for (std::shared_ptr<AbstractScreen> screen : this->screens) {
+        screen->update(pros::millis() - this->last_update_time);
+        screen->handle_events(buttonUpdates);
     }
     this->last_update_time = pros::millis();
 
     // Check if enough time has passed for the Gamepad to poll for updates
     if (pros::millis() - this->last_print_time <= 50) return;
 
-    for (int i = 0; i < this->screens.size(); i++) {
+    for (std::shared_ptr<AbstractScreen> screen : this->screens) {
         // get all lines that arent being used by a higher priority screen
         std::set<uint8_t> visible_lines;
         for (uint8_t j = 0; j < 4; j++)
             if (!this->nextBuffer[j].has_value()) visible_lines.emplace(j);
 
         // get the buffer of the next lower priority screen and set it to be printed
-        ScreenBuffer buffer = this->screens[i]->get_screen(visible_lines);
+        ScreenBuffer buffer = screen->get_screen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
             if (buffer[j].has_value() && !buffer[j]->empty() && !nextBuffer[j].has_value())
                 nextBuffer[j] = std::move(buffer[j]);
@@ -120,8 +121,8 @@ void Gamepad::update() {
 }
 
 void Gamepad::add_screen(std::shared_ptr<AbstractScreen> screen) {
-    uint last = UINT32_MAX;
-    uint pos = 0;
+    uint32_t last = UINT32_MAX;
+    uint32_t pos = 0;
     for (pos = 0; pos < this->screens.size(); pos++) {
         if (this->screens[pos]->get_priority() < screen->get_priority() && last >= screen->get_priority()) break;
         last = this->screens[pos]->get_priority();
