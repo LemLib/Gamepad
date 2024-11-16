@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 #include "button.hpp"
-#include "joystick_modifier.hpp"
+#include "joystick_transformation.hpp"
 #include "pros/misc.hpp"
 
 namespace gamepad {
@@ -46,65 +46,113 @@ class Gamepad {
          *
          * @param joystick Which joystick axis to return
          *
+         * @return float the value of the joystick, between -1.0 and 1.0.
+         *
          * @b Example:
          * @code {.cpp}
          * // control a motor with a joystick
-         * intake.move(gamepad::master[ANALOG_RIGHT_Y]);
+         * intake.move(gamepad::master[ANALOG_RIGHT_Y] * 127);
          * @endcode
          *
          */
         float operator[](pros::controller_analog_e_t joystick);
 
-        const Button& L1() { return m_L1; }
+        /// The L1 button on the top of the controller.
+        const Button& buttonL1() { return m_L1; }
 
-        const Button& L2() { return m_L2; }
+        /// The L2 button on the top of the controller.
+        const Button& buttonL2() { return m_L2; }
 
-        const Button& R1() { return m_R1; }
+        /// The R1 button on the top of the controller.
+        const Button& buttonR1() { return m_R1; }
 
-        const Button& R2() { return m_R2; }
+        /// The R2 button on the top of the controller.
+        const Button& buttonR2() { return m_R2; }
 
-        const Button& Up() { return m_Up; }
+        /// The up arrow button on the front of the controller.
+        const Button& buttonUp() { return m_Up; }
 
-        const Button& Down() { return m_Down; }
+        /// The down arrow button on the front of the controller.
+        const Button& buttonDown() { return m_Down; }
 
-        const Button& Left() { return m_Left; }
+        /// The left arrow button on the front of the controller.
+        const Button& buttonLeft() { return m_Left; }
 
-        const Button& Right() { return m_Right; }
+        /// The right arrow button on the front of the controller.
+        const Button& buttonRight() { return m_Right; }
 
-        const Button& X() { return m_X; }
+        /// The X arrow button on the front of the controller.
+        const Button& buttonX() { return m_X; }
 
-        const Button& B() { return m_B; }
+        /// The B arrow button on the front of the controller.
+        const Button& buttonB() { return m_B; }
 
-        const Button& Y() { return m_Y; }
+        /// The Y arrow button on the front of the controller.
+        const Button& buttonY() { return m_Y; }
 
-        const Button& A() { return m_A; }
+        /// The A arrow button on the front of the controller.
+        const Button& buttonA() { return m_A; }
 
-        float LeftX(bool use_curve = true) {
+        /**
+        * @brief Gets the value of the left joystick's x axis, optionally applying a curve.
+        * 
+        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+        * @return float The value of the left joystick's x-axis, between -1.0 and 1.0.
+        */
+        float axisLeftX(bool use_curve = true) {
             if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).first;
             else return m_LeftX;
         }
 
-        float LeftY(bool use_curve = true) {
+        /**
+        * @brief Gets the value of the left joystick's y axis, optionally applying a curve.
+        * 
+        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+        * @return float The value of the left joystick's y-axis, between -1.0 and 1.0.
+        */
+        float axisLeftY(bool use_curve = true) {
             if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).second;
             else return m_LeftY;
         }
 
-        float RightX(bool use_curve = true) {
+        /**
+        * @brief Gets the value of the right joystick's x axis, optionally applying a curve.
+        * 
+        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+        * @return float The value of the right joystick's x-axis, between -1.0 and 1.0.
+        */
+        float axisRightX(bool use_curve = true) {
             if (use_curve && m_right_transformation)
                 return m_right_transformation->get_value({m_RightX, m_RightY}).first;
             else return m_RightX;
         }
 
-        float RightY(bool use_curve = true) {
+        /**
+        * @brief Gets the value of the right joystick's y axis, optionally applying a curve.
+        * 
+        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+        * @return float The value of the right joystick's y-axis, between -1.0 and 1.0.
+        */
+        float axisRightY(bool use_curve = true) {
             if (use_curve && m_right_transformation)
                 return m_right_transformation->get_value({m_RightX, m_RightY}).second;
             else return m_RightY;
         }
 
+        /**
+        * @brief Set the transformation to be used for the left joystick.
+        * 
+        * @param left_transformation The transformation to be used
+        */
         void set_left_transform(Transformation left_transformation) {
             m_left_transformation = std::move(left_transformation);
         }
 
+        /**
+        * @brief Set the transformation to be used for the right joystick.
+        * 
+        * @param right_transformation The transformation to be used
+        */
         void set_right_transform(Transformation right_transformation) {
             m_right_transformation = std::move(right_transformation);
         }

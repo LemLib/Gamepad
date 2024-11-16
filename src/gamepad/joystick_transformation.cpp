@@ -1,4 +1,4 @@
-#include "joystick_modifier.hpp"
+#include "joystick_transformation.hpp"
 #include <cmath>
 #include <numeric>
 
@@ -32,14 +32,14 @@ std::pair<float, float> Fisheye::get_value(std::pair<float, float> value) {
     float y = value.second;
     float x_abs = abs(x);
     float y_abs = abs(y);
-    float j = std::sqrt(m_radius * m_radius - 127 * 127);
+    float j = std::sqrt(m_radius * m_radius - 1.0 * 1.0);
     if (x_abs >= j && y_abs >= j) {
         float theta = std::atan2(y_abs, x_abs);
         x_abs *= std::acos(abs(std::remainder(theta, 90)));
         y_abs *= std::acos(abs(std::remainder(theta, 90)));
     }
-    x = std::copysign(std::min(127.0f, x_abs), x);
-    y = std::copysign(std::min(127.0f, y_abs), y);
+    x = std::copysign(std::min(1.0f, x_abs), x);
+    y = std::copysign(std::min(1.0f, y_abs), y);
     return {x, y};
 }
 

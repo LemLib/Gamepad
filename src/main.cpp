@@ -1,8 +1,5 @@
 #include "main.h"
 #include "gamepad/api.hpp"
-#include "gamepad/controller.hpp"
-#include "gamepad/joystick_modifier.hpp"
-#include "pros/rtos.hpp"
 #include <cstdint>
 #include <cstdio>
 
@@ -37,22 +34,22 @@ void aRepeatPress1() {
 
 void initialize() {
     // We can register functions to run when buttons are pressed
-    gamepad::master.Down().onPress("downPress1", downPress1);
+    gamepad::master.buttonDown().onPress("downPress1", downPress1);
     // ...or when they're released
-    gamepad::master.Up().onRelease("downRelease1", upRelease1);
+    gamepad::master.buttonUp().onRelease("downRelease1", upRelease1);
     // There's also the longPress event
-    gamepad::master.Left().onLongPress("leftLongPress1", leftLongPress1);
+    gamepad::master.buttonLeft().onLongPress("leftLongPress1", leftLongPress1);
     // We can have two or even more functions on one button,
     // just remember to give them different names
-    gamepad::master.Left().onShortRelease("leftShortRelease", leftShortRelease1);
-    gamepad::master.Left().onLongRelease("leftLongRelease", leftLongRelease1);
+    gamepad::master.buttonLeft().onShortRelease("leftShortRelease", leftShortRelease1);
+    gamepad::master.buttonLeft().onLongRelease("leftLongRelease", leftLongRelease1);
     // We also have the repeat press event, where we can adjust the timing
-    gamepad::master.A().set_long_press_threshold(1000); // in ms
-    gamepad::master.A().set_repeat_cooldown(100); // in ms
-    gamepad::master.A().onPress("aStartPress", aPress1);
-    gamepad::master.A().onRepeatPress("aRepeatPress", aRepeatPress1);
+    gamepad::master.buttonA().set_long_press_threshold(1000); // in ms
+    gamepad::master.buttonA().set_repeat_cooldown(100); // in ms
+    gamepad::master.buttonA().onPress("aStartPress", aPress1);
+    gamepad::master.buttonA().onRepeatPress("aRepeatPress", aRepeatPress1);
     // And we can use lambda's too
-    gamepad::master.X().onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+    gamepad::master.buttonX().onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
 
     // set up controller curves:
     gamepad::master.set_left_transform(
@@ -111,8 +108,8 @@ void opcontrol() {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
         // We'll use the arcade control scheme
-        int dir = gamepad::master.LeftY(); // Gets amount forward/backward from left joystick
-        int turn = gamepad::master.RightX(); // Gets the turn left/right from right joystick
+        int dir = gamepad::master.axisLeftY(); // Gets amount forward/backward from left joystick
+        int turn = gamepad::master.axisRightX(); // Gets the turn left/right from right joystick
         left_mg.move(dir - turn); // Sets left motor voltage
         right_mg.move(dir + turn); // Sets right motor voltage
         pros::delay(25); // Wait for 25 ms, then update the motor values again
