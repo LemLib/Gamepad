@@ -8,17 +8,17 @@
 namespace gamepad {
 
 /**
- * @brief An abstract class for joystick transformations. 
- * 
- * A transformation takes a coordinate representing the value of the joystick, and returns a transformed coordinate 
+ * @brief An abstract class for joystick transformations.
+ *
+ * A transformation takes a coordinate representing the value of the joystick, and returns a transformed coordinate
  * value
- * 
+ *
  */
 class AbstractTransformation {
     public:
     /**
      * @brief Get the transformed coordinate given the original.
-     * 
+     *
      * @param original The original value of the joystick
      * @return std::pair<float, float> The transformed value
      */
@@ -28,7 +28,7 @@ class AbstractTransformation {
 
 /**
  * @brief A joystick transformation that applies a deadband to the joystick values
- * 
+ *
  * A deadband makes the joystick value zero when the value is close to zero. This helps prevent drifting, since
  * joysticks often do not read exactly zero when released.
  */
@@ -36,7 +36,7 @@ class Deadband : public AbstractTransformation {
     public:
         /**
          * @brief Construct a new Deadband object
-         * 
+         *
          * @param x_deadband The deadband to apply for the x axis.
          * @param y_deadband The deadband to apply for the x axis.
          * @param x_spread How much the deadband for the x axis should widen.
@@ -50,7 +50,7 @@ class Deadband : public AbstractTransformation {
 
         /**
          * @brief Construct a new Deadband object
-         * 
+         *
          * @param x_deadband The deadband to apply for the x axis.
          * @param y_deadband The deadband to apply for the y axis.
          */
@@ -59,7 +59,7 @@ class Deadband : public AbstractTransformation {
 
         /**
          * @brief Get the joystick coordinate after applying the deadband
-         * 
+         *
          * @param original The value of the joystick before applying the deadband
          * @return std::pair<float, float> The joystick coordinate, with a deadband applied
          */
@@ -73,7 +73,7 @@ class Deadband : public AbstractTransformation {
 
 /**
  * @brief A joystick transformation that applies an expo curve to the joystick values
- * 
+ *
  * An expo curve allows greater control of the joystick, by reducing the joystick values at low speeds, while still
  * allowing you to attain the maximum value of the joysticks.
  */
@@ -81,7 +81,7 @@ class ExpoCurve : public AbstractTransformation {
     public:
         /**
          * @brief Construct a new Expo Curve object
-         * 
+         *
          * @param x_curve How much the x axis should be curved. A higher value curves the joystick value more.
          * @param y_curve How much the y axis should be curved. A higher value curves the joystick value more.
          */
@@ -91,7 +91,7 @@ class ExpoCurve : public AbstractTransformation {
 
         /**
          * @brief Get the joystick coordinate after applying the curve
-         * 
+         *
          * @param original The value of the joystick before applying the curve
          * @return std::pair<float, float> The joystick coordinate, with a curve applied
          */
@@ -112,15 +112,15 @@ class Fisheye : public AbstractTransformation {
     public:
         /**
          * @brief Construct a new Fisheye object
-         * 
+         *
          * @param radius The radius of the rounded circle that forms the corners of the joystick's housing.
          */
         Fisheye(float radius)
             : m_radius(radius) {}
-        
+
         /**
          * @brief Get the joystick coordinate after applying the fisheye
-         * 
+         *
          * @param original The value of the joystick before applying the fisheye
          * @return std::pair<float, float> The joystick coordinate, with a fisheye applied
          */
@@ -143,13 +143,13 @@ class Transformation final {
 
 /**
  * @brief A class to create a chain of transformations.
- * 
+ *
  */
 class TransformationBuilder final {
     public:
         /**
          * @brief Construct a new Transformation Builder object
-         * 
+         *
          * @param first The transformation that should be used first
          */
         template <std::derived_from<AbstractTransformation> T> TransformationBuilder(T first) {
@@ -160,7 +160,7 @@ class TransformationBuilder final {
 
         /**
          * @brief Add a transformation to the list of transformations to be applied.
-         * 
+         *
          * @param next The next transformation to be applied after the previous specified transformation
          * @return TransformationBuilder& The original Transformation Builder.
          */
@@ -171,14 +171,14 @@ class TransformationBuilder final {
 
         /**
          * @brief Generate the final chained transformation
-         * 
+         *
          * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
          */
         Transformation build() { return std::move(m_transform); }
 
         /**
          * @brief Generate the final chained transformation
-         * 
+         *
          * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
          */
         operator Transformation() { return std::move(m_transform); }

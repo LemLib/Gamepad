@@ -95,8 +95,8 @@ class Gamepad {
 
         /**
          * @brief Gets the value of the left joystick's x axis, optionally applying a curve.
-         * 
-         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
          * @return float The value of the left joystick's x-axis, between -1.0 and 1.0.
          */
         float axisLeftX(bool use_curve = true) {
@@ -106,8 +106,8 @@ class Gamepad {
 
         /**
          * @brief Gets the value of the left joystick's y axis, optionally applying a curve.
-         * 
-         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
          * @return float The value of the left joystick's y-axis, between -1.0 and 1.0.
          */
         float axisLeftY(bool use_curve = true) {
@@ -117,8 +117,8 @@ class Gamepad {
 
         /**
          * @brief Gets the value of the right joystick's x axis, optionally applying a curve.
-         * 
-         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
          * @return float The value of the right joystick's x-axis, between -1.0 and 1.0.
          */
         float axisRightX(bool use_curve = true) {
@@ -129,8 +129,8 @@ class Gamepad {
 
         /**
          * @brief Gets the value of the right joystick's y axis, optionally applying a curve.
-         * 
-         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
          * @return float The value of the right joystick's y-axis, between -1.0 and 1.0.
          */
         float axisRightY(bool use_curve = true) {
@@ -141,7 +141,7 @@ class Gamepad {
 
         /**
          * @brief Set the transformation to be used for the left joystick.
-         * 
+         *
          * @param left_transformation The transformation to be used
          */
         void set_left_transform(Transformation left_transformation) {
@@ -150,7 +150,7 @@ class Gamepad {
 
         /**
          * @brief Set the transformation to be used for the right joystick.
-         * 
+         *
          * @param right_transformation The transformation to be used
          */
         void set_right_transform(Transformation right_transformation) {
