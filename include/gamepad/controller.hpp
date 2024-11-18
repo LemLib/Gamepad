@@ -94,33 +94,33 @@ class Gamepad {
         const Button& buttonA() { return m_A; }
 
         /**
-        * @brief Gets the value of the left joystick's x axis, optionally applying a curve.
-        * 
-        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
-        * @return float The value of the left joystick's x-axis, between -1.0 and 1.0.
-        */
+         * @brief Gets the value of the left joystick's x axis, optionally applying a curve.
+         * 
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         * @return float The value of the left joystick's x-axis, between -1.0 and 1.0.
+         */
         float axisLeftX(bool use_curve = true) {
             if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).first;
             else return m_LeftX;
         }
 
         /**
-        * @brief Gets the value of the left joystick's y axis, optionally applying a curve.
-        * 
-        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
-        * @return float The value of the left joystick's y-axis, between -1.0 and 1.0.
-        */
+         * @brief Gets the value of the left joystick's y axis, optionally applying a curve.
+         * 
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         * @return float The value of the left joystick's y-axis, between -1.0 and 1.0.
+         */
         float axisLeftY(bool use_curve = true) {
             if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).second;
             else return m_LeftY;
         }
 
         /**
-        * @brief Gets the value of the right joystick's x axis, optionally applying a curve.
-        * 
-        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
-        * @return float The value of the right joystick's x-axis, between -1.0 and 1.0.
-        */
+         * @brief Gets the value of the right joystick's x axis, optionally applying a curve.
+         * 
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         * @return float The value of the right joystick's x-axis, between -1.0 and 1.0.
+         */
         float axisRightX(bool use_curve = true) {
             if (use_curve && m_right_transformation)
                 return m_right_transformation->get_value({m_RightX, m_RightY}).first;
@@ -128,11 +128,11 @@ class Gamepad {
         }
 
         /**
-        * @brief Gets the value of the right joystick's y axis, optionally applying a curve.
-        * 
-        * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
-        * @return float The value of the right joystick's y-axis, between -1.0 and 1.0.
-        */
+         * @brief Gets the value of the right joystick's y axis, optionally applying a curve.
+         * 
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true. 
+         * @return float The value of the right joystick's y-axis, between -1.0 and 1.0.
+         */
         float axisRightY(bool use_curve = true) {
             if (use_curve && m_right_transformation)
                 return m_right_transformation->get_value({m_RightX, m_RightY}).second;
@@ -140,19 +140,19 @@ class Gamepad {
         }
 
         /**
-        * @brief Set the transformation to be used for the left joystick.
-        * 
-        * @param left_transformation The transformation to be used
-        */
+         * @brief Set the transformation to be used for the left joystick.
+         * 
+         * @param left_transformation The transformation to be used
+         */
         void set_left_transform(Transformation left_transformation) {
             m_left_transformation = std::move(left_transformation);
         }
 
         /**
-        * @brief Set the transformation to be used for the right joystick.
-        * 
-        * @param right_transformation The transformation to be used
-        */
+         * @brief Set the transformation to be used for the right joystick.
+         * 
+         * @param right_transformation The transformation to be used
+         */
         void set_right_transform(Transformation right_transformation) {
             m_right_transformation = std::move(right_transformation);
         }

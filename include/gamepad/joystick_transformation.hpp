@@ -111,10 +111,10 @@ class ExpoCurve : public AbstractTransformation {
 class Fisheye : public AbstractTransformation {
     public:
         /**
-        * @brief Construct a new Fisheye object
-        * 
-        * @param radius The radius of the rounded circle that forms the corners of the joystick's housing.
-        */
+         * @brief Construct a new Fisheye object
+         * 
+         * @param radius The radius of the rounded circle that forms the corners of the joystick's housing.
+         */
         Fisheye(float radius)
             : m_radius(radius) {}
         
@@ -148,10 +148,10 @@ class Transformation final {
 class TransformationBuilder final {
     public:
         /**
-        * @brief Construct a new Transformation Builder object
-        * 
-        * @param first The transformation that should be used first
-        */
+         * @brief Construct a new Transformation Builder object
+         * 
+         * @param first The transformation that should be used first
+         */
         template <std::derived_from<AbstractTransformation> T> TransformationBuilder(T first) {
             m_transform.m_all_transforms.push_back(std::make_unique<T>(std::move(first)));
         }
@@ -170,10 +170,10 @@ class TransformationBuilder final {
         }
 
         /**
-        * @brief Generate the final chained transformation
-        * 
-        * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
-        */
+         * @brief Generate the final chained transformation
+         * 
+         * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
+         */
         Transformation build() { return std::move(m_transform); }
 
         /**
