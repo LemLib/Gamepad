@@ -16,12 +16,12 @@ namespace gamepad {
  */
 class AbstractTransformation {
     public:
-    /**
-     * @brief Get the transformed coordinate given the original.
-     *
-     * @param original The original value of the joystick
-     * @return std::pair<float, float> The transformed value
-     */
+        /**
+         * @brief Get the transformed coordinate given the original.
+         *
+         * @param original The original value of the joystick
+         * @return std::pair<float, float> The transformed value
+         */
         virtual std::pair<float, float> get_value(std::pair<float, float> original) = 0;
         virtual ~AbstractTransformation() = default;
 };
@@ -172,14 +172,16 @@ class TransformationBuilder final {
         /**
          * @brief Generate the final chained transformation
          *
-         * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
+         * @return Transformation The final chained transformation. This can be passed to
+         * set_left_transform/set_right_transform
          */
         Transformation build() { return std::move(m_transform); }
 
         /**
          * @brief Generate the final chained transformation
          *
-         * @return Transformation The final chained transformation. This can be passed to set_left_transform/set_right_transform
+         * @return Transformation The final chained transformation. This can be passed to
+         * set_left_transform/set_right_transform
          */
         operator Transformation() { return std::move(m_transform); }
     private:
