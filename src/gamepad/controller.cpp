@@ -42,6 +42,58 @@ std::string Gamepad::unique_name() {
     return std::to_string(i++) + "_internal";
 }
 
+const Button& Gamepad::buttonL1() { return m_L1; }
+
+const Button& Gamepad::buttonL2() { return m_L2; }
+
+const Button& Gamepad::buttonR1() { return m_R1; }
+
+const Button& Gamepad::buttonR2() { return m_R2; }
+
+const Button& Gamepad::buttonUp() { return m_Up; }
+
+const Button& Gamepad::buttonDown() { return m_Down; }
+
+const Button& Gamepad::buttonLeft() { return m_Left; }
+
+const Button& Gamepad::buttonRight() { return m_Right; }
+
+const Button& Gamepad::buttonX() { return m_X; }
+
+const Button& Gamepad::buttonB() { return m_B; }
+
+const Button& Gamepad::buttonY() { return m_Y; }
+
+const Button& Gamepad::buttonA() { return m_A; }
+
+float Gamepad::axisLeftX(bool use_curve) {
+    if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).first;
+    else return m_LeftX;
+}
+
+float Gamepad::axisLeftY(bool use_curve) {
+    if (use_curve && m_left_transformation) return m_left_transformation->get_value({m_LeftX, m_LeftY}).second;
+    else return m_LeftY;
+}
+
+float Gamepad::axisRightX(bool use_curve) {
+    if (use_curve && m_right_transformation) return m_right_transformation->get_value({m_RightX, m_RightY}).first;
+    else return m_RightX;
+}
+
+float Gamepad::axisRightY(bool use_curve) {
+    if (use_curve && m_right_transformation) return m_right_transformation->get_value({m_RightX, m_RightY}).second;
+    else return m_RightY;
+}
+
+void Gamepad::set_left_transform(Transformation left_transformation) {
+    m_left_transformation = std::move(left_transformation);
+}
+
+void Gamepad::set_right_transform(Transformation right_transformation) {
+    m_right_transformation = std::move(right_transformation);
+}
+
 Button Gamepad::*Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
