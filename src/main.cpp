@@ -53,7 +53,7 @@ void initialize() {
 
     // set up controller curves:
     gamepad::master.set_left_transform(
-        gamepad::TransformationBuilder(gamepad::Deadband(5, 5)).and_then(gamepad::ExpoCurve(2, 2)));
+        gamepad::TransformationBuilder(gamepad::Deadband(0.05, 0.05)).and_then(gamepad::ExpoCurve(2, 2)));
 }
 
 /**
@@ -108,8 +108,8 @@ void opcontrol() {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
         // We'll use the arcade control scheme
-        int dir = gamepad::master.axisLeftY(); // Gets amount forward/backward from left joystick
-        int turn = gamepad::master.axisRightX(); // Gets the turn left/right from right joystick
+        int dir = gamepad::master.axisLeftY() * 127; // Gets amount forward/backward from left joystick
+        int turn = gamepad::master.axisRightX() * 127; // Gets the turn left/right from right joystick
         left_mg.move(dir - turn); // Sets left motor voltage
         right_mg.move(dir + turn); // Sets right motor voltage
         pros::delay(25); // Wait for 25 ms, then update the motor values again
