@@ -1,0 +1,7 @@
+git
+python3-minimal
+python3-pip
+pipx
+qemu-system
+gdb-multiarch
+jq
