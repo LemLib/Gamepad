@@ -2,7 +2,6 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <cstdint>
-#include <sys/types.h>
 
 namespace gamepad {
 void Button::set_long_press_threshold(uint32_t threshold) const { this->long_press_threshold = threshold; }

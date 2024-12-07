@@ -1,8 +1,12 @@
 #pragma once
 
 #include "pros/misc.h"
+#include "screens/defaultScreen.hpp"
+#include <cstdint>
 #include <string>
-
+#include <memory>
+#include <vector>
+#include "screens/abstractScreen.hpp"
 #include "button.hpp"
 #include "pros/misc.hpp"
 
@@ -26,6 +30,63 @@ class Gamepad {
          *
          */
         void update();
+        /**
+         * @brief Add a screen to the sceen update loop that can update the controller's screen
+         *
+         * @param screen the `AbstractScreen` to add to the screen queue
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // initialize the alerts screen so we can have alerts on the controller
+         * std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertScreen>();
+         *
+         * gamepad::master.add_screen(alerts);
+         */
+        void add_screen(std::shared_ptr<AbstractScreen> screen);
+        /**
+         * @brief print a line to the console like pros (low priority)
+         *
+         * @param line the line number to print the string on (0-2)
+         * @param str the string to print onto the controller (\n to go to the next line)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * gamepad::master.print_line(1, "This will print on the middle line");
+         * gamepad::master.print_line(0, "this will print\n\naround the middle line");
+         */
+        void print_line(uint8_t line, std::string str);
+        /**
+         * @brief clears all lines on the controller, similar to the pros function (low priority)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the whole screen on the controller
+         * gamepad::master.clear()
+         */
+        void clear();
+        /**
+         * @brief clears the specific line on the controller, similar to the pros function clear_line (low priority)
+         *
+         * @param line the line to clear (0-2)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the center line on the controller
+         * gamepad::master.clear(1);
+         */
+        void clear(uint8_t line);
+        /**
+         * makes the controller rumble like pros (low priority)
+         *
+         * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
+         * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // rumbles in the folllowing pattern: short, pause, long, short short
+         * gamepad::master.rumble(". -..");
+         */
+        void rumble(std::string rumble_pattern);
         /**
          * @brief Get the state of a button on the controller.
          *
@@ -74,8 +135,7 @@ class Gamepad {
         /// The partner controller, same as @ref gamepad::partner
         static Gamepad partner;
     private:
-        Gamepad(pros::controller_id_e_t id)
-            : controller(id) {}
+        Gamepad(pros::controller_id_e_t id);
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
@@ -92,7 +152,20 @@ class Gamepad {
         static std::string unique_name();
         static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
+
+        void updateScreens();
+
+        std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
+        std::vector<std::shared_ptr<AbstractScreen>> screens = {};
+        ScreenBuffer currentScreen = {};
+        ScreenBuffer nextBuffer = {};
         pros::Controller controller;
+
+        uint8_t last_printed_line = 0;
+        uint32_t last_print_time = 0;
+        uint32_t last_update_time = 0;
+        bool screenCleared = false;
+        pros::Mutex mut {};
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};
