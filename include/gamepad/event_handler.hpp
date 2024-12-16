@@ -27,7 +27,7 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true The listener was successfully added
          * @return false The listener was NOT successfully added (there is already a listener with the same key)
          */
-        bool add_listener(Key key, Listener func) {
+        bool addListener(Key key, Listener func) {
             std::lock_guard lock(mutex);
             if (std::find(keys.begin(), keys.end(), key) != keys.end()) return false;
             keys.push_back(key);
@@ -42,7 +42,7 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true The listener was successfully removed
          * @return false The listener was NOT successfully removed (there is no listener with the same key)
          */
-        bool remove_listener(Key key) {
+        bool removeListener(Key key) {
             std::lock_guard lock(mutex);
             auto i = std::find(keys.begin(), keys.end(), key);
             if (i != keys.end()) {
@@ -59,7 +59,7 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true There are listeners registered
          * @return false There are no listeners registered
          */
-        bool is_empty() {
+        bool isEmpty() {
             std::lock_guard lock(mutex);
             return listeners.empty();
         }

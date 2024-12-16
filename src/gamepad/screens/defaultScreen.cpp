@@ -9,18 +9,18 @@
 
 namespace gamepad {
 
-ScreenBuffer DefaultScreen::get_screen(std::set<uint8_t> visible_lines) {
+ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
     const std::lock_guard<pros::Mutex> guard(this->mut);
 
     for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
-        output[*i] = std::move(this->currentBuffer[*i]);
-        this->currentBuffer[*i] = std::nullopt;
+        output[*i] = std::move(this->current_buffer[*i]);
+        this->current_buffer[*i] = std::nullopt;
     }
     return output;
 }
 
-void DefaultScreen::print_line(uint8_t line, std::string str) {
+void DefaultScreen::printLine(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
@@ -38,12 +38,12 @@ void DefaultScreen::print_line(uint8_t line, std::string str) {
         }
 
         for (uint8_t l = 0; l < 3; l++) {
-            if (!strs[l].empty()) this->currentBuffer[l] = (strs[l]);
+            if (!strs[l].empty()) this->current_buffer[l] = (strs[l]);
         }
         return;
     }
 
-    this->currentBuffer[line] = std::move(str);
+    this->current_buffer[line] = std::move(str);
 }
 
 void DefaultScreen::rumble(std::string rumble_pattern) {
@@ -51,7 +51,7 @@ void DefaultScreen::rumble(std::string rumble_pattern) {
     if (rumble_pattern.size() > 8) std::exit(1);
 
     std::lock_guard<pros::Mutex> guard(this->mut);
-    this->currentBuffer[3] = std::move(rumble_pattern);
+    this->current_buffer[3] = std::move(rumble_pattern);
 }
 
 } // namespace gamepad

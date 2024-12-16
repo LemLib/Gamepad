@@ -37,7 +37,7 @@ class RecursiveMutex {
          * @return true The mutex was successfully acquired
          * @return false The mutex was not successfully acquired
          */
-        bool try_lock() { return this->take(0); }
+        bool tryLock() { return this->take(0); }
 
         /**
          * @brief Unlocks the mutex

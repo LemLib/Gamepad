@@ -35,7 +35,7 @@ class AlertScreen : public AbstractScreen {
          *
          * @returns a the lines to be printed, any lines that are not available will be ignored
          */
-        ScreenBuffer get_screen(std::set<uint8_t> visible_lines);
+        ScreenBuffer getScreen(std::set<uint8_t> visible_lines);
 
         /**
          * @brief add an alert to the alert queue, to be printed as soon as there is an available space
@@ -47,7 +47,7 @@ class AlertScreen : public AbstractScreen {
          * @param rumble A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
          */
-        void add_alerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
+        void addAlerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
     private:
         struct AlertBuffer {
                 ScreenBuffer screen;

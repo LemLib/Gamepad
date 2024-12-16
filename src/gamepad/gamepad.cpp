@@ -55,7 +55,7 @@ void Gamepad::updateScreens() {
     // Update all screens, and send new button presses, also note deltatime
     for (std::shared_ptr<AbstractScreen> screen : this->screens) {
         screen->update(pros::millis() - this->last_update_time);
-        screen->handle_events(buttonUpdates);
+        screen->handleEvents(buttonUpdates);
     }
     this->last_update_time = pros::millis();
 
@@ -69,7 +69,7 @@ void Gamepad::updateScreens() {
             if (!this->nextBuffer[j].has_value()) visible_lines.emplace(j);
 
         // get the buffer of the next lower priority screen and set it to be printed
-        ScreenBuffer buffer = screen->get_screen(visible_lines);
+        ScreenBuffer buffer = screen->getScreen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
             if (buffer[j].has_value() && !buffer[j]->empty() && !nextBuffer[j].has_value())
                 nextBuffer[j] = std::move(buffer[j]);
@@ -124,17 +124,17 @@ void Gamepad::add_screen(std::shared_ptr<AbstractScreen> screen) {
     uint32_t last = UINT32_MAX;
     uint32_t pos = 0;
     for (pos = 0; pos < this->screens.size(); pos++) {
-        if (this->screens[pos]->get_priority() < screen->get_priority() && last >= screen->get_priority()) break;
-        last = this->screens[pos]->get_priority();
+        if (this->screens[pos]->getPriority() < screen->getPriority() && last >= screen->getPriority()) break;
+        last = this->screens[pos]->getPriority();
     }
     this->screens.emplace(this->screens.begin() + pos, screen);
 }
 
-void Gamepad::print_line(uint8_t line, std::string str) { this->defaultScreen->print_line(line, str); }
+void Gamepad::printLine(uint8_t line, std::string str) { this->defaultScreen->printLine(line, str); }
 
-void Gamepad::clear() { this->defaultScreen->print_line(0, " \n \n "); }
+void Gamepad::clear() { this->defaultScreen->printLine(0, " \n \n "); }
 
-void Gamepad::clear(uint8_t line) { this->defaultScreen->print_line(line, " "); }
+void Gamepad::clear(uint8_t line) { this->defaultScreen->printLine(line, " "); }
 
 void Gamepad::rumble(std::string rumble_pattern) { this->defaultScreen->rumble(rumble_pattern); }
 

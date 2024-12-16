@@ -51,10 +51,10 @@ class Gamepad {
          *
          * @b Example:
          * @code {.cpp}
-         * gamepad::master.print_line(1, "This will print on the middle line");
-         * gamepad::master.print_line(0, "this will print\n\naround the middle line");
+         * gamepad::master.printLine(1, "This will print on the middle line");
+         * gamepad::master.printLine(0, "this will print\n\naround the middle line");
          */
-        void print_line(uint8_t line, std::string str);
+        void printLine(uint8_t line, std::string str);
         /**
          * @brief clears all lines on the controller, similar to the pros function (low priority)
          *
@@ -145,7 +145,7 @@ class Gamepad {
          * @brief Gets a unique name for a listener that will not conflict with user listener names.
          *
          * @important: when using the function, you must register the listener by
-         * directly calling add_listener on the EventHandler, do NOT use onPress/addListener,etc.
+         * directly calling addListener on the EventHandler, do NOT use onPress/addListener,etc.
          *
          * @return std::string A unique listener name
          */

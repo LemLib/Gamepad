@@ -9,7 +9,7 @@
 
 namespace gamepad {
 
-ScreenBuffer AlertScreen::get_screen(std::set<uint8_t> visible_lines) {
+ScreenBuffer AlertScreen::getScreen(std::set<uint8_t> visible_lines) {
     std::lock_guard<pros::Mutex> guard(this->mut);
     if (this->screen_contents.has_value()) {
         this->screen_contents->screen.at(3) = std::nullopt;
@@ -32,7 +32,7 @@ void AlertScreen::update(uint32_t delta_time) {
     if (pros::millis() - this->line_set_time >= this->screen_contents->duration) this->screen_contents = std::nullopt;
 }
 
-void AlertScreen::add_alerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
+void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
