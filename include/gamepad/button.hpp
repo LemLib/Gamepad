@@ -42,14 +42,14 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // change the threshold
-         *   gamepad::master.Left.set_long_press_threshold(5000);
+         *   gamepad::master.Left.setLongPressThreshold(5000);
          *   // then call the function
          *   gamepad::master.Left.onLongPress("longPress1", []() {
          *       std::cout << "I was held for 5000ms instead of the 500ms default!" << std::endl;
          *   });
          * @endcode
          */
-        void set_long_press_threshold(uint32_t threshold) const;
+        void setLongPressThreshold(uint32_t threshold) const;
         /**
          * @brief Set the interval for the repeatPress event to repeat
          *
@@ -60,14 +60,14 @@ class Button {
          * @b Example:
          * @code {.cpp}
          *   // change the threshold
-         *   gamepad::master.Up.set_repeat_cooldown(100);
+         *   gamepad::master.Up.setRepeatCooldown(100);
          *   // then call the function
          *   gamepad::master.Up.onRepeatPress("repeatPress1", []() {
          *       std::cout << "I'm being repeated every 100ms instead of the 50ms default!" << std::endl;
          *   });
          * @endcode
          */
-        void set_repeat_cooldown(uint32_t cooldown) const;
+        void setRepeatCooldown(uint32_t cooldown) const;
         /**
          * @brief Register a function to run when the button is pressed.
          *
@@ -89,7 +89,7 @@ class Button {
          * @brief Register a function to run when the button is long pressed.
          *
          * By default, onLongPress will fire when the button has been held down for
-         * 500ms or more, this threshold can be adjusted via the set_long_press_threshold() method.
+         * 500ms or more, this threshold can be adjusted via the setLongPressThreshold() method.
          *
          * @warning When using this event along with onPress, both the onPress
          * and onlongPress listeners may fire together.
@@ -130,7 +130,7 @@ class Button {
          * @brief Register a function to run when the button is short released.
          *
          * By default, shortRelease will fire when the button has been released before 500ms, this threshold can be
-         * adjusted via the set_long_press_threshold() method.
+         * adjusted via the setLongPressThreshold() method.
          *
          * @note This event will most likely be used along with the longPress event.
          *
@@ -152,7 +152,7 @@ class Button {
          * @brief Register a function to run when the button is long released.
          *
          * By default, longRelease will fire when the button has been released after 500ms, this threshold can be
-         * adjusted via the set_long_press_threshold() method.
+         * adjusted via the setLongPressThreshold() method.
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long released, the function MUST NOT block
@@ -173,7 +173,7 @@ class Button {
          * @brief Register a function to run periodically after its been held
          *
          * By default repeatPress will start repeating after 500ms and repeat every 50ms, this can be adjusted via the
-         * set_long_press_threshold() and set_repeat_cooldown() methods respectively
+         * setLongPressThreshold() and setRepeatCooldown() methods respectively
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func the function to run periodically when the button is held, the function MUST NOT block
@@ -250,11 +250,11 @@ class Button {
         uint32_t last_long_press_time = 0;
         /// The last time the repeat event was called
         uint32_t last_repeat_time = 0;
-        mutable _impl::EventHandler<std::string> onPressEvent {};
-        mutable _impl::EventHandler<std::string> onLongPressEvent {};
-        mutable _impl::EventHandler<std::string> onReleaseEvent {};
-        mutable _impl::EventHandler<std::string> onShortReleaseEvent {};
-        mutable _impl::EventHandler<std::string> onLongReleaseEvent {};
-        mutable _impl::EventHandler<std::string> onRepeatPressEvent {};
+        mutable _impl::EventHandler<std::string> on_press_event {};
+        mutable _impl::EventHandler<std::string> on_long_press_event {};
+        mutable _impl::EventHandler<std::string> on_release_event {};
+        mutable _impl::EventHandler<std::string> on_short_release_event {};
+        mutable _impl::EventHandler<std::string> on_long_release_event {};
+        mutable _impl::EventHandler<std::string> on_repeat_press_event {};
 };
 } // namespace gamepad

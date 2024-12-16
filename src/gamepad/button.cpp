@@ -4,32 +4,32 @@
 #include <cstdint>
 
 namespace gamepad {
-void Button::set_long_press_threshold(uint32_t threshold) const { this->long_press_threshold = threshold; }
+void Button::setLongPressThreshold(uint32_t threshold) const { this->long_press_threshold = threshold; }
 
-void Button::set_repeat_cooldown(uint32_t cooldown) const { this->repeat_cooldown = cooldown; }
+void Button::setRepeatCooldown(uint32_t cooldown) const { this->repeat_cooldown = cooldown; }
 
 bool Button::onPress(std::string listenerName, std::function<void(void)> func) const {
-    return this->onPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_press_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onLongPress(std::string listenerName, std::function<void(void)> func) const {
-    return this->onLongPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_long_press_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onRelease(std::string listenerName, std::function<void(void)> func) const {
-    return this->onReleaseEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_release_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onShortRelease(std::string listenerName, std::function<void(void)> func) const {
-    return this->onShortReleaseEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_short_release_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onLongRelease(std::string listenerName, std::function<void(void)> func) const {
-    return this->onLongReleaseEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_long_release_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::onRepeatPress(std::string listenerName, std::function<void(void)> func) const {
-    return this->onRepeatPressEvent.add_listener(std::move(listenerName) + "_user", std::move(func));
+    return this->on_repeat_press_event.addListener(std::move(listenerName) + "_user", std::move(func));
 }
 
 bool Button::addListener(EventType event, std::string listenerName, std::function<void(void)> func) const {
@@ -49,12 +49,12 @@ bool Button::addListener(EventType event, std::string listenerName, std::functio
 }
 
 bool Button::removeListener(std::string listenerName) const {
-    return this->onPressEvent.remove_listener(listenerName + "_user") ||
-           this->onLongPressEvent.remove_listener(listenerName + "_user") ||
-           this->onReleaseEvent.remove_listener(listenerName + "_user") ||
-           this->onShortReleaseEvent.remove_listener(listenerName + "_user") ||
-           this->onLongReleaseEvent.remove_listener(listenerName + "_user") ||
-           this->onRepeatPressEvent.remove_listener(listenerName + "_user");
+    return this->on_press_event.removeListener(listenerName + "_user") ||
+           this->on_long_press_event.removeListener(listenerName + "_user") ||
+           this->on_release_event.removeListener(listenerName + "_user") ||
+           this->on_short_release_event.removeListener(listenerName + "_user") ||
+           this->on_long_release_event.removeListener(listenerName + "_user") ||
+           this->on_repeat_press_event.removeListener(listenerName + "_user");
 }
 
 void Button::update(const bool is_held) {
@@ -65,22 +65,22 @@ void Button::update(const bool is_held) {
     else this->time_released += pros::millis() - this->last_update_time;
 
     if (this->rising_edge) {
-        this->onPressEvent.fire();
+        this->on_press_event.fire();
     } else if (this->is_pressed && this->time_held >= this->long_press_threshold &&
                this->last_long_press_time <= pros::millis() - this->time_held) {
-        this->onLongPressEvent.fire();
+        this->on_long_press_event.fire();
         this->last_long_press_time = pros::millis();
         this->last_repeat_time = pros::millis() - this->repeat_cooldown;
         this->repeat_iterations = 0;
     } else if (this->is_pressed && this->time_held >= this->long_press_threshold &&
                pros::millis() - this->last_repeat_time >= this->repeat_cooldown) {
         this->repeat_iterations++;
-        this->onRepeatPressEvent.fire();
+        this->on_repeat_press_event.fire();
         this->last_repeat_time = pros::millis();
     } else if (this->falling_edge) {
-        this->onReleaseEvent.fire();
-        if (this->time_held < this->long_press_threshold) this->onShortReleaseEvent.fire();
-        else this->onLongReleaseEvent.fire();
+        this->on_release_event.fire();
+        if (this->time_held < this->long_press_threshold) this->on_short_release_event.fire();
+        else this->on_long_release_event.fire();
     }
 
     if (this->rising_edge) this->time_held = 0;
