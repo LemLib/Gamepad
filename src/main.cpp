@@ -18,8 +18,8 @@ std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertSc
  */
 void initialize() {
     // VERY IMPORTANT, this actually adds the alerts screen to the gamepad
-    // it wouldnt work without this line
-    gamepad::master.add_screen(alerts);
+    // it wouldn't work without this line
+    gamepad::master.addScreen(alerts);
 
     // When the A button is pressed, schedule an alert that spans all three
     // lines, lasts 3 seconds and rumbles in a long-short-long pattern

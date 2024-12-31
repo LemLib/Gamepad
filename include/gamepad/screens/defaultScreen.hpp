@@ -42,8 +42,8 @@ class DefaultScreen : public AbstractScreen {
          */
         void rumble(std::string rumble_pattern);
     private:
-        ScreenBuffer current_buffer {};
-        pros::Mutex mut {};
+        ScreenBuffer m_current_buffer {};
+        pros::Mutex m_mutex {};
 };
 
 } // namespace gamepad

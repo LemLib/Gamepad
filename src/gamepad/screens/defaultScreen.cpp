@@ -11,11 +11,11 @@ namespace gamepad {
 
 ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
     ScreenBuffer output;
-    const std::lock_guard<pros::Mutex> guard(this->mut);
+    const std::lock_guard<pros::Mutex> guard(m_mutex);
 
     for (auto i = visible_lines.begin(); i != visible_lines.end(); ++i) {
-        output[*i] = std::move(this->current_buffer[*i]);
-        this->current_buffer[*i] = std::nullopt;
+        output[*i] = std::move(m_current_buffer[*i]);
+        m_current_buffer[*i] = std::nullopt;
     }
     return output;
 }
@@ -24,7 +24,7 @@ void DefaultScreen::printLine(uint8_t line, std::string str) {
     TODO("change handling for off screen lines")
     if (line > 2) std::exit(1);
 
-    const std::lock_guard<pros::Mutex> guard(this->mut);
+    const std::lock_guard<pros::Mutex> guard(m_mutex);
 
     if (str.find('\n') != std::string::npos) {
         TODO("warn instead of throw error if there are too many lines")
@@ -38,20 +38,20 @@ void DefaultScreen::printLine(uint8_t line, std::string str) {
         }
 
         for (uint8_t l = 0; l < 3; l++) {
-            if (!strs[l].empty()) this->current_buffer[l] = (strs[l]);
+            if (!strs[l].empty()) m_current_buffer[l] = (strs[l]);
         }
         return;
     }
 
-    this->current_buffer[line] = std::move(str);
+    m_current_buffer[line] = std::move(str);
 }
 
 void DefaultScreen::rumble(std::string rumble_pattern) {
     TODO("change handling for too long rumble patterns")
     if (rumble_pattern.size() > 8) std::exit(1);
 
-    std::lock_guard<pros::Mutex> guard(this->mut);
-    this->current_buffer[3] = std::move(rumble_pattern);
+    std::lock_guard<pros::Mutex> guard(m_mutex);
+    m_current_buffer[3] = std::move(rumble_pattern);
 }
 
 } // namespace gamepad

@@ -24,7 +24,7 @@ class RecursiveMutex {
         bool take(std::uint32_t timeout = TIMEOUT_MAX) { return pros::c::mutex_recursive_take(mutex, timeout); }
 
         /**
-         * @brief Locks the mutex, waiting indefinetely until the mutex is acquired
+         * @brief Locks the mutex, waiting indefinitely until the mutex is acquired
          *
          */
         void lock() {
@@ -37,7 +37,7 @@ class RecursiveMutex {
          * @return true The mutex was successfully acquired
          * @return false The mutex was not successfully acquired
          */
-        bool tryLock() { return this->take(0); }
+        bool try_lock() { return this->take(0); }
 
         /**
          * @brief Unlocks the mutex

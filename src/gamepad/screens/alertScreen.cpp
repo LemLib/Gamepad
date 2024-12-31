@@ -10,26 +10,26 @@
 namespace gamepad {
 
 ScreenBuffer AlertScreen::getScreen(std::set<uint8_t> visible_lines) {
-    std::lock_guard<pros::Mutex> guard(this->mut);
-    if (this->screen_contents.has_value()) {
-        this->screen_contents->screen.at(3) = std::nullopt;
-        return this->screen_contents->screen;
+    std::lock_guard<pros::Mutex> guard(m_mutex);
+    if (m_screen_contents.has_value()) {
+        m_screen_contents->screen.at(3) = std::nullopt;
+        return m_screen_contents->screen;
     }
-    if (this->screen_buffer.size() < 1) return ScreenBuffer();
+    if (m_screen_buffer.size() < 1) return ScreenBuffer();
 
     for (uint8_t i = 0; i < 4; i++) {
-        if (!this->screen_buffer[0].screen[i].has_value()) continue;
-        if (this->screen_buffer[0].screen[i].has_value() && !visible_lines.contains(i)) return ScreenBuffer();
+        if (!m_screen_buffer[0].screen[i].has_value()) continue;
+        if (m_screen_buffer[0].screen[i].has_value() && !visible_lines.contains(i)) return ScreenBuffer();
     }
-    this->screen_contents = std::move(this->screen_buffer[0]);
-    this->screen_buffer.pop_front();
-    this->line_set_time = pros::millis();
-    return this->screen_contents->screen;
+    m_screen_contents = std::move(m_screen_buffer[0]);
+    m_screen_buffer.pop_front();
+    m_line_set_time = pros::millis();
+    return m_screen_contents->screen;
 }
 
 void AlertScreen::update(uint32_t delta_time) {
-    std::lock_guard<pros::Mutex> guard(this->mut);
-    if (pros::millis() - this->line_set_time >= this->screen_contents->duration) this->screen_contents = std::nullopt;
+    std::lock_guard<pros::Mutex> guard(m_mutex);
+    if (pros::millis() - m_line_set_time >= m_screen_contents->duration) m_screen_contents = std::nullopt;
 }
 
 void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
@@ -54,8 +54,8 @@ void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, st
     if (strs[2] != "") buffer[2] = std::move(strs[2]);
     if (rumble != "") buffer[3] = std::move(rumble);
 
-    std::lock_guard<pros::Mutex> guard(this->mut);
-    this->screen_buffer.push_back({buffer, duration});
+    std::lock_guard<pros::Mutex> guard(m_mutex);
+    m_screen_buffer.push_back({buffer, duration});
 }
 
 } // namespace gamepad

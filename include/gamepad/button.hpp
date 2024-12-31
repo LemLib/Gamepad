@@ -92,7 +92,7 @@ class Button {
          * 500ms or more, this threshold can be adjusted via the setLongPressThreshold() method.
          *
          * @warning When using this event along with onPress, both the onPress
-         * and onlongPress listeners may fire together.
+         * and onLongPress listeners may fire together.
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long pressed, the function MUST NOT block
@@ -241,20 +241,20 @@ class Button {
          */
         void update(bool is_held);
         /// How long the threshold should be for the longPress and shortRelease events
-        mutable uint32_t long_press_threshold = 500;
+        mutable uint32_t m_long_press_threshold = 500;
         /// How often repeatPress is called
-        mutable uint32_t repeat_cooldown = 50;
+        mutable uint32_t m_repeat_cooldown = 50;
         /// The last time the update function was called
-        uint32_t last_update_time = pros::millis();
+        uint32_t m_last_update_time = pros::millis();
         /// The last time the long press event was fired
-        uint32_t last_long_press_time = 0;
+        uint32_t m_last_long_press_time = 0;
         /// The last time the repeat event was called
-        uint32_t last_repeat_time = 0;
-        mutable _impl::EventHandler<std::string> on_press_event {};
-        mutable _impl::EventHandler<std::string> on_long_press_event {};
-        mutable _impl::EventHandler<std::string> on_release_event {};
-        mutable _impl::EventHandler<std::string> on_short_release_event {};
-        mutable _impl::EventHandler<std::string> on_long_release_event {};
-        mutable _impl::EventHandler<std::string> on_repeat_press_event {};
+        uint32_t m_last_repeat_time = 0;
+        mutable _impl::EventHandler<std::string> m_on_press_event {};
+        mutable _impl::EventHandler<std::string> m_on_long_press_event {};
+        mutable _impl::EventHandler<std::string> m_on_release_event {};
+        mutable _impl::EventHandler<std::string> m_on_short_release_event {};
+        mutable _impl::EventHandler<std::string> m_on_long_release_event {};
+        mutable _impl::EventHandler<std::string> m_on_repeat_press_event {};
 };
 } // namespace gamepad

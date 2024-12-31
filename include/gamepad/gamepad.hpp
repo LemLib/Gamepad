@@ -31,7 +31,7 @@ class Gamepad {
          */
         void update();
         /**
-         * @brief Add a screen to the sceen update loop that can update the controller's screen
+         * @brief Add a screen to the screen update loop that can update the controller's screen
          *
          * @param screen the `AbstractScreen` to add to the screen queue
          *
@@ -42,7 +42,7 @@ class Gamepad {
          *
          * gamepad::master.add_screen(alerts);
          */
-        void add_screen(std::shared_ptr<AbstractScreen> screen);
+        void addScreen(std::shared_ptr<AbstractScreen> screen);
         /**
          * @brief print a line to the console like pros (low priority)
          *
@@ -83,7 +83,7 @@ class Gamepad {
          *
          * @b Example:
          * @code {.cpp}
-         * // rumbles in the folllowing pattern: short, pause, long, short short
+         * // rumbles in the following pattern: short, pause, long, short short
          * gamepad::master.rumble(". -..");
          */
         void rumble(std::string rumble_pattern);
@@ -149,23 +149,23 @@ class Gamepad {
          *
          * @return std::string A unique listener name
          */
-        static std::string unique_name();
-        static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
+        static std::string uniqueName();
+        static Button Gamepad::*buttonToPtr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
 
         void updateScreens();
 
-        std::shared_ptr<DefaultScreen> defaultScreen = std::make_shared<DefaultScreen>();
-        std::vector<std::shared_ptr<AbstractScreen>> screens = {};
-        ScreenBuffer currentScreen = {};
-        ScreenBuffer nextBuffer = {};
-        pros::Controller controller;
+        std::shared_ptr<DefaultScreen> m_default_screen = std::make_shared<DefaultScreen>();
+        std::vector<std::shared_ptr<AbstractScreen>> m_screens = {};
+        ScreenBuffer m_current_screen = {};
+        ScreenBuffer m_next_buffer = {};
+        pros::Controller m_controller;
 
-        uint8_t last_printed_line = 0;
-        uint32_t last_print_time = 0;
-        uint32_t last_update_time = 0;
-        bool screenCleared = false;
-        pros::Mutex mut {};
+        uint8_t m_last_printed_line = 0;
+        uint32_t m_last_print_time = 0;
+        uint32_t m_last_update_time = 0;
+        bool m_screen_cleared = false;
+        pros::Mutex m_mutex {};
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};

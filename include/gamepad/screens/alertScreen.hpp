@@ -54,10 +54,10 @@ class AlertScreen : public AbstractScreen {
                 uint32_t duration;
         };
 
-        std::deque<AlertBuffer> screen_buffer {};
-        std::optional<AlertBuffer> screen_contents {};
-        uint32_t line_set_time = 0;
-        pros::Mutex mut {};
+        std::deque<AlertBuffer> m_screen_buffer {};
+        std::optional<AlertBuffer> m_screen_contents {};
+        uint32_t m_line_set_time = 0;
+        pros::Mutex m_mutex {};
 };
 
 } // namespace gamepad

@@ -14,95 +14,95 @@
 
 namespace gamepad {
 Gamepad::Gamepad(pros::controller_id_e_t id)
-    : controller(id) {
-    this->add_screen(defaultScreen);
+    : m_controller(id) {
+    this->addScreen(m_default_screen);
 }
 
 void Gamepad::updateButton(pros::controller_digital_e_t button_id) {
-    Button Gamepad::*button = Gamepad::button_to_ptr(button_id);
-    bool is_held = this->controller.get_digital(button_id);
+    Button Gamepad::*button = Gamepad::buttonToPtr(button_id);
+    bool is_held = m_controller.get_digital(button_id);
     (this->*button).update(is_held);
 }
 
 void Gamepad::updateScreens() {
     // Lock Mutexes for Thread Safety
-    std::lock_guard<pros::Mutex> guard_scheduling(this->mut);
+    std::lock_guard<pros::Mutex> guard_scheduling(m_mutex);
 
     // Disable screen updates if the controller is disconnected
-    if (!this->controller.is_connected()) {
-        if (this->screenCleared) {
-            this->nextBuffer = std::move(this->currentScreen);
-            this->currentScreen = {};
-            this->screenCleared = false;
+    if (!m_controller.is_connected()) {
+        if (m_screen_cleared) {
+            m_next_buffer = std::move(m_current_screen);
+            m_current_screen = {};
+            m_screen_cleared = false;
         }
         return;
     }
 
     // Clear current screen and reset last update time on reconnect
-    if (this->controller.is_connected() && !screenCleared) {
-        this->currentScreen = {};
-        this->last_update_time = pros::millis();
+    if (m_controller.is_connected() && !m_screen_cleared) {
+        m_current_screen = {};
+        m_last_update_time = pros::millis();
     }
 
     // Get new button presses
     std::set<pros::controller_digital_e_t> buttonUpdates;
     for (int i = pros::E_CONTROLLER_DIGITAL_L1; i <= pros::E_CONTROLLER_DIGITAL_A; ++i) {
-        if ((this->*this->button_to_ptr(static_cast<pros::controller_digital_e_t>(i))).rising_edge) {
+        if ((this->*this->buttonToPtr(static_cast<pros::controller_digital_e_t>(i))).rising_edge) {
             buttonUpdates.emplace(static_cast<pros::controller_digital_e_t>(i));
         }
     }
 
     // Update all screens, and send new button presses, also note deltatime
-    for (std::shared_ptr<AbstractScreen> screen : this->screens) {
-        screen->update(pros::millis() - this->last_update_time);
+    for (std::shared_ptr<AbstractScreen> screen : m_screens) {
+        screen->update(pros::millis() - m_last_update_time);
         screen->handleEvents(buttonUpdates);
     }
-    this->last_update_time = pros::millis();
+    m_last_update_time = pros::millis();
 
     // Check if enough time has passed for the Gamepad to poll for updates
-    if (pros::millis() - this->last_print_time <= 50) return;
+    if (pros::millis() - m_last_print_time <= 50) return;
 
-    for (std::shared_ptr<AbstractScreen> screen : this->screens) {
-        // get all lines that arent being used by a higher priority screen
+    for (std::shared_ptr<AbstractScreen> screen : m_screens) {
+        // get all lines that aren't being used by a higher priority screen
         std::set<uint8_t> visible_lines;
         for (uint8_t j = 0; j < 4; j++)
-            if (!this->nextBuffer[j].has_value()) visible_lines.emplace(j);
+            if (!m_next_buffer[j].has_value()) visible_lines.emplace(j);
 
         // get the buffer of the next lower priority screen and set it to be printed
         ScreenBuffer buffer = screen->getScreen(visible_lines);
         for (uint8_t j = 0; j < 4; j++)
-            if (buffer[j].has_value() && !buffer[j]->empty() && !nextBuffer[j].has_value())
-                nextBuffer[j] = std::move(buffer[j]);
+            if (buffer[j].has_value() && !buffer[j]->empty() && !m_next_buffer[j].has_value())
+                m_next_buffer[j] = std::move(buffer[j]);
     }
 
     for (int i = 0; i < 4; i++) {
         // start from the line thats after the line thats been set so we dont get stuck setting the first line
-        int line = (this->last_printed_line + i) % 4;
+        int line = (m_last_printed_line + i) % 4;
 
         // theres nothing on this line so we can skip it
-        if (!this->nextBuffer[line].has_value()) continue;
+        if (!m_next_buffer[line].has_value()) continue;
 
-        if (!this->screenCleared && line != 3) {
-            this->controller.clear();
-            this->screenCleared = true;
-            this->currentScreen = {};
-            this->last_print_time = pros::millis();
+        if (!m_screen_cleared && line != 3) {
+            m_controller.clear();
+            m_screen_cleared = true;
+            m_current_screen = {};
+            m_last_print_time = pros::millis();
             return;
         }
 
         // text on screen is the same as last frame's text so no use updating
-        if (this->currentScreen[line] == this->nextBuffer[line] && line != 3) {
-            this->nextBuffer[line] = std::nullopt;
+        if (m_current_screen[line] == m_next_buffer[line] && line != 3) {
+            m_next_buffer[line] = std::nullopt;
             continue;
         }
 
         // print to screen or rumble
-        if (line == 3) this->controller.rumble(this->nextBuffer[line].value_or("").c_str());
-        else this->controller.set_text(line, 0, this->nextBuffer[line].value_or("") + std::string(40, ' '));
-        if (line != 3) this->currentScreen[line] = std::move(this->nextBuffer[line]);
-        this->nextBuffer[line] = std::nullopt;
-        this->last_printed_line = line;
-        this->last_print_time = pros::millis();
+        if (line == 3) m_controller.rumble(m_next_buffer[line].value_or("").c_str());
+        else m_controller.set_text(line, 0, m_next_buffer[line].value_or("") + std::string(40, ' '));
+        if (line != 3) m_current_screen[line] = std::move(m_next_buffer[line]);
+        m_next_buffer[line] = std::nullopt;
+        m_last_printed_line = line;
+        m_last_print_time = pros::millis();
         return;
     }
 }
@@ -112,33 +112,33 @@ void Gamepad::update() {
         this->updateButton(static_cast<pros::controller_digital_e_t>(i));
     }
 
-    this->m_LeftX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-    this->m_LeftY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    this->m_RightX = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-    this->m_RightY = this->controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+    m_LeftX = m_controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    m_LeftY = m_controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    m_RightX = m_controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    m_RightY = m_controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 
     this->updateScreens();
 }
 
-void Gamepad::add_screen(std::shared_ptr<AbstractScreen> screen) {
+void Gamepad::addScreen(std::shared_ptr<AbstractScreen> screen) {
     uint32_t last = UINT32_MAX;
     uint32_t pos = 0;
-    for (pos = 0; pos < this->screens.size(); pos++) {
-        if (this->screens[pos]->getPriority() < screen->getPriority() && last >= screen->getPriority()) break;
-        last = this->screens[pos]->getPriority();
+    for (pos = 0; pos < m_screens.size(); pos++) {
+        if (m_screens[pos]->getPriority() < screen->getPriority() && last >= screen->getPriority()) break;
+        last = m_screens[pos]->getPriority();
     }
-    this->screens.emplace(this->screens.begin() + pos, screen);
+    m_screens.emplace(m_screens.begin() + pos, screen);
 }
 
-void Gamepad::printLine(uint8_t line, std::string str) { this->defaultScreen->printLine(line, str); }
+void Gamepad::printLine(uint8_t line, std::string str) { m_default_screen->printLine(line, str); }
 
-void Gamepad::clear() { this->defaultScreen->printLine(0, " \n \n "); }
+void Gamepad::clear() { m_default_screen->printLine(0, " \n \n "); }
 
-void Gamepad::clear(uint8_t line) { this->defaultScreen->printLine(line, " "); }
+void Gamepad::clear(uint8_t line) { m_default_screen->printLine(line, " "); }
 
-void Gamepad::rumble(std::string rumble_pattern) { this->defaultScreen->rumble(rumble_pattern); }
+void Gamepad::rumble(std::string rumble_pattern) { m_default_screen->rumble(rumble_pattern); }
 
-const Button& Gamepad::operator[](pros::controller_digital_e_t button) { return this->*Gamepad::button_to_ptr(button); }
+const Button& Gamepad::operator[](pros::controller_digital_e_t button) { return this->*Gamepad::buttonToPtr(button); }
 
 float Gamepad::operator[](pros::controller_analog_e_t axis) {
     switch (axis) {
@@ -153,12 +153,12 @@ float Gamepad::operator[](pros::controller_analog_e_t axis) {
     }
 }
 
-std::string Gamepad::unique_name() {
+std::string Gamepad::uniqueName() {
     static std::atomic<uint32_t> i = 0;
     return std::to_string(i++) + "_internal";
 }
 
-Button Gamepad::*Gamepad::button_to_ptr(pros::controller_digital_e_t button) {
+Button Gamepad::*Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
         case pros::E_CONTROLLER_DIGITAL_L2: return &Gamepad::m_L2;
