@@ -39,9 +39,7 @@ void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, st
         return;
     }
 
-    if (std::ranges::count(str, '\n') > 2) {
-        TODO("add warn logging")
-    }
+    if (std::ranges::count(str, '\n') > 2) { TODO("add warn logging") }
 
     std::vector<std::string> strs(3, "");
     std::stringstream ss(str);
