@@ -33,11 +33,15 @@ void AlertScreen::update(uint32_t delta_time) {
 }
 
 void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
-    TODO("change handling for off screen lines")
-    if (line > 2) std::exit(1);
+    if (line > 2) {
+        TODO("add error logging")
+        errno = EINVAL;
+        return;
+    }
 
-    TODO("warn instead of throw error if there are too many lines")
-    if (std::ranges::count(str, '\n') > 2) std::exit(1);
+    if (std::ranges::count(str, '\n') > 2) {
+        TODO("add warn logging")
+    }
 
     std::vector<std::string> strs(3, "");
     std::stringstream ss(str);
