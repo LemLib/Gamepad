@@ -22,11 +22,11 @@ typedef std::array<std::optional<std::string>, 4> ScreenBuffer;
 class AbstractScreen {
     public:
         AbstractScreen(uint32_t priority)
-            : priority(priority) {}
+            : m_priority(priority) {}
 
         /**
          * @brief runs every time the controller's update function is called
-         * use this if you need to update somthing regardless of if there is an
+         * use this if you need to update something regardless of if there is an
          * available slot in the screen
          *
          * @param delta_time the time since the last update in milliseconds
@@ -41,23 +41,23 @@ class AbstractScreen {
          *
          * @returns a the lines to be printed, any lines that are not available will be ignored
          */
-        virtual ScreenBuffer get_screen(std::set<uint8_t> visible_lines) = 0;
+        virtual ScreenBuffer getScreen(std::set<uint8_t> visible_lines) = 0;
 
         /**
          * @brief a function where button events are pushed, use this to handle button events.
          *
          * @param button_events a set of the button events that happened this update
          */
-        virtual void handle_events(std::set<pros::controller_digital_e_t> button_events) {}
+        virtual void handleEvents(std::set<pros::controller_digital_e_t> button_events) {}
 
         /**
          * @brief returns the priority of the screen
          *
-         * @important it is not reccomended to override this function
+         * @warning it is not recommended to override this function
          */
-        uint32_t get_priority() { return this->priority; }
+        uint32_t getPriority() { return m_priority; }
     protected:
-        const uint32_t priority;
+        const uint32_t m_priority;
 };
 
 } // namespace gamepad

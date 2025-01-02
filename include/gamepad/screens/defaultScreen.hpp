@@ -24,7 +24,7 @@ class DefaultScreen : public AbstractScreen {
          *
          * @returns a the lines to be printed, any lines that are not available will be ignored
          */
-        ScreenBuffer get_screen(std::set<uint8_t> visible_lines);
+        ScreenBuffer getScreen(std::set<uint8_t> visible_lines);
 
         /**
          * @brief print a line to the console like pros
@@ -32,7 +32,7 @@ class DefaultScreen : public AbstractScreen {
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
          */
-        void print_line(uint8_t line, std::string str);
+        void printLine(uint8_t line, std::string str);
 
         /**
          * makes the controller rumble like pros
@@ -42,8 +42,8 @@ class DefaultScreen : public AbstractScreen {
          */
         void rumble(std::string rumble_pattern);
     private:
-        ScreenBuffer currentBuffer {};
-        pros::Mutex mut {};
+        ScreenBuffer m_current_buffer {};
+        pros::Mutex m_mutex {};
 };
 
 } // namespace gamepad

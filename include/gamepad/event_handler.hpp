@@ -27,11 +27,11 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true The listener was successfully added
          * @return false The listener was NOT successfully added (there is already a listener with the same key)
          */
-        bool add_listener(Key key, Listener func) {
-            std::lock_guard lock(mutex);
-            if (std::find(keys.begin(), keys.end(), key) != keys.end()) return false;
-            keys.push_back(key);
-            listeners.push_back(func);
+        bool addListener(Key key, Listener func) {
+            std::lock_guard lock(m_mutex);
+            if (std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end()) return false;
+            m_keys.push_back(key);
+            m_listeners.push_back(func);
             return true;
         }
 
@@ -42,12 +42,12 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true The listener was successfully removed
          * @return false The listener was NOT successfully removed (there is no listener with the same key)
          */
-        bool remove_listener(Key key) {
-            std::lock_guard lock(mutex);
-            auto i = std::find(keys.begin(), keys.end(), key);
-            if (i != keys.end()) {
-                keys.erase(i);
-                listeners.erase(listeners.begin() + (i - keys.begin()));
+        bool removeListener(Key key) {
+            std::lock_guard lock(m_mutex);
+            auto i = std::find(m_keys.begin(), m_keys.end(), key);
+            if (i != m_keys.end()) {
+                m_keys.erase(i);
+                m_listeners.erase(m_listeners.begin() + (i - m_keys.begin()));
                 return true;
             }
             return false;
@@ -59,9 +59,9 @@ template <typename Key, typename... Args> class EventHandler {
          * @return true There are listeners registered
          * @return false There are no listeners registered
          */
-        bool is_empty() {
-            std::lock_guard lock(mutex);
-            return listeners.empty();
+        bool isEmpty() {
+            std::lock_guard lock(m_mutex);
+            return m_listeners.empty();
         }
 
         /**
@@ -70,12 +70,12 @@ template <typename Key, typename... Args> class EventHandler {
          * @param args The parameters to pass to each listener
          */
         void fire(Args... args) {
-            std::lock_guard lock(mutex);
-            for (auto listener : listeners) { listener(args...); }
+            std::lock_guard lock(m_mutex);
+            for (auto listener : m_listeners) { listener(args...); }
         }
     private:
-        std::vector<Key> keys {};
-        std::vector<Listener> listeners {};
-        gamepad::_impl::RecursiveMutex mutex {};
+        std::vector<Key> m_keys {};
+        std::vector<Listener> m_listeners {};
+        gamepad::_impl::RecursiveMutex m_mutex {};
 };
 } // namespace gamepad::_impl
