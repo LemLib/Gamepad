@@ -53,8 +53,11 @@ class Gamepad {
          * @code {.cpp}
          * gamepad::master.printLine(1, "This will print on the middle line");
          * gamepad::master.printLine(0, "this will print\n\naround the middle line");
+         * @endcode
+         *
+         * @return true if the alert was added successfully, false if there was an error.
          */
-        void printLine(uint8_t line, std::string str);
+        bool printLine(uint8_t line, std::string str);
         /**
          * @brief clears all lines on the controller, similar to the pros function (low priority)
          *

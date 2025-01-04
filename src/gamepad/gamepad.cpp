@@ -130,7 +130,7 @@ void Gamepad::addScreen(std::shared_ptr<AbstractScreen> screen) {
     m_screens.emplace(m_screens.begin() + pos, screen);
 }
 
-void Gamepad::printLine(uint8_t line, std::string str) { m_default_screen->printLine(line, str); }
+bool Gamepad::printLine(uint8_t line, std::string str) { return m_default_screen->printLine(line, str); }
 
 void Gamepad::clear() { m_default_screen->printLine(0, " \n \n "); }
 
@@ -146,10 +146,7 @@ float Gamepad::operator[](pros::controller_analog_e_t axis) {
         case pros::E_CONTROLLER_ANALOG_LEFT_Y: return this->LeftY;
         case pros::E_CONTROLLER_ANALOG_RIGHT_X: return this->RightX;
         case pros::E_CONTROLLER_ANALOG_RIGHT_Y: return this->RightY;
-        default:
-            TODO("add error logging")
-            errno = EINVAL;
-            return 0;
+        default: TODO("add error logging") return 0;
     }
 }
 
@@ -172,10 +169,7 @@ Button Gamepad::*Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
         case pros::E_CONTROLLER_DIGITAL_B: return &Gamepad::m_B;
         case pros::E_CONTROLLER_DIGITAL_Y: return &Gamepad::m_Y;
         case pros::E_CONTROLLER_DIGITAL_A: return &Gamepad::m_A;
-        default:
-            TODO("add error logging")
-            errno = EINVAL;
-            return &Gamepad::Fake;
+        default: TODO("add error logging") return &Gamepad::Fake;
     }
 }
 } // namespace gamepad

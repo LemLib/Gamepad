@@ -20,11 +20,11 @@ ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
     return output;
 }
 
-void DefaultScreen::printLine(uint8_t line, std::string str) {
-    TODO("change handling for off screen lines")
+bool DefaultScreen::printLine(uint8_t line, std::string str) {
     if (line > 2) {
+        TODO("add error logging")
         errno = EINVAL;
-        return;
+        return false;
     }
 
     const std::lock_guard<pros::Mutex> guard(m_mutex);
@@ -42,10 +42,11 @@ void DefaultScreen::printLine(uint8_t line, std::string str) {
         for (uint8_t l = 0; l < 3; l++) {
             if (!strs[l].empty()) m_current_buffer[l] = (strs[l]);
         }
-        return;
+        return true;
     }
 
     m_current_buffer[line] = std::move(str);
+    return true;
 }
 
 void DefaultScreen::rumble(std::string rumble_pattern) {

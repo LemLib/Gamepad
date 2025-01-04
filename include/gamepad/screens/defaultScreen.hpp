@@ -31,8 +31,10 @@ class DefaultScreen : public AbstractScreen {
          *
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
+         *
+         * @return true if the alert was added successfully, false if there was an error.
          */
-        void printLine(uint8_t line, std::string str);
+        bool printLine(uint8_t line, std::string str);
 
         /**
          * makes the controller rumble like pros
