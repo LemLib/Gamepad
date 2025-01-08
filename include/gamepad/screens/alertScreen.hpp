@@ -47,9 +47,9 @@ class AlertScreen : public AbstractScreen {
          * @param rumble A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
          *
-         * @return true if the alert was added successfully, false if there was an error.
+         * @return 0 if the alert was added successfully, UINT32_MAX if there was an error.
          */
-        bool addAlerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
+        uint32_t addAlerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
     private:
         struct AlertBuffer {
                 ScreenBuffer screen;

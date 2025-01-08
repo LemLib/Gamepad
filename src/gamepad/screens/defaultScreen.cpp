@@ -2,6 +2,7 @@
 #include "gamepad/screens/abstractScreen.hpp"
 #include "gamepad/todo.hpp"
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
 #include <mutex>
 #include <optional>
@@ -20,11 +21,11 @@ ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
     return output;
 }
 
-bool DefaultScreen::printLine(uint8_t line, std::string str) {
+uint32_t DefaultScreen::printLine(uint8_t line, std::string str) {
     if (line > 2) {
         TODO("add error logging")
         errno = EINVAL;
-        return false;
+        return UINT32_MAX;
     }
 
     const std::lock_guard<pros::Mutex> guard(m_mutex);
@@ -42,15 +43,16 @@ bool DefaultScreen::printLine(uint8_t line, std::string str) {
         for (uint8_t l = 0; l < 3; l++) {
             if (!strs[l].empty()) m_current_buffer[l] = (strs[l]);
         }
-        return true;
+        return 0;
     }
 
     m_current_buffer[line] = std::move(str);
-    return true;
+    return 0;
 }
 
 void DefaultScreen::rumble(std::string rumble_pattern) {
     if (rumble_pattern.size() > 8) {
+        errno = EINVAL;
         TODO("add warn logging")
         rumble_pattern.resize(8);
     }

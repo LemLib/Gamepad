@@ -84,7 +84,7 @@ class Button {
          *   gamepad::master.Up.onPress("upPress1", []() { std::cout << "I was pressed!" << std::endl; });
          * @endcode
          */
-        bool onPress(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is long pressed.
          *
@@ -108,7 +108,7 @@ class Button {
          * std::endl; });
          * @endcode
          */
-        bool onLongPress(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onLongPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is released.
          *
@@ -125,7 +125,7 @@ class Button {
          *   gamepad::master.Y.onRelease("stopIntake", []() { intake.move(0); });
          * @endcode
          */
-        bool onRelease(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is short released.
          *
@@ -147,7 +147,7 @@ class Button {
          *   gamepad::master.B.onShortRelease("intakeOnePiece", []() { intake.move_relative(600, 100); });
          * @endcode
          */
-        bool onShortRelease(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onShortRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run when the button is long released.
          *
@@ -168,7 +168,7 @@ class Button {
          * @endcode
          *
          */
-        bool onLongRelease(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onLongRelease(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run periodically after its been held
          *
@@ -189,7 +189,7 @@ class Button {
          * @endcode
          *
          */
-        bool onRepeatPress(std::string listenerName, std::function<void(void)> func) const;
+        uint32_t onRepeatPress(std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Register a function to run for a given event.
          *
@@ -207,7 +207,7 @@ class Button {
          *   gamepad::master.L1.addListener(gamepad::ON_RELEASE, "stop_spin", []() { motor1.brake(); });
          * @endcode
          */
-        bool addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
+        uint32_t addListener(EventType event, std::string listenerName, std::function<void(void)> func) const;
         /**
          * @brief Removes a listener from the button
          * @warning Usage of this function is discouraged.
@@ -224,7 +224,7 @@ class Button {
          *   gamepad::master.L1.removeListener("do_something");
          * @endcode
          */
-        bool removeListener(std::string listenerName) const;
+        uint32_t removeListener(std::string listenerName) const;
 
         /**
          * @brief Returns a value indicating whether the button is currently being held.

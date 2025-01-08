@@ -32,11 +32,11 @@ void AlertScreen::update(uint32_t delta_time) {
     if (pros::millis() - m_line_set_time >= m_screen_contents->duration) m_screen_contents = std::nullopt;
 }
 
-bool AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
+uint32_t AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
     if (line > 2) {
         TODO("add error logging")
         errno = EINVAL;
-        return false;
+        return UINT32_MAX;
     }
 
     if (std::ranges::count(str, '\n') > 2) { TODO("add warn logging") }
@@ -58,7 +58,7 @@ bool AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, st
 
     std::lock_guard<pros::Mutex> guard(m_mutex);
     m_screen_buffer.push_back({buffer, duration});
-    return true;
+    return 0;
 }
 
 } // namespace gamepad
