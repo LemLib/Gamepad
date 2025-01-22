@@ -19,7 +19,7 @@ Gamepad::Gamepad(pros::controller_id_e_t id)
 }
 
 void Gamepad::updateButton(pros::controller_digital_e_t button_id) {
-    Button Gamepad::*button = Gamepad::buttonToPtr(button_id);
+    Button Gamepad::* button = Gamepad::buttonToPtr(button_id);
     bool is_held = m_controller.get_digital(button_id);
     (this->*button).update(is_held);
 }
@@ -155,7 +155,7 @@ std::string Gamepad::uniqueName() {
     return std::to_string(i++) + "_internal";
 }
 
-Button Gamepad::*Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
+Button Gamepad::* Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
         case pros::E_CONTROLLER_DIGITAL_L2: return &Gamepad::m_L2;

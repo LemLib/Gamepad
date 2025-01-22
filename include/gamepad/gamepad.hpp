@@ -162,7 +162,7 @@ class Gamepad {
          * @return std::string A unique listener name
          */
         static std::string uniqueName();
-        static Button Gamepad::*buttonToPtr(pros::controller_digital_e_t button);
+        static Button Gamepad::* buttonToPtr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
 
         void updateScreens();

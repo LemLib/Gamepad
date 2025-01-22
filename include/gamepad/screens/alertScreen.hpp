@@ -53,7 +53,7 @@ class AlertScreen : public AbstractScreen {
          *
          * @return 0 if the alert was added successfully
          * @return INT32_MAX if there was an error, setting errno
-         * 
+         *
          */
         int32_t addAlerts(uint8_t line, std::string strs, uint32_t duration, std::string rumble = "");
     private:
