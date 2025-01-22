@@ -130,7 +130,7 @@ void Gamepad::addScreen(std::shared_ptr<AbstractScreen> screen) {
     m_screens.emplace(m_screens.begin() + pos, screen);
 }
 
-uint32_t Gamepad::printLine(uint8_t line, std::string str) { return m_default_screen->printLine(line, str); }
+int32_t Gamepad::printLine(uint8_t line, std::string str) { return m_default_screen->printLine(line, str); }
 
 void Gamepad::clear() { m_default_screen->printLine(0, " \n \n "); }
 

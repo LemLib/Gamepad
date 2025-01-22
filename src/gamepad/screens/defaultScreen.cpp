@@ -21,11 +21,11 @@ ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
     return output;
 }
 
-uint32_t DefaultScreen::printLine(uint8_t line, std::string str) {
+int32_t DefaultScreen::printLine(uint8_t line, std::string str) {
     if (line > 2) {
         TODO("add error logging")
         errno = EINVAL;
-        return UINT32_MAX;
+        return INT32_MAX;
     }
 
     const std::lock_guard<pros::Mutex> guard(m_mutex);
@@ -50,15 +50,25 @@ uint32_t DefaultScreen::printLine(uint8_t line, std::string str) {
     return 0;
 }
 
-void DefaultScreen::rumble(std::string rumble_pattern) {
+int32_t DefaultScreen::rumble(std::string rumble_pattern) {
+    bool is_err = false;
     if (rumble_pattern.size() > 8) {
-        errno = EINVAL;
         TODO("add warn logging")
+        errno = EINVAL;
+        is_err = true;
         rumble_pattern.resize(8);
+    }
+
+    if (rumble_pattern.find_first_not_of(".- ") != std::string::npos) {
+        TODO("add error logging")
+        errno = EINVAL;
+        return INT32_MAX;
     }
 
     std::lock_guard<pros::Mutex> guard(m_mutex);
     m_current_buffer[3] = std::move(rumble_pattern);
+    if (is_err) return INT32_MAX;
+    else return 0;
 }
 
 } // namespace gamepad

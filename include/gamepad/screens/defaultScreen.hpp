@@ -32,9 +32,14 @@ class DefaultScreen : public AbstractScreen {
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
          *
-         * @return 0 if the alert was added successfully, UINT32_MAX if there was an error.
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The line number is not in the interval [0, 2]
+         *
+         * @return 0 if the alert was added successfully
+         * @return INT32_MAX if there was an error, setting errno
          */
-        uint32_t printLine(uint8_t line, std::string str);
+        int32_t printLine(uint8_t line, std::string str);
 
         /**
          * makes the controller rumble like pros
@@ -42,7 +47,7 @@ class DefaultScreen : public AbstractScreen {
          * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
          */
-        void rumble(std::string rumble_pattern);
+        int32_t rumble(std::string rumble_pattern);
     private:
         ScreenBuffer m_current_buffer {};
         pros::Mutex m_mutex {};
