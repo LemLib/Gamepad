@@ -65,6 +65,15 @@ class Deadband : public AbstractTransformation {
          */
         std::pair<float, float> get_value(std::pair<float, float> original) override;
     private:
+        /**
+         * @brief Applies a deadband to a joystick axis
+         * 
+         * @param value The value of the joystick axis
+         * @param deadband The deadband to use
+         * @return float The joystick axis value with deadband applied
+         */
+        static float apply_deadband(float value, float deadband);
+
         float m_x_deadband;
         float m_y_deadband;
         float m_x_spread;

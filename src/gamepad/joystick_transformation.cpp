@@ -7,15 +7,18 @@ using std::copysign;
 using std::pow;
 
 namespace gamepad {
+float Deadband::apply_deadband(float value, float deadband) {
+    float abs_val = abs(value);
+    return copysign(abs_val < deadband ? 0 : (abs_val - deadband) / (1.0 - deadband), value);
+}
+
 std::pair<float, float> Deadband::get_value(std::pair<float, float> value) {
     float x = value.first;
     float y = value.second;
     float x_deadband = m_x_deadband + abs(y) * m_x_spread;
     float y_deadband = m_y_deadband + abs(x) * m_y_spread;
-    float x_scale = 1.0 / (1.0 - x_deadband);
-    float y_scale = 1.0 / (1.0 - y_deadband);
-    x = copysign(abs(x) < x_deadband ? 0 : (abs(x) - x_deadband) * x_scale, x);
-    y = copysign(abs(y) < y_deadband ? 0 : (abs(y) - y_deadband) * y_scale, y);
+    x = apply_deadband(x, x_deadband);
+    y = apply_deadband(y, y_deadband);
     return {x, y};
 }
 
