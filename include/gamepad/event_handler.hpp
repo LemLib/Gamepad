@@ -27,9 +27,9 @@ template <typename Key, typename... Args> class EventHandler {
          * @return 0 The listener was successfully added
          * @return UINT32_MAX The listener was NOT successfully added (there is already a listener with the same key)
          */
-        uint32_t addListener(Key key, Listener func) {
+        int32_t addListener(Key key, Listener func) {
             std::lock_guard lock(m_mutex);
-            if (std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end()) return UINT32_MAX;
+            if (std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end()) return INT32_MAX;
             m_keys.push_back(key);
             m_listeners.push_back(func);
             return 0;
@@ -42,7 +42,7 @@ template <typename Key, typename... Args> class EventHandler {
          * @return 0 The listener was successfully removed
          * @return UINT32_MAX The listener was NOT successfully removed (there is no listener with the same key)
          */
-        uint32_t removeListener(Key key) {
+        int32_t removeListener(Key key) {
             std::lock_guard lock(m_mutex);
             auto i = std::find(m_keys.begin(), m_keys.end(), key);
             if (i != m_keys.end()) {
@@ -50,7 +50,7 @@ template <typename Key, typename... Args> class EventHandler {
                 m_listeners.erase(m_listeners.begin() + (i - m_keys.begin()));
                 return 0;
             }
-            return UINT32_MAX;
+            return INT32_MAX;
         }
 
         /**
