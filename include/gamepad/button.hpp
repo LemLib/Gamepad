@@ -212,6 +212,7 @@ class Button {
          * @brief Removes a listener from the button
          * @warning Usage of this function is discouraged.
          *
+         * @param event the event type of the listener
          * @param listenerName The name of the listener to remove
          * @return true The specified listener was successfully removed
          * @return false The specified listener could not be removed
@@ -221,10 +222,10 @@ class Button {
          *   // Add an event listener...
          *   gamepad::master.L1.addListener(gamepad::ON_PRESS, "do_something", doSomething);
          *   // ...and now get rid of it
-         *   gamepad::master.L1.removeListener("do_something");
+         *   gamepad::master.L1.removeListener(gamepad::ON_PRESS, "do_something");
          * @endcode
          */
-        int32_t removeListener(std::string listenerName) const;
+        int32_t removeListener(EventType event, std::string listenerName) const;
 
         /**
          * @brief Returns a value indicating whether the button is currently being held.
@@ -240,6 +241,14 @@ class Button {
          * @param is_held Whether or not the button is currently held down
          */
         void update(bool is_held);
+        /**
+         * @brief Get the handler object for the given event type
+         * 
+         * @param event The desired event type
+         * @return nullptr The event value is invalid
+         * @return _impl::EventHandler<std::string>* A pointer to the given event's handler
+         */
+        _impl::EventHandler<std::string>* get_handler(EventType event) const;
         /// How long the threshold should be for the longPress and shortRelease events
         mutable uint32_t m_long_press_threshold = 500;
         /// How often repeatPress is called
