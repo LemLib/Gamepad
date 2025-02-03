@@ -2,7 +2,6 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <cstdint>
-#include <stdexcept>
 
 namespace gamepad {
 _impl::EventHandler<std::string>* Button::get_handler(EventType event) const {
