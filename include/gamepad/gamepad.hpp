@@ -49,12 +49,21 @@ class Gamepad {
          * @param line the line number to print the string on (0-2)
          * @param str the string to print onto the controller (\n to go to the next line)
          *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The line number is not in the interval [0, 2]
+         * EMSGSIZE: The string is more than 3 lines long
+         *
          * @b Example:
          * @code {.cpp}
          * gamepad::master.printLine(1, "This will print on the middle line");
          * gamepad::master.printLine(0, "this will print\n\naround the middle line");
+         * @endcode
+         *
+         * @return 0 if the line was printed successfully
+         * @return INT32_MAX if there was an error, setting errno
          */
-        void printLine(uint8_t line, std::string str);
+        int32_t printLine(uint8_t line, std::string str);
         /**
          * @brief clears all lines on the controller, similar to the pros function (low priority)
          *
@@ -62,6 +71,7 @@ class Gamepad {
          * @code {.cpp}
          * // clears the whole screen on the controller
          * gamepad::master.clear()
+         * @endcode
          */
         void clear();
         /**
@@ -69,22 +79,39 @@ class Gamepad {
          *
          * @param line the line to clear (0-2)
          *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The line number is not in the interval [0, 2]
+         *
          * @b Example:
          * @code {.cpp}
          * // clears the center line on the controller
          * gamepad::master.clear(1);
+         * @endcode
+         *
+         * @return 0 if the line was cleared successfully
+         * @return INT32_MAX if there was an error, setting errno
          */
-        void clear(uint8_t line);
+        int32_t clear(uint8_t line);
         /**
          * makes the controller rumble like pros (low priority)
          *
          * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
          *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The rumble pattern contains a character other than '.', '-', or ' '
+         * EMSGSIZE: The pattern is more than 8 characters long
+         *
          * @b Example:
          * @code {.cpp}
          * // rumbles in the following pattern: short, pause, long, short short
          * gamepad::master.rumble(". -..");
+         * @endcode
+         *
+         * @return 0 if the rumble was successful
+         * @return INT32_MAX if there was an error, setting errno
          */
         void rumble(std::string rumble_pattern);
         /**
@@ -150,7 +177,7 @@ class Gamepad {
          * @return std::string A unique listener name
          */
         static std::string uniqueName();
-        static Button Gamepad::*buttonToPtr(pros::controller_digital_e_t button);
+        static Button Gamepad::* buttonToPtr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
 
         void updateScreens();

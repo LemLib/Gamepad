@@ -2,6 +2,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <algorithm>
+#include <cerrno>
 #include <cstdint>
 #include <mutex>
 #include <optional>
@@ -32,12 +33,19 @@ void AlertScreen::update(uint32_t delta_time) {
     if (pros::millis() - m_line_set_time >= m_screen_contents->duration) m_screen_contents = std::nullopt;
 }
 
-void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
-    TODO("change handling for off screen lines")
-    if (line > 2) std::exit(1);
+int32_t AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
+    int32_t ret_val = 0;
+    if (line > 2) {
+        TODO("add error logging")
+        errno = EINVAL;
+        return INT32_MAX;
+    }
 
-    TODO("warn instead of throw error if there are too many lines")
-    if (std::ranges::count(str, '\n') > 2) std::exit(1);
+    if (std::ranges::count(str, '\n') > 2) { 
+        TODO("add warn logging")
+        errno = EMSGSIZE;
+        ret_val = INT32_MAX;
+    }
 
     std::vector<std::string> strs(3, "");
     std::stringstream ss(str);
@@ -56,6 +64,7 @@ void AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, st
 
     std::lock_guard<pros::Mutex> guard(m_mutex);
     m_screen_buffer.push_back({buffer, duration});
+    return ret_val;
 }
 
 } // namespace gamepad

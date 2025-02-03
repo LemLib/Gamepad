@@ -24,37 +24,37 @@ template <typename Key, typename... Args> class EventHandler {
          *
          * @param key The listener key (this must be a unique key value)
          * @param func The function to run when this event is fired
-         * @return true The listener was successfully added
-         * @return false The listener was NOT successfully added (there is already a listener with the same key)
+         * @return 0 The listener was successfully added
+         * @return INT32_MAX The listener was NOT successfully added (there is already a listener with the same key)
          */
-        bool addListener(Key key, Listener func) {
+        int32_t addListener(Key key, Listener func) {
             std::lock_guard lock(m_mutex);
-            if (std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end()) return false;
+            if (std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end()) return INT32_MAX;
             m_keys.push_back(key);
             m_listeners.push_back(func);
-            return true;
+            return 0;
         }
 
         /**
          * @brief Remove a listener from the list of listeners
          *
          * @param key The listener key (this must be a unique key value)
-         * @return true The listener was successfully removed
-         * @return false The listener was NOT successfully removed (there is no listener with the same key)
+         * @return 0 The listener was successfully removed
+         * @return INT32_MAX The listener was NOT successfully removed (there is no listener with the same key)
          */
-        bool removeListener(Key key) {
+        int32_t removeListener(Key key) {
             std::lock_guard lock(m_mutex);
             auto i = std::find(m_keys.begin(), m_keys.end(), key);
             if (i != m_keys.end()) {
                 m_keys.erase(i);
                 m_listeners.erase(m_listeners.begin() + (i - m_keys.begin()));
-                return true;
+                return 0;
             }
-            return false;
+            return INT32_MAX;
         }
 
         /**
-         * @brief Whther or not there are any listeners registered
+         * @brief Whether or not there are any listeners registered
          *
          * @return true There are listeners registered
          * @return false There are no listeners registered

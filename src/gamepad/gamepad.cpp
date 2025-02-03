@@ -19,7 +19,7 @@ Gamepad::Gamepad(pros::controller_id_e_t id)
 }
 
 void Gamepad::updateButton(pros::controller_digital_e_t button_id) {
-    Button Gamepad::*button = Gamepad::buttonToPtr(button_id);
+    Button Gamepad::* button = Gamepad::buttonToPtr(button_id);
     bool is_held = m_controller.get_digital(button_id);
     (this->*button).update(is_held);
 }
@@ -130,11 +130,11 @@ void Gamepad::addScreen(std::shared_ptr<AbstractScreen> screen) {
     m_screens.emplace(m_screens.begin() + pos, screen);
 }
 
-void Gamepad::printLine(uint8_t line, std::string str) { m_default_screen->printLine(line, str); }
+int32_t Gamepad::printLine(uint8_t line, std::string str) { return m_default_screen->printLine(line, str); }
 
 void Gamepad::clear() { m_default_screen->printLine(0, " \n \n "); }
 
-void Gamepad::clear(uint8_t line) { m_default_screen->printLine(line, " "); }
+int32_t Gamepad::clear(uint8_t line) { return m_default_screen->printLine(line, " "); }
 
 void Gamepad::rumble(std::string rumble_pattern) { m_default_screen->rumble(rumble_pattern); }
 
@@ -146,10 +146,7 @@ float Gamepad::operator[](pros::controller_analog_e_t axis) {
         case pros::E_CONTROLLER_ANALOG_LEFT_Y: return this->LeftY;
         case pros::E_CONTROLLER_ANALOG_RIGHT_X: return this->RightX;
         case pros::E_CONTROLLER_ANALOG_RIGHT_Y: return this->RightY;
-        default:
-            TODO("add error logging")
-            errno = EINVAL;
-            return 0;
+        default: TODO("add error logging") return 0;
     }
 }
 
@@ -158,7 +155,7 @@ std::string Gamepad::uniqueName() {
     return std::to_string(i++) + "_internal";
 }
 
-Button Gamepad::*Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
+Button Gamepad::* Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
     switch (button) {
         case pros::E_CONTROLLER_DIGITAL_L1: return &Gamepad::m_L1;
         case pros::E_CONTROLLER_DIGITAL_L2: return &Gamepad::m_L2;
@@ -172,10 +169,7 @@ Button Gamepad::*Gamepad::buttonToPtr(pros::controller_digital_e_t button) {
         case pros::E_CONTROLLER_DIGITAL_B: return &Gamepad::m_B;
         case pros::E_CONTROLLER_DIGITAL_Y: return &Gamepad::m_Y;
         case pros::E_CONTROLLER_DIGITAL_A: return &Gamepad::m_A;
-        default:
-            TODO("add error logging")
-            errno = EINVAL;
-            return &Gamepad::Fake;
+        default: TODO("add error logging") return &Gamepad::Fake;
     }
 }
 } // namespace gamepad
