@@ -134,7 +134,7 @@ int32_t Gamepad::printLine(uint8_t line, std::string str) { return m_default_scr
 
 void Gamepad::clear() { m_default_screen->printLine(0, " \n \n "); }
 
-void Gamepad::clear(uint8_t line) { m_default_screen->printLine(line, " "); }
+int32_t Gamepad::clear(uint8_t line) { return m_default_screen->printLine(line, " "); }
 
 void Gamepad::rumble(std::string rumble_pattern) { m_default_screen->rumble(rumble_pattern); }
 
