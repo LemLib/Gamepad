@@ -35,6 +35,7 @@ class DefaultScreen : public AbstractScreen {
          * This function uses the following value(s) of errno when an error state is reached:
          *
          * EINVAL: The line number is not in the interval [0, 2]
+         * EMSGSIZE: The string is more than 3 lines long
          *
          * @return 0 if the alert was added successfully
          * @return INT32_MAX if there was an error, setting errno
@@ -46,6 +47,14 @@ class DefaultScreen : public AbstractScreen {
          *
          * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
          * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
+         *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The rumble pattern contains a character other than '.', '-', or ' '
+         * EMSGSIZE: The pattern is more than 8 characters long
+         *
+         * @return 0 if the alert was added successfully
+         * @return INT32_MAX if there was an error, setting errno
          */
         int32_t rumble(std::string rumble_pattern);
     private:

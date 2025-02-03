@@ -50,6 +50,7 @@ class AlertScreen : public AbstractScreen {
          * This function uses the following value(s) of errno when an error state is reached:
          *
          * EINVAL: The line number is not in the interval [0, 2]
+         * EMSGSIZE: The alert is more than 3 lines long
          *
          * @return 0 if the alert was added successfully
          * @return INT32_MAX if there was an error, setting errno
