@@ -2,6 +2,7 @@
 #include "gamepad/todo.hpp"
 #include "pros/rtos.hpp"
 #include <algorithm>
+#include <cerrno>
 #include <cstdint>
 #include <mutex>
 #include <optional>
@@ -33,13 +34,18 @@ void AlertScreen::update(uint32_t delta_time) {
 }
 
 int32_t AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration, std::string rumble) {
+    int32_t ret_val = 0;
     if (line > 2) {
         TODO("add error logging")
         errno = EINVAL;
         return INT32_MAX;
     }
 
-    if (std::ranges::count(str, '\n') > 2) { TODO("add warn logging") }
+    if (std::ranges::count(str, '\n') > 2) { 
+        TODO("add warn logging")
+        errno = EMSGSIZE;
+        ret_val = INT32_MAX;
+    }
 
     std::vector<std::string> strs(3, "");
     std::stringstream ss(str);
@@ -58,7 +64,7 @@ int32_t AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration,
 
     std::lock_guard<pros::Mutex> guard(m_mutex);
     m_screen_buffer.push_back({buffer, duration});
-    return 0;
+    return ret_val;
 }
 
 } // namespace gamepad

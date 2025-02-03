@@ -2,6 +2,7 @@
 #include "gamepad/screens/abstractScreen.hpp"
 #include "gamepad/todo.hpp"
 #include <algorithm>
+#include <cerrno>
 #include <cstdint>
 #include <cstdio>
 #include <mutex>
@@ -22,6 +23,7 @@ ScreenBuffer DefaultScreen::getScreen(std::set<uint8_t> visible_lines) {
 }
 
 int32_t DefaultScreen::printLine(uint8_t line, std::string str) {
+    int32_t ret_val = 0;
     if (line > 2) {
         TODO("add error logging")
         errno = EINVAL;
@@ -31,7 +33,11 @@ int32_t DefaultScreen::printLine(uint8_t line, std::string str) {
     const std::lock_guard<pros::Mutex> guard(m_mutex);
 
     if (str.find('\n') != std::string::npos) {
-        if (std::ranges::count(str, '\n') > 2) { TODO("add warn logging for too many lines") }
+        if (std::ranges::count(str, '\n') > 2) { 
+            TODO("add warn logging for too many lines") 
+            errno = EMSGSIZE;
+            ret_val = INT32_MAX;
+        }
 
         std::vector<std::string> strs(3);
         std::stringstream ss(str);
@@ -43,19 +49,19 @@ int32_t DefaultScreen::printLine(uint8_t line, std::string str) {
         for (uint8_t l = 0; l < 3; l++) {
             if (!strs[l].empty()) m_current_buffer[l] = (strs[l]);
         }
-        return 0;
+        return ret_val;
     }
 
     m_current_buffer[line] = std::move(str);
-    return 0;
+    return ret_val;
 }
 
 int32_t DefaultScreen::rumble(std::string rumble_pattern) {
-    bool is_err = false;
+    int32_t ret_val = 0;
     if (rumble_pattern.size() > 8) {
-        TODO("add warn logging")
-        errno = EINVAL;
-        is_err = true;
+        TODO("add error logging")
+        errno = EMSGSIZE;
+        ret_val = INT32_MAX;
         rumble_pattern.resize(8);
     }
 
@@ -67,8 +73,7 @@ int32_t DefaultScreen::rumble(std::string rumble_pattern) {
 
     std::lock_guard<pros::Mutex> guard(m_mutex);
     m_current_buffer[3] = std::move(rumble_pattern);
-    if (is_err) return INT32_MAX;
-    else return 0;
+    return ret_val;
 }
 
 } // namespace gamepad
