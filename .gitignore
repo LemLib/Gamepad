@@ -8,7 +8,7 @@
 
 # PROS
 bin/
-.vscode/
+.vscode/*
 .cache/
 compile_commands.json
 temp.log
@@ -24,3 +24,6 @@ temp.errors
 
 # Linux
 debug.log
+
+# Always include development settings
+!.vscode/settings.json
