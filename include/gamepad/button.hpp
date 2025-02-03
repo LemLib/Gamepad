@@ -73,8 +73,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is pressed, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -96,8 +96,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long pressed, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -114,8 +114,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is released, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -136,8 +136,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is short released, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -156,8 +156,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run when the button is long released, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -177,8 +177,8 @@ class Button {
          *
          * @param listenerName The name of the listener, this must be a unique name
          * @param func the function to run periodically when the button is held, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -196,8 +196,8 @@ class Button {
          * @param event Which event to register the listener on.
          * @param listenerName The name of the listener, this must be a unique name
          * @param func The function to run for the given event, the function MUST NOT block
-         * @return true The listener was successfully registered
-         * @return false The listener was not successfully registered (there is already a listener with this name)
+         * @return 0 The listener was successfully registered
+         * @return INT32_MAX The listener was not successfully registered (there is already a listener with this name)
          *
          * @b Example:
          * @code {.cpp}
@@ -214,8 +214,8 @@ class Button {
          *
          * @param event the event type of the listener
          * @param listenerName The name of the listener to remove
-         * @return true The specified listener was successfully removed
-         * @return false The specified listener could not be removed
+         * @return 0 The specified listener was successfully removed
+         * @return INT32_MAX The specified listener could not be removed
          *
          * @b Example:
          * @code {.cpp}

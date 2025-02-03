@@ -25,7 +25,7 @@ template <typename Key, typename... Args> class EventHandler {
          * @param key The listener key (this must be a unique key value)
          * @param func The function to run when this event is fired
          * @return 0 The listener was successfully added
-         * @return UINT32_MAX The listener was NOT successfully added (there is already a listener with the same key)
+         * @return INT32_MAX The listener was NOT successfully added (there is already a listener with the same key)
          */
         int32_t addListener(Key key, Listener func) {
             std::lock_guard lock(m_mutex);
@@ -40,7 +40,7 @@ template <typename Key, typename... Args> class EventHandler {
          *
          * @param key The listener key (this must be a unique key value)
          * @return 0 The listener was successfully removed
-         * @return UINT32_MAX The listener was NOT successfully removed (there is no listener with the same key)
+         * @return INT32_MAX The listener was NOT successfully removed (there is no listener with the same key)
          */
         int32_t removeListener(Key key) {
             std::lock_guard lock(m_mutex);
@@ -54,7 +54,7 @@ template <typename Key, typename... Args> class EventHandler {
         }
 
         /**
-         * @brief Whther or not there are any listeners registered
+         * @brief Whether or not there are any listeners registered
          *
          * @return true There are listeners registered
          * @return false There are no listeners registered
