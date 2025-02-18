@@ -1,10 +1,14 @@
 #pragma once
 
-#include "pros/misc.h"
-#include <optional>
-#include <string>
-#include "button.hpp"
 #include "joystick_transformation.hpp"
+#include "pros/misc.h"
+#include "screens/defaultScreen.hpp"
+#include <cstdint>
+#include <string>
+#include <memory>
+#include <vector>
+#include "screens/abstractScreen.hpp"
+#include "button.hpp"
 #include "pros/misc.hpp"
 
 namespace gamepad {
@@ -28,6 +32,90 @@ class Gamepad {
          */
         void update();
         /**
+         * @brief Add a screen to the screen update loop that can update the controller's screen
+         *
+         * @param screen the `AbstractScreen` to add to the screen queue
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // initialize the alerts screen so we can have alerts on the controller
+         * std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertScreen>();
+         *
+         * gamepad::master.add_screen(alerts);
+         */
+        void addScreen(std::shared_ptr<AbstractScreen> screen);
+        /**
+         * @brief print a line to the console like pros (low priority)
+         *
+         * @param line the line number to print the string on (0-2)
+         * @param str the string to print onto the controller (\n to go to the next line)
+         *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The line number is not in the interval [0, 2]
+         * EMSGSIZE: The string is more than 3 lines long
+         *
+         * @b Example:
+         * @code {.cpp}
+         * gamepad::master.printLine(1, "This will print on the middle line");
+         * gamepad::master.printLine(0, "this will print\n\naround the middle line");
+         * @endcode
+         *
+         * @return 0 if the line was printed successfully
+         * @return INT32_MAX if there was an error, setting errno
+         */
+        int32_t printLine(uint8_t line, std::string str);
+        /**
+         * @brief clears all lines on the controller, similar to the pros function (low priority)
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the whole screen on the controller
+         * gamepad::master.clear()
+         * @endcode
+         */
+        void clear();
+        /**
+         * @brief clears the specific line on the controller, similar to the pros function clear_line (low priority)
+         *
+         * @param line the line to clear (0-2)
+         *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The line number is not in the interval [0, 2]
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // clears the center line on the controller
+         * gamepad::master.clear(1);
+         * @endcode
+         *
+         * @return 0 if the line was cleared successfully
+         * @return INT32_MAX if there was an error, setting errno
+         */
+        int32_t clear(uint8_t line);
+        /**
+         * makes the controller rumble like pros (low priority)
+         *
+         * @param rumble_pattern A string consisting of the characters '.', '-', and ' ', where dots are short rumbles,
+         * dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters.
+         *
+         * This function uses the following value(s) of errno when an error state is reached:
+         *
+         * EINVAL: The rumble pattern contains a character other than '.', '-', or ' '
+         * EMSGSIZE: The pattern is more than 8 characters long
+         *
+         * @b Example:
+         * @code {.cpp}
+         * // rumbles in the following pattern: short, pause, long, short short
+         * gamepad::master.rumble(". -..");
+         * @endcode
+         *
+         * @return 0 if the rumble was successful
+         * @return INT32_MAX if there was an error, setting errno
+         */
+        void rumble(std::string rumble_pattern);
+        /**
          * @brief Get the state of a button on the controller.
          *
          * @param button Which button to return
@@ -46,12 +134,10 @@ class Gamepad {
          *
          * @param joystick Which joystick axis to return
          *
-         * @return float the value of the joystick, between -1.0 and 1.0.
-         *
          * @b Example:
          * @code {.cpp}
          * // control a motor with a joystick
-         * intake.move(gamepad::master[ANALOG_RIGHT_Y] * 127);
+         * intake.move(gamepad::master[ANALOG_RIGHT_Y]);
          * @endcode
          *
          */
@@ -144,8 +230,7 @@ class Gamepad {
         /// The partner controller, same as @ref gamepad::partner
         static Gamepad partner;
     private:
-        Gamepad(pros::controller_id_e_t id)
-            : controller(id) {}
+        Gamepad(pros::controller_id_e_t id);
 
         Button m_L1 {}, m_L2 {}, m_R1 {}, m_R2 {}, m_Up {}, m_Down {}, m_Left {}, m_Right {}, m_X {}, m_B {}, m_Y {},
             m_A {};
@@ -157,14 +242,27 @@ class Gamepad {
          * @brief Gets a unique name for a listener that will not conflict with user listener names.
          *
          * @important: when using the function, you must register the listener by
-         * directly calling add_listener on the EventHandler, do NOT use onPress/addListener,etc.
+         * directly calling addListener on the EventHandler, do NOT use onPress/addListener,etc.
          *
          * @return std::string A unique listener name
          */
-        static std::string unique_name();
-        static Button Gamepad::*button_to_ptr(pros::controller_digital_e_t button);
+        static std::string uniqueName();
+        static Button Gamepad::* buttonToPtr(pros::controller_digital_e_t button);
         void updateButton(pros::controller_digital_e_t button_id);
-        pros::Controller controller;
+
+        void updateScreens();
+
+        std::shared_ptr<DefaultScreen> m_default_screen = std::make_shared<DefaultScreen>();
+        std::vector<std::shared_ptr<AbstractScreen>> m_screens = {};
+        ScreenBuffer m_current_screen = {};
+        ScreenBuffer m_next_buffer = {};
+        pros::Controller m_controller;
+
+        uint8_t m_last_printed_line = 0;
+        uint32_t m_last_print_time = 0;
+        uint32_t m_last_update_time = 0;
+        bool m_screen_cleared = false;
+        pros::Mutex m_mutex {};
 };
 
 inline Gamepad Gamepad::master {pros::E_CONTROLLER_MASTER};

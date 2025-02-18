@@ -1,7 +1,14 @@
 #include "main.h"
 #include "gamepad/api.hpp"
-#include <cstdint>
+#include "gamepad/gamepad.hpp"
+#include "gamepad/screens/alertScreen.hpp"
+#include "pros/rtos.hpp"
 #include <cstdio>
+#include <memory>
+#include <string>
+
+// initialize the alerts screen so we can have alerts on the controller
+std::shared_ptr<gamepad::AlertScreen> alerts = std::make_shared<gamepad::AlertScreen>();
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -9,47 +16,29 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-
-uint32_t last_repeat_press_time = pros::millis();
-
-void downPress1() { printf("Down Press!\n"); }
-
-void upRelease1() { printf("Up Release!\n"); }
-
-void leftLongPress1() { printf("Left Long Press!\n"); }
-
-void leftShortRelease1() { printf("Left Short Release!\n"); }
-
-void leftLongRelease1() { printf("Left Long Release!\n"); }
-
-void aPress1() {
-    last_repeat_press_time = pros::millis();
-    printf("A Pressed!\n");
-}
-
-void aRepeatPress1() {
-    printf("A Repeat Pressed %ims after last\n", pros::millis() - last_repeat_press_time);
-    last_repeat_press_time = pros::millis();
-}
-
 void initialize() {
-    // We can register functions to run when buttons are pressed
-    gamepad::master.buttonDown().onPress("downPress1", downPress1);
-    // ...or when they're released
-    gamepad::master.buttonUp().onRelease("downRelease1", upRelease1);
-    // There's also the longPress event
-    gamepad::master.buttonLeft().onLongPress("leftLongPress1", leftLongPress1);
-    // We can have two or even more functions on one button,
-    // just remember to give them different names
-    gamepad::master.buttonLeft().onShortRelease("leftShortRelease", leftShortRelease1);
-    gamepad::master.buttonLeft().onLongRelease("leftLongRelease", leftLongRelease1);
-    // We also have the repeat press event, where we can adjust the timing
-    gamepad::master.buttonA().set_long_press_threshold(1000); // in ms
-    gamepad::master.buttonA().set_repeat_cooldown(100); // in ms
-    gamepad::master.buttonA().onPress("aStartPress", aPress1);
-    gamepad::master.buttonA().onRepeatPress("aRepeatPress", aRepeatPress1);
-    // And we can use lambda's too
-    gamepad::master.buttonX().onShortRelease("xShortRelease1", []() { printf("X Short Release!\n"); });
+    // VERY IMPORTANT, this actually adds the alerts screen to the gamepad
+    // it wouldn't work without this line
+    gamepad::master.addScreen(alerts);
+
+    // When the A button is pressed, schedule an alert that spans all three
+    // lines, lasts 3 seconds and rumbles in a long-short-long pattern
+    gamepad::master.buttonA().onPress("alert", []() {
+        alerts->addAlerts(0, "a very\nimportant alert\nat " + std::to_string(pros::millis()) + " ms", 3000, "-.-");
+    });
+
+    // Normally print a string on the first and third line without overriding
+    // the second line when the B button is pressed
+    gamepad::master.buttonB().onPress(
+        "print02", []() { gamepad::master.printLine(0, "the time is\n\n" + std::to_string(pros::millis()) + " ms"); });
+
+    // rumbles 3 times for a short duration when the X button is pressed
+    gamepad::master.buttonX().onPress("rumble", []() { gamepad::master.rumble("..."); });
+
+    // when the Y button is pressed and held the text should show up, and when
+    // the button is released it should be cleared
+    gamepad::master.buttonY().onPress("print1", []() { gamepad::master.printLine(1, "this should be cleared"); });
+    gamepad::master.buttonY().onRelease("clear1", []() { gamepad::master.clear(1); });
 
     // set up controller curves:
     gamepad::master.set_left_transform(
@@ -103,7 +92,6 @@ void autonomous() {}
 void opcontrol() {
     pros::MotorGroup left_mg({1, -2, 3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
     pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
-
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
