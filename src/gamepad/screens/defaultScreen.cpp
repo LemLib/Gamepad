@@ -33,8 +33,8 @@ int32_t DefaultScreen::printLine(uint8_t line, std::string str) {
     const std::lock_guard<pros::Mutex> guard(m_mutex);
 
     if (str.find('\n') != std::string::npos) {
-        if (std::ranges::count(str, '\n') > 2) { 
-            TODO("add warn logging for too many lines") 
+        if (std::ranges::count(str, '\n') > 2) {
+            TODO("add warn logging for too many lines")
             errno = EMSGSIZE;
             ret_val = INT32_MAX;
         }
