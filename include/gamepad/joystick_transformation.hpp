@@ -67,7 +67,7 @@ class Deadband : public AbstractTransformation {
     private:
         /**
          * @brief Applies a deadband to a joystick axis
-         * 
+         *
          * @param value The value of the joystick axis
          * @param deadband The deadband to use
          * @return float The joystick axis value with deadband applied
