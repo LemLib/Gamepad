@@ -1,11 +1,14 @@
-FROM rust:1.67 as builder
+FROM rust:1.84 as builder
 
 RUN git clone https://github.com/vexide/vex-v5-qemu.git /vex-v5-qemu
 
 WORKDIR /vex-v5-qemu
 RUN cd packages/kernel; cargo build --target-dir /target/kernel
 
-RUN cd packages/client-cli; cargo install --path . --root /target/client-cli
+# FIXME: This should probably be removed in the future since it's very fragile
+RUN rustup toolchain install nightly
+
+RUN cd packages/client-cli; cargo +nightly install --path . --root /target/client-cli
 
 FROM mcr.microsoft.com/devcontainers/cpp:1-noble
 # ------------

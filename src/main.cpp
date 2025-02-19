@@ -23,22 +23,26 @@ void initialize() {
 
     // When the A button is pressed, schedule an alert that spans all three
     // lines, lasts 3 seconds and rumbles in a long-short-long pattern
-    gamepad::master.A.onPress("alert", []() {
+    gamepad::master.buttonA().onPress("alert", []() {
         alerts->addAlerts(0, "a very\nimportant alert\nat " + std::to_string(pros::millis()) + " ms", 3000, "-.-");
     });
 
     // Normally print a string on the first and third line without overriding
     // the second line when the B button is pressed
-    gamepad::master.B.onPress(
+    gamepad::master.buttonB().onPress(
         "print02", []() { gamepad::master.printLine(0, "the time is\n\n" + std::to_string(pros::millis()) + " ms"); });
 
     // rumbles 3 times for a short duration when the X button is pressed
-    gamepad::master.X.onPress("rumble", []() { gamepad::master.rumble("..."); });
+    gamepad::master.buttonX().onPress("rumble", []() { gamepad::master.rumble("..."); });
 
     // when the Y button is pressed and held the text should show up, and when
     // the button is released it should be cleared
-    gamepad::master.Y.onPress("print1", []() { gamepad::master.printLine(1, "this should be cleared"); });
-    gamepad::master.Y.onRelease("clear1", []() { gamepad::master.clear(1); });
+    gamepad::master.buttonY().onPress("print1", []() { gamepad::master.printLine(1, "this should be cleared"); });
+    gamepad::master.buttonY().onRelease("clear1", []() { gamepad::master.clear(1); });
+
+    // set up controller curves:
+    gamepad::master.set_left_transform(
+        gamepad::TransformationBuilder(gamepad::Deadband(0.05, 0.05)).and_then(gamepad::ExpoCurve(2, 2)));
 }
 
 /**
@@ -86,10 +90,16 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+    pros::MotorGroup left_mg({1, -2, 3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+    pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
     while (true) {
         // Remember to ALWAYS call update at the start of your while loop!
         gamepad::master.update();
-
+        // We'll use the arcade control scheme
+        int dir = gamepad::master.axisLeftY() * 127; // Gets amount forward/backward from left joystick
+        int turn = gamepad::master.axisRightX() * 127; // Gets the turn left/right from right joystick
+        left_mg.move(dir - turn); // Sets left motor voltage
+        right_mg.move(dir + turn); // Sets right motor voltage
         pros::delay(25); // Wait for 25 ms, then update the motor values again
     }
 }

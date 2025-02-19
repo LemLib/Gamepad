@@ -1,5 +1,6 @@
 #pragma once
 
+#include "joystick_transformation.hpp"
 #include "pros/misc.h"
 #include "screens/defaultScreen.hpp"
 #include <cstdint>
@@ -141,22 +142,89 @@ class Gamepad {
          *
          */
         float operator[](pros::controller_analog_e_t joystick);
-        const Button& L1 {m_L1};
-        const Button& L2 {m_L2};
-        const Button& R1 {m_R1};
-        const Button& R2 {m_R2};
-        const Button& Up {m_Up};
-        const Button& Down {m_Down};
-        const Button& Left {m_Left};
-        const Button& Right {m_Right};
-        const Button& X {m_X};
-        const Button& B {m_B};
-        const Button& Y {m_Y};
-        const Button& A {m_A};
-        const float& LeftX = m_LeftX;
-        const float& LeftY = m_LeftY;
-        const float& RightX = m_RightX;
-        const float& RightY = m_RightY;
+
+        /// The L1 button on the top of the controller.
+        const Button& buttonL1();
+
+        /// The L2 button on the top of the controller.
+        const Button& buttonL2();
+
+        /// The R1 button on the top of the controller.
+        const Button& buttonR1();
+
+        /// The R2 button on the top of the controller.
+        const Button& buttonR2();
+
+        /// The up arrow button on the front of the controller.
+        const Button& buttonUp();
+
+        /// The down arrow button on the front of the controller.
+        const Button& buttonDown();
+
+        /// The left arrow button on the front of the controller.
+        const Button& buttonLeft();
+
+        /// The right arrow button on the front of the controller.
+        const Button& buttonRight();
+
+        /// The X arrow button on the front of the controller.
+        const Button& buttonX();
+
+        /// The B arrow button on the front of the controller.
+        const Button& buttonB();
+
+        /// The Y arrow button on the front of the controller.
+        const Button& buttonY();
+
+        /// The A arrow button on the front of the controller.
+        const Button& buttonA();
+
+        /**
+         * @brief Gets the value of the left joystick's x axis, optionally applying a curve.
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
+         * @return float The value of the left joystick's x-axis, between -1.0 and 1.0.
+         */
+        float axisLeftX(bool use_curve = true);
+
+        /**
+         * @brief Gets the value of the left joystick's y axis, optionally applying a curve.
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
+         * @return float The value of the left joystick's y-axis, between -1.0 and 1.0.
+         */
+        float axisLeftY(bool use_curve = true);
+
+        /**
+         * @brief Gets the value of the right joystick's x axis, optionally applying a curve.
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
+         * @return float The value of the right joystick's x-axis, between -1.0 and 1.0.
+         */
+        float axisRightX(bool use_curve = true);
+
+        /**
+         * @brief Gets the value of the right joystick's y axis, optionally applying a curve.
+         *
+         * @param use_curve (optional) Whether or not to use the curve; defaults to true.
+         * @return float The value of the right joystick's y-axis, between -1.0 and 1.0.
+         */
+        float axisRightY(bool use_curve = true);
+
+        /**
+         * @brief Set the transformation to be used for the left joystick.
+         *
+         * @param left_transformation The transformation to be used
+         */
+        void set_left_transform(Transformation left_transformation);
+
+        /**
+         * @brief Set the transformation to be used for the right joystick.
+         *
+         * @param right_transformation The transformation to be used
+         */
+        void set_right_transform(Transformation right_transformation);
+
         /// The master controller, same as @ref gamepad::master
         static Gamepad master;
         /// The partner controller, same as @ref gamepad::partner
@@ -168,6 +236,8 @@ class Gamepad {
             m_A {};
         float m_LeftX = 0, m_LeftY = 0, m_RightX = 0, m_RightY = 0;
         Button Fake {};
+        std::optional<Transformation> m_left_transformation {std::nullopt};
+        std::optional<Transformation> m_right_transformation {std::nullopt};
         /**
          * @brief Gets a unique name for a listener that will not conflict with user listener names.
          *
