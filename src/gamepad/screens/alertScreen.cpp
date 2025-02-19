@@ -41,7 +41,7 @@ int32_t AlertScreen::addAlerts(uint8_t line, std::string str, uint32_t duration,
         return INT32_MAX;
     }
 
-    if (std::ranges::count(str, '\n') > 2) { 
+    if (std::ranges::count(str, '\n') > 2) {
         TODO("add warn logging")
         errno = EMSGSIZE;
         ret_val = INT32_MAX;

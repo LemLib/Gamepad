@@ -243,7 +243,7 @@ class Button {
         void update(bool is_held);
         /**
          * @brief Get the handler object for the given event type
-         * 
+         *
          * @param event The desired event type
          * @return nullptr The event value is invalid
          * @return _impl::EventHandler<std::string>* A pointer to the given event's handler
