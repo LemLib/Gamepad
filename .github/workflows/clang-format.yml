@@ -11,11 +11,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - './src/gamepad'
+          - './include/gamepad'
 
     steps:
     - uses: actions/checkout@v2
-    - uses: DoozyX/clang-format-lint-action@v0.18
+    - uses: jidicula/clang-format-action@v4.14.0
       with:
-        source: './src/gamepad ./include/gamepad'
-        extensions: 'hpp,cpp'
-        clangFormatVersion: 18
+        clang-format-version: '19'
+        check-path: ${{ matrix.path }}
