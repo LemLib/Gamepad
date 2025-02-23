@@ -1,0 +1,10 @@
+{
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ],
+    "conventionalCommits.scopes": [
+        "buttons",
+        "display",
+        "joysticks"
+    ]
+}
